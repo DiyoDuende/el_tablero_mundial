@@ -30,3 +30,26 @@
 5. **Ecosistema** - Clima, desastres naturales
 
 ### 5. Cómo usar el tablero
+MODO REALIDAD
+├── Observar el mundo actual
+├── Consultar leyes y datos
+└── Verificar noticias
+
+MODO JUEGO
+├── "¿Qué pasaría si..."
+├── Simular decisiones
+├── Ver impactos en cadena
+└── Analizar resultados
+
+### 6. Transparencia
+
+- No se guardan datos personales
+- Sin sesgos políticos
+- Múltiples fuentes por dato
+- Siempre mostramos la incertidumbre
+
+### 7. Actualización
+
+- Datos en tiempo real (vía APIs)
+- Actualización automática al abrir la página
+- Sin bases de datos propias
