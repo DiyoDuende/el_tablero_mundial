@@ -34,3 +34,28 @@ Un tablero interactivo que muestra el **poder real** en el mundo: no solo paíse
 - 🇸🇦 Árabe
 
 ### 📁 Estructura del proyecto
+tablero-mundial/
+├── index.html
+├── css/
+├── js/
+│   ├── core/      # Territorios, actores, estado
+│   ├── simulador/ # Poderes, eventos, motor
+│   └── ui/        # Interfaz de usuario
+├── lang/          # Archivos de traducción
+└── docs/          # Documentación
+
+### 📚 Fuentes de datos
+
+- INE (España)
+- Eurostat (Europa)
+- Banco Mundial (global)
+- International Energy Agency
+- Datos abiertos gubernamentales
+
+### 📝 Licencia
+
+Código abierto · Uso libre · Datos públicos
+
+---
+
+**🌍 Porque entender el poder es el primer paso para no ser manipulado.**
