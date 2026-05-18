@@ -3,7 +3,6 @@
 ## Simulador Geopolítico Global · Datos reales · Verificador ciudadano
 
 ### 🔍 ¿Qué es?
-
 Un tablero interactivo que muestra el **poder real** en el mundo: no solo países, sino también corporaciones, instituciones, movimientos sociales y el ecosistema.
 
 ### 🎯 Características principales
@@ -19,12 +18,10 @@ Un tablero interactivo que muestra el **poder real** en el mundo: no solo paíse
 | 📚 **Fuentes verificadas** | Siempre mostramos el origen de los datos |
 
 ### 🏛️ Capas de poder
-
 - 🏛️ Político · 💰 Económico · ⚔️ Militar · 📜 Legislativo
 - 👥 Social · 🌍 Ecosistema · 🏢 Corporaciones
 
 ### 🌐 Idiomas soportados
-
 - 🇪🇸 Español
 - 🇬🇧 Inglés
 - 🇫🇷 Francés
@@ -34,18 +31,18 @@ Un tablero interactivo que muestra el **poder real** en el mundo: no solo paíse
 - 🇸🇦 Árabe
 
 ### 📁 Estructura del proyecto
+
 tablero-mundial/
 ├── index.html
 ├── css/
 ├── js/
-│   ├── core/      # Territorios, actores, estado
-│   ├── simulador/ # Poderes, eventos, motor
-│   └── ui/        # Interfaz de usuario
-├── lang/          # Archivos de traducción
-└── docs/          # Documentación
+│   ├── core/           # Territorios, actores, estado
+│   ├── simulador/      # Poderes, eventos, motor
+│   └── ui/             # Interfaz de usuario
+├── lang/               # Archivos de traducción
+└── docs/               # Documentación
 
 ### 📚 Fuentes de datos
-
 - INE (España)
 - Eurostat (Europa)
 - Banco Mundial (global)
@@ -53,9 +50,6 @@ tablero-mundial/
 - Datos abiertos gubernamentales
 
 ### 📝 Licencia
-
 Código abierto · Uso libre · Datos públicos
-
----
 
 **🌍 Porque entender el poder es el primer paso para no ser manipulado.**
