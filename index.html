@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌍 TABLERO MUNDIAL - Simulador Geopolítico Global</title>
+    <title data-i18n="titulo_pagina">🌍 TABLERO MUNDIAL - Simulador Geopolítico Global</title>
     
     <!-- Leaflet para el mapa -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -26,8 +26,8 @@
                 <button class="nav-btn nav-btn-real active" id="btn-modo-real" data-i18n="datosReales">🌐 Datos reales</button>
                 <button class="nav-btn nav-btn-sim" id="btn-modo-juego" data-i18n="simulacion">🎮 Simulación</button>
                 <button class="nav-btn nav-btn-verif" id="btn-verificador-panel" data-i18n="verificador">✅ Verificador</button>
-                <button class="nav-btn nav-btn-relaciones-globales" id="btn-relaciones-globales">🌐 Red Global</button>
-                <button class="nav-btn nav-btn-timeline" id="btn-timeline-panel">📅 Timeline Global</button>
+                <button class="nav-btn nav-btn-relaciones-globales" id="btn-relaciones-globales" data-i18n="redGlobal">🌐 Red Global</button>
+                <button class="nav-btn nav-btn-timeline" id="btn-timeline-panel" data-i18n="timelineGlobal">📅 Timeline Global</button>
             </div>
         </div>
 
@@ -45,19 +45,19 @@
                 </div>
                 <div class="panel-capas">
                     <div class="capas-grid">
-                        <button class="capa-icon" data-capa="politico" title="Político">🏛️</button>
-                        <button class="capa-icon" data-capa="economico" title="Económico">💰</button>
-                        <button class="capa-icon" data-capa="militar" title="Militar">⚔️</button>
-                        <button class="capa-icon" data-capa="legislativo" title="Legislativo">📜</button>
-                        <button class="capa-icon" data-capa="social" title="Social">👥</button>
-                        <button class="capa-icon" data-capa="clima" title="Clima">🌍</button>
-                        <button class="capa-icon" data-capa="corporaciones" title="Corporaciones">🏢</button>
+                        <button class="capa-icon" data-capa="politico" title="Político" data-i18n="politico">🏛️</button>
+                        <button class="capa-icon" data-capa="economico" title="Económico" data-i18n="economico">💰</button>
+                        <button class="capa-icon" data-capa="militar" title="Militar" data-i18n="militar">⚔️</button>
+                        <button class="capa-icon" data-capa="legislativo" title="Legislativo" data-i18n="legislativo">📜</button>
+                        <button class="capa-icon" data-capa="social" title="Social" data-i18n="social">👥</button>
+                        <button class="capa-icon" data-capa="clima" title="Clima" data-i18n="clima">🌍</button>
+                        <button class="capa-icon" data-capa="corporaciones" title="Corporaciones" data-i18n="corporaciones">🏢</button>
                     </div>
                 </div>
                 <div class="panel-info" id="panel-info">
                     <div class="info-header">
                         <h3 id="pais-nombre">🇪🇸 España</h3>
-                        <span class="pais-estado" id="pais-estado">🟢 ESTABLE</span>
+                        <span class="pais-estado" id="pais-estado" data-i18n="estado">🟢 ESTABLE</span>
                     </div>
                     <div class="info-objetivos">
                         <span data-i18n="objetivos">🎯 Objetivos</span>: <span id="objetivos-valor">68%</span>
@@ -101,7 +101,7 @@
         <!-- MAPA DE RELACIONES GLOBALES -->
         <div class="relaciones-globales-container" id="relaciones-globales-panel">
             <div class="relaciones-globales-header">
-                <h4>🌐 MAPA GLOBAL DE RELACIONES</h4>
+                <h4 data-i18n="mapaGlobalRelaciones">🌐 MAPA GLOBAL DE RELACIONES</h4>
                 <button class="btn-cerrar" id="btn-cerrar-relaciones-globales">✕</button>
             </div>
             <div id="relaciones-contenido"></div>
@@ -110,7 +110,7 @@
         <!-- VISOR DE LÍNEA TEMPORAL GLOBAL -->
         <div class="timeline-global-container" id="timeline-panel">
             <div class="timeline-global-header">
-                <h4>🌐 VISOR DE LÍNEA TEMPORAL GLOBAL</h4>
+                <h4 data-i18n="visorTimelineGlobal">🌐 VISOR DE LÍNEA TEMPORAL GLOBAL</h4>
                 <button class="btn-cerrar" id="btn-cerrar-timeline">✕</button>
             </div>
             <div id="timeline-contenido"></div>
@@ -145,7 +145,7 @@
         </div>
     </div>
 
-    <!-- SCRIPTS -->
+    <!-- SCRIPTS (el orden es importante) -->
     <script src="js/core/00-config.js"></script>
     <script src="js/core/01-territorios.js"></script>
     <script src="js/core/02-actores.js"></script>
