@@ -1,7 +1,5 @@
 // js/ui/01-panel-info.js - Panel lateral con datos reales
 const UIPanelInfo = {
-  datosPaises: MapaMundial.datosPaises, // referencia
-
   init: function() {
     document.querySelectorAll('.info-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
