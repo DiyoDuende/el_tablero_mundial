@@ -12,7 +12,7 @@ const MapaMundial = {
     await this.cargarTodosLosDatos();
 
     // Cargar GeoJSON de países (asegúrate de tener el archivo en esa ruta)
-    const response = await fetch('js/data/countries.geojson');
+    const response = await fetch('https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson');
     const geojson = await response.json();
     
     L.geoJSON(geojson, {
