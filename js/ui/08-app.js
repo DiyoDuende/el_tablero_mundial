@@ -1,65 +1,56 @@
-// js/ui/08-app.js - Inicialización principal (versión segura)
+// ============================================
+// APP PRINCIPAL - Inicialización de todos los módulos
+// ============================================
+
 document.addEventListener('DOMContentLoaded', async () => {
-  console.log('🚀 Tablero Mundial v3.0 iniciando...');
-  
-  // Inicializar idioma primero
-  if (window.Idioma) await Idioma.init();
-  
-  // Inicializar componentes solo si existen en el DOM
-  if (window.MapaMundial) MapaMundial.init();
-  if (window.UIPanelInfo) UIPanelInfo.init();
-  if (window.UIVerificador) UIVerificador.init();
-  if (window.UISimulador) UISimulador.init();
-  if (window.UIDomino) UIDomino.init();
-  if (window.UIRelaciones) UIRelaciones.init();
-  if (window.UIRelacionesGlobales) UIRelacionesGlobales.init();
-  if (window.UITimeline) UITimeline.init();
-  
-  // Mostrar país por defecto (España) cuando el mapa esté listo
-  setTimeout(() => {
-    if (window.UIPanelInfo) UIPanelInfo.mostrarPais('ESP', 'España');
-  }, 2000);
-  
-  // Configurar modos
-  const btnModoReal = document.getElementById('btn-modo-real');
-  const btnModoJuego = document.getElementById('btn-modo-juego');
-  const modoBadge = document.getElementById('modo-badge');
-  if (btnModoReal) {
-    btnModoReal.addEventListener('click', () => {
-      CONFIG.modo = 'realidad';
-      btnModoReal.classList.add('active');
-      if (btnModoJuego) btnModoJuego.classList.remove('active');
-      if (modoBadge) {
-        modoBadge.innerHTML = '🌐 MODO REAL';
-        modoBadge.style.background = '#2e7d32';
-      }
+    console.log('🚀 Tablero Mundial v3.0 iniciando...');
+    
+    // Inicializar idioma primero
+    await Idioma.init();
+    
+    // Inicializar componentes UI
+    MapaMundial.init();
+    UIPanelInfo.init();
+    UIVerificador.init();
+    UISimulador.init();
+    UIDomino.init();
+    UIRelaciones.init();
+    UIRelacionesGlobales.init();
+    UITimeline.init();
+    
+    // Mostrar España por defecto
+    UIPanelInfo.mostrarPais('españa');
+    
+    // Configurar modos
+    document.getElementById('btn-modo-real').addEventListener('click', () => {
+        CONFIG.modo = 'realidad';
+        document.getElementById('btn-modo-real').classList.add('active');
+        document.getElementById('btn-modo-juego').classList.remove('active');
+        document.getElementById('modo-badge').innerHTML = '🌐 MODO REAL';
+        document.getElementById('modo-badge').style.background = '#2e7d32';
     });
-  }
-  if (btnModoJuego) {
-    btnModoJuego.addEventListener('click', () => {
-      CONFIG.modo = 'juego';
-      btnModoJuego.classList.add('active');
-      if (btnModoReal) btnModoReal.classList.remove('active');
-      if (modoBadge) {
-        modoBadge.innerHTML = '🎮 MODO JUEGO';
-        modoBadge.style.background = '#b27c2c';
-      }
+    
+    document.getElementById('btn-modo-juego').addEventListener('click', () => {
+        CONFIG.modo = 'juego';
+        document.getElementById('btn-modo-juego').classList.add('active');
+        document.getElementById('btn-modo-real').classList.remove('active');
+        document.getElementById('modo-badge').innerHTML = '🎮 MODO JUEGO';
+        document.getElementById('modo-badge').style.background = '#b27c2c';
     });
-  }
-  
-  // Buscador rápido
-  const buscador = document.getElementById('buscador-rapido');
-  if (buscador) {
-    buscador.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        const busqueda = e.target.value.trim();
-        if (busqueda && window.MapaMundial) {
-          const resultados = TERRITORIOS.buscar(busqueda);
-          if (resultados.length > 0) MapaMundial.irAPais(resultados[0].id);
+    
+    // Buscador rápido
+    document.getElementById('buscador-rapido').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const busqueda = e.target.value.trim();
+            if (busqueda) {
+                const resultados = TERRITORIOS.buscar(busqueda);
+                if (resultados.length > 0) {
+                    MapaMundial.irAPais(resultados[0].id);
+                }
+            }
         }
-      }
     });
-  }
-  
-  console.log('✅ Tablero Mundial listo');
+    
+    console.log('✅ Tablero Mundial listo');
 });
+
