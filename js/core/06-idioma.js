@@ -14,8 +14,8 @@ const Idioma = {
     { code: 'ar', nombre: 'العربية', native: 'العربية', bandera: '🇸🇦' }
   ],
   textos: {},
+
   init: async function() {
-    // Detectar idioma del navegador
     const idiomaNavegador = this.getIdiomaNavegador();
     if (this.disponibles.includes(idiomaNavegador)) {
       this.actual = idiomaNavegador;
@@ -30,9 +30,11 @@ const Idioma = {
     this.aplicarIdioma();
     this.crearSelector();
   },
+
   getIdiomaNavegador: function() {
     return (navigator.language || 'en').slice(0, 2).toLowerCase();
   },
+
   detectarPorPais: async function() {
     try {
       const response = await fetch(CONFIG.apis.ipapi);
@@ -51,6 +53,7 @@ const Idioma = {
       return 'en';
     }
   },
+
   cargarTextos: async function(codigo) {
     try {
       const response = await fetch(`lang/${codigo}.json`);
@@ -71,6 +74,7 @@ const Idioma = {
       };
     }
   },
+
   aplicarIdioma: function() {
     document.querySelectorAll('[data-i18n]').forEach(el => {
       const key = el.dataset.i18n;
@@ -83,11 +87,10 @@ const Idioma = {
       }
     });
   },
+
   crearSelector: function() {
-    // Buscar el lugar donde insertar el selector (usamos .top-nav)
     const topNav = document.querySelector('.top-nav');
     if (!topNav) return;
-    // Evitar duplicados
     if (document.getElementById('selector-idioma-universal')) return;
 
     const container = document.createElement('div');
@@ -112,6 +115,7 @@ const Idioma = {
       this.aplicarIdioma();
     });
   },
+
   t: function(clave) {
     return this.textos[clave] || clave;
   }
