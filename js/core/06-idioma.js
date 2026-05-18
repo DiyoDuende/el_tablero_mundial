@@ -13,17 +13,9 @@ const Idioma = {
     { code: 'zh', nombre: '中文', native: '中文', bandera: '🇨🇳' },
     { code: 'ar', nombre: 'العربية', native: 'العربية', bandera: '🇸🇦' }
   ],
-  mapaPaises: {
-    ES: 'es', AR: 'es', MX: 'es', CO: 'es', PE: 'es',
-    US: 'en', GB: 'en', AU: 'en', CA: 'en',
-    FR: 'fr', BE: 'fr', CH: 'fr',
-    BR: 'pt', PT: 'pt',
-    DE: 'de', AT: 'de',
-    CN: 'zh', TW: 'zh',
-    SA: 'ar', AE: 'ar', EG: 'ar'
-  },
   textos: {},
   init: async function() {
+    // Detectar idioma del navegador
     const idiomaNavegador = this.getIdiomaNavegador();
     if (this.disponibles.includes(idiomaNavegador)) {
       this.actual = idiomaNavegador;
@@ -45,7 +37,16 @@ const Idioma = {
     try {
       const response = await fetch(CONFIG.apis.ipapi);
       const data = await response.json();
-      return this.mapaPaises[data.country_code] || 'en';
+      const mapa = {
+        ES: 'es', AR: 'es', MX: 'es', CO: 'es', PE: 'es',
+        US: 'en', GB: 'en', AU: 'en', CA: 'en',
+        FR: 'fr', BE: 'fr', CH: 'fr',
+        BR: 'pt', PT: 'pt',
+        DE: 'de', AT: 'de',
+        CN: 'zh', TW: 'zh',
+        SA: 'ar', AE: 'ar', EG: 'ar'
+      };
+      return mapa[data.country_code] || 'en';
     } catch {
       return 'en';
     }
@@ -83,20 +84,28 @@ const Idioma = {
     });
   },
   crearSelector: function() {
-    const selector = document.createElement('div');
-    selector.className = 'selector-idioma-universal';
-    let opciones = '';
+    // Buscar el lugar donde insertar el selector (usamos .top-nav)
+    const topNav = document.querySelector('.top-nav');
+    if (!topNav) return;
+    // Evitar duplicados
+    if (document.getElementById('selector-idioma-universal')) return;
+
+    const container = document.createElement('div');
+    container.id = 'selector-idioma-universal';
+    container.className = 'selector-idioma-universal';
+    container.style.marginLeft = 'auto';
+    container.style.marginRight = '10px';
+
+    let selectHtml = `<select id="selector-idioma" class="idioma-select universal" style="background:#1c2c36; color:white; border-radius:30px; padding:6px 12px; border:1px solid #2a4050;">`;
     this.idiomas.forEach(idioma => {
       const selected = idioma.code === this.actual ? 'selected' : '';
-      opciones += `<option value="${idioma.code}" ${selected}>${idioma.bandera} ${idioma.native}</option>`;
+      selectHtml += `<option value="${idioma.code}" ${selected}>${idioma.bandera} ${idioma.native}</option>`;
     });
-    selector.innerHTML = `
-      <select id="selector-idioma" class="idioma-select universal">
-        ${opciones}
-      </select>
-    `;
-    const topNav = document.querySelector('.top-nav');
-    topNav.insertBefore(selector, topNav.firstChild);
+    selectHtml += `</select>`;
+
+    container.innerHTML = selectHtml;
+    topNav.appendChild(container);
+
     document.getElementById('selector-idioma').addEventListener('change', async (e) => {
       this.actual = e.target.value;
       await this.cargarTextos(this.actual);
