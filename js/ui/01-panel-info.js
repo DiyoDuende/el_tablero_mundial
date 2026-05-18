@@ -1,56 +1,7 @@
-// ============================================
-// PANEL DE INFORMACIÓN DEL PAÍS
-// ============================================
+// js/ui/01-panel-info.js - Panel lateral con datos reales
 const UIPanelInfo = {
-  datosMock: {
-    españa: {
-      nombre: 'España',
-      estado: 'ESTABLE',
-      color: '#2e7d32',
-      objetivos: 68,
-      alertas: [
-        { tipo: 'roja', texto: 'Seguridad energética' },
-        { tipo: 'amarilla', texto: 'Desempleo alto' }
-      ],
-      economia: {
-        pib: 2.3,
-        inflacion: 2.1,
-        deuda: 98,
-        desempleo: 11.2
-      }
-    },
-    francia: {
-      nombre: 'Francia',
-      estado: 'ESTABLE',
-      color: '#2e7d32',
-      objetivos: 72,
-      alertas: [
-        { tipo: 'amarilla', texto: 'Protestas sociales' }
-      ],
-      economia: {
-        pib: 1.8,
-        inflacion: 2.5,
-        deuda: 112,
-        desempleo: 7.5
-      }
-    },
-    portugal: {
-      nombre: 'Portugal',
-      estado: 'INQUIETO',
-      color: '#f57c00',
-      objetivos: 55,
-      alertas: [
-        { tipo: 'roja', texto: 'Deuda pública' },
-        { tipo: 'amarilla', texto: 'Crecimiento lento' }
-      ],
-      economia: {
-        pib: 1.2,
-        inflacion: 2.8,
-        deuda: 127,
-        desempleo: 6.8
-      }
-    }
-  },
+  datosPaises: MapaMundial.datosPaises, // referencia
+
   init: function() {
     document.querySelectorAll('.info-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
@@ -59,44 +10,55 @@ const UIPanelInfo = {
       });
     });
   },
+
   mostrarPais: function(paisId) {
-    const datos = this.datosMock[paisId] || this.datosMock.españa;
-    document.getElementById('pais-nombre').innerHTML = `🇪🇸 ${datos.nombre}`;
-    document.getElementById('pais-estado').innerHTML = `🟢 ${datos.estado}`;
-    document.getElementById('pais-estado').style.background = datos.color;
-    document.getElementById('objetivos-valor').innerHTML = `${datos.objetivos}%`;
+    const code = paisId?.toUpperCase();
+    const datos = MapaMundial.datosPaises[code] || {};
+    const nombre = TERRITORIOS[paisId]?.nombre || paisId;
+
+    document.getElementById('pais-nombre').innerHTML = `🇪🇸 ${nombre}`;
+    const estado = datos.pib ? (datos.pib > 30000 ? 'ESTABLE' : (datos.pib > 10000 ? 'INQUIETO' : 'TENSIÓN')) : 'DESCONOCIDO';
+    document.getElementById('pais-estado').innerHTML = `🟢 ${estado}`;
+    document.getElementById('objetivos-valor').innerHTML = datos.pib ? Math.round(datos.pib / 1000) : '?';
+
     let alertasHtml = '';
-    datos.alertas.forEach(a => {
-      alertasHtml += `<div class="alerta-item alerta-${a.tipo}">${a.tipo === 'roja' ? '🔴' : '🟡'} ${a.texto}</div>`;
-    });
+    if (datos.desempleo && datos.desempleo > 10) alertasHtml += `<div class="alerta-item alerta-roja">🔴 Desempleo alto (${datos.desempleo}%)</div>`;
+    if (datos.deuda && datos.deuda > 100) alertasHtml += `<div class="alerta-item alerta-amarilla">🟡 Deuda excesiva (${datos.deuda}%)</div>`;
+    if (!alertasHtml) alertasHtml = '<div class="alerta-item alerta-verde">✅ Sin alertas destacadas</div>';
     document.getElementById('info-alertas').innerHTML = `<h4 data-i18n="alertas">⚠️ Alertas</h4>${alertasHtml}`;
   },
+
   mostrarSeccion: function(seccion) {
-    const pais = document.getElementById('pais-nombre').innerText.split(' ')[1].toLowerCase();
-    const datos = this.datosMock[pais] || this.datosMock.españa;
+    const paisId = document.getElementById('pais-nombre').innerText.split(' ')[1]?.toLowerCase();
+    const code = paisId?.toUpperCase();
+    const datos = MapaMundial.datosPaises[code] || {};
     let html = '';
     switch(seccion) {
       case 'economia':
         html = `
-          <h5>📊 Datos económicos</h5>
-          <p>PIB: ${datos.economia.pib}%</p>
-          <p>Inflación: ${datos.economia.inflacion}%</p>
-          <p>Deuda/PIB: ${datos.economia.deuda}%</p>
-          <p>Desempleo: ${datos.economia.desempleo}%</p>
+          <h5>📊 Datos económicos (Banco Mundial)</h5>
+          <p>PIB per cápita: ${datos.pib ? `$${datos.pib.toLocaleString()}` : 'No disponible'}</p>
+          <p>Desempleo: ${datos.desempleo ? `${datos.desempleo}%` : 'No disponible'}</p>
+          <p>Deuda pública: ${datos.deuda ? `${datos.deuda}%` : 'No disponible'}</p>
         `;
         break;
-      case 'leyes':
-        html = '<p>⚖️ Información legislativa próximamente</p>';
-        break;
-      case 'geopolitica':
-        html = '<p>🏛️ Análisis geopolítico próximamente</p>';
-        break;
       case 'social':
-        html = '<p>👥 Datos sociales próximamente</p>';
+        html = `
+          <h5>👥 Datos sociales</h5>
+          <p>Población: ${datos.poblacion ? datos.poblacion.toLocaleString() : 'No disponible'}</p>
+          <p>Esperanza de vida: ${datos.esperanzaVida ? `${datos.esperanzaVida} años` : 'No disponible'}</p>
+          <p>Paro juvenil: ${datos.paroJuvenil ? `${datos.paroJuvenil}%` : 'No disponible'}</p>
+        `;
         break;
       case 'clima':
-        html = '<p>🌍 Datos climáticos próximamente</p>';
+        html = `
+          <h5>🌍 Datos climáticos</h5>
+          <p>CO₂ per cápita: ${datos.co2 ? `${datos.co2} t` : 'No disponible'}</p>
+          <p>Energía per cápita: ${datos.energia ? `${datos.energia.toLocaleString()} kg` : 'No disponible'}</p>
+        `;
         break;
+      default:
+        html = '<p>Información no disponible para esta sección.</p>';
     }
     alert(html.replace(/<[^>]*>/g, ' '));
   }
