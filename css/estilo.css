@@ -387,4 +387,25 @@ body {
   #mapa-mundial {
     height: 300px;
   }
+
+  /* Selector de idioma universal */
+  .selector-idioma-universal {
+    margin-left: auto;
+    margin-right: 10px;
+  }
+
+  .selector-idioma-universal select {
+    background: var(--bg-panel);
+    color: white;
+    border: 1px solid var(--border);
+    border-radius: 30px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    outline: none;
+  }
+
+  .selector-idioma-universal select:hover {
+    border-color: var(--info);
+  }
 }
