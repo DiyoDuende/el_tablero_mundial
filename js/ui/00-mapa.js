@@ -1,5 +1,5 @@
 // ============================================================
-// MAPA MUNDIAL (Leaflet) + Datos de ejemplo (mock) para pruebas
+// MAPA MUNDIAL (Leaflet) + Datos de ejemplo para pruebas
 // ============================================================
 const MapaMundial = {
   map: null,
@@ -27,9 +27,29 @@ const MapaMundial = {
     const response = await fetch('https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson');
     const geojson = await response.json();
     L.geoJSON(geojson, {
-      style: { color: '#4fc3f7', weight: 1, fillColor: '#2a7faa', fillOpacity: 0.5 },
+      style: (feature) => this.estiloPais(feature),
       onEachFeature: (feature, layer) => this.onEachFeature(feature, layer)
     }).addTo(this.map);
+  },
+
+  estiloPais(feature) {
+    const code = feature.properties?.ISO_A3;
+    const pib = this.datosPaises[code]?.pib;
+    let color = '#cccccc';
+    if (pib) {
+      if (pib > 50000) color = '#1b5e20';
+      else if (pib > 30000) color = '#2e7d32';
+      else if (pib > 15000) color = '#4caf50';
+      else if (pib > 5000) color = '#ff9800';
+      else color = '#d32f2f';
+    }
+    return {
+      fillColor: color,
+      weight: 1,
+      opacity: 1,
+      color: 'white',
+      fillOpacity: 0.7
+    };
   },
 
   onEachFeature(feature, layer) {
@@ -41,7 +61,7 @@ const MapaMundial = {
         window.UIPanelInfo.mostrarPais(code, nombre);
       }
     });
-    // Popup rápido con el PIB si existe en los datos de ejemplo
+    // Popup rápido
     const datos = this.datosPaises[code] || {};
     const pib = datos.pib ? `$${datos.pib.toLocaleString()}` : 'Datos no disponibles';
     layer.bindPopup(`<strong>${nombre}</strong><br>💰 PIB per cápita: ${pib}`);
