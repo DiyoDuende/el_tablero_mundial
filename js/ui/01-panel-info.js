@@ -9,10 +9,10 @@ const UIPanelInfo = {
     });
   },
 
-  mostrarPais: function(paisId) {
+  mostrarPais: function(paisId, nombrePais) {
     const code = paisId?.toUpperCase();
-    const datos = MapaMundial.datosPaises[code] || {};
-    const nombre = TERRITORIOS[paisId]?.nombre || paisId;
+    const datos = (typeof MapaMundial !== 'undefined' && MapaMundial.datosPaises) ? MapaMundial.datosPaises[code] || {} : {};
+    const nombre = nombrePais || paisId;
 
     document.getElementById('pais-nombre').innerHTML = `🇪🇸 ${nombre}`;
     const estado = datos.pib ? (datos.pib > 30000 ? 'ESTABLE' : (datos.pib > 10000 ? 'INQUIETO' : 'TENSIÓN')) : 'DESCONOCIDO';
@@ -27,37 +27,22 @@ const UIPanelInfo = {
   },
 
   mostrarSeccion: function(seccion) {
-    const paisId = document.getElementById('pais-nombre').innerText.split(' ')[1]?.toLowerCase();
+    const paisNombre = document.getElementById('pais-nombre').innerText;
+    const paisId = paisNombre.split(' ')[1]?.toLowerCase();
     const code = paisId?.toUpperCase();
-    const datos = MapaMundial.datosPaises[code] || {};
+    const datos = (typeof MapaMundial !== 'undefined' && MapaMundial.datosPaises) ? MapaMundial.datosPaises[code] || {} : {};
     let html = '';
     switch(seccion) {
       case 'economia':
-        html = `
-          <h5>📊 Datos económicos (Banco Mundial)</h5>
-          <p>PIB per cápita: ${datos.pib ? `$${datos.pib.toLocaleString()}` : 'No disponible'}</p>
-          <p>Desempleo: ${datos.desempleo ? `${datos.desempleo}%` : 'No disponible'}</p>
-          <p>Deuda pública: ${datos.deuda ? `${datos.deuda}%` : 'No disponible'}</p>
-        `;
-        break;
-      case 'social':
-        html = `
-          <h5>👥 Datos sociales</h5>
-          <p>Población: ${datos.poblacion ? datos.poblacion.toLocaleString() : 'No disponible'}</p>
-          <p>Esperanza de vida: ${datos.esperanzaVida ? `${datos.esperanzaVida} años` : 'No disponible'}</p>
-          <p>Paro juvenil: ${datos.paroJuvenil ? `${datos.paroJuvenil}%` : 'No disponible'}</p>
-        `;
-        break;
-      case 'clima':
-        html = `
-          <h5>🌍 Datos climáticos</h5>
-          <p>CO₂ per cápita: ${datos.co2 ? `${datos.co2} t` : 'No disponible'}</p>
-          <p>Energía per cápita: ${datos.energia ? `${datos.energia.toLocaleString()} kg` : 'No disponible'}</p>
-        `;
+        html = `<h5>📊 Datos económicos (Banco Mundial)</h5>
+                <p>PIB per cápita: ${datos.pib ? `$${datos.pib.toLocaleString()}` : 'No disponible'}</p>
+                <p>Desempleo: ${datos.desempleo ? `${datos.desempleo}%` : 'No disponible'}</p>
+                <p>Deuda pública: ${datos.deuda ? `${datos.deuda}%` : 'No disponible'}</p>`;
         break;
       default:
         html = '<p>Información no disponible para esta sección.</p>';
     }
+    // Mostrar en un alert o en un modal (por ahora alert)
     alert(html.replace(/<[^>]*>/g, ' '));
   }
 };
