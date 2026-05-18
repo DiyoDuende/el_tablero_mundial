@@ -106,24 +106,34 @@ const MapaMundial = {
 
   // Asocia eventos a cada país (tooltip, popup y clic para actualizar panel)
   onEachFeature(feature, layer) {
-    const code = feature.properties?.ISO_A3;
+  const code = feature.properties?.ISO_A3;
+  const nombre = feature.properties?.NAME || code;
+  layer.bindTooltip(nombre);
+  
+  layer.on('click', async () => {
+    // Esperar a que los datos estén cargados (por si acaso)
+    if (!this.datosPaises[code] && Object.keys(this.datosPaises).length === 0) {
+      await this.cargarTodosLosDatos();
+    }
     const datos = this.datosPaises[code] || {};
-    const nombre = feature.properties?.NAME || code;
-
-    // Tooltip con el nombre del país
-    layer.bindTooltip(nombre);
-
-    // Al hacer clic en el país, actualizar el panel lateral y preparar gráfico
-    layer.on('click', async () => {
-      if (window.UIPanelInfo) {
-        window.UIPanelInfo.mostrarPais(code, nombre);
-        // Obtener serie histórica del PIB (últimos 10 años) para el gráfico
-        const seriePib = await this.obtenerSerieHistorica(code, 'NY.GDP.PCAP.PP.CD', 10);
-        if (window.UIPanelInfo.mostrarGrafico) {
-          window.UIPanelInfo.mostrarGrafico(seriePib);
-        }
-      }
-    });
+    const pib = datos.pib ? `$${datos.pib.toLocaleString()}` : 'No disponible';
+    const pob = datos.poblacion ? datos.poblacion.toLocaleString() : 'No disponible';
+    const desempleo = datos.desempleo ? `${datos.desempleo}%` : 'No disponible';
+    const deuda = datos.deuda ? `${datos.deuda}%` : 'No disponible';
+    const co2 = datos.co2 ? `${datos.co2} t` : 'No disponible';
+    const energia = datos.energia ? `${datos.energia.toLocaleString()} kg` : 'No disponible';
+    layer.bindPopup(`
+      <strong>${nombre}</strong><br>
+      💰 PIB per cápita: ${pib}<br>
+      👥 Población: ${pob}<br>
+      📉 Desempleo: ${desempleo}<br>
+      💸 Deuda pública (% PIB): ${deuda}<br>
+      🌍 CO₂ per cápita: ${co2}<br>
+      🔋 Energía per cápita: ${energia}<br>
+      <em>Datos: Banco Mundial (último año disponible)</em>
+    `).openPopup();
+  });
+}
 
     // También mantenemos el popup clásico con todos los indicadores
     const pib = datos.pib ? `$${datos.pib.toLocaleString()}` : 'No disponible';
