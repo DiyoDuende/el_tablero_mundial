@@ -49,23 +49,38 @@ const MapaMundial = {
     for (let code of paises) {
       this.datosPaises[code] = {};
       for (let [key, apiCode] of Object.entries(indicadores)) {
-        const url = `https://api.worldbank.org/v2/country/${code}/indicator/${apiCode}?format=json`;
+        // Convertir código de país: la API espera "ES" para España, y para otros puede necesitar el código de 2 letras
+        let apiCountryCode = code;
+        if (code === 'ESP') apiCountryCode = 'ES';
+        // También podrías añadir más mapeos si otros países fallan, pero por ahora solo España requiere ajuste
+        
+        const url = `https://api.worldbank.org/v2/country/${apiCountryCode}/indicator/${apiCode}?format=json`;
         try {
           const res = await fetch(url);
           const data = await res.json();
-          const valor = data[1]?.[0]?.value;
-          if (valor && !isNaN(parseFloat(valor))) {
+          
+          // La respuesta tiene estructura: [ {page:...}, [ { ... } ] ]
+          const records = data[1] || [];
+          // Buscar el primer valor no nulo (el más reciente, ya que vienen ordenados descendente)
+          const firstValid = records.find(r => r.valor !== null && r.valor !== undefined);
+          const valor = firstValid?.valor;
+          
+          if (valor !== null && valor !== undefined && !isNaN(parseFloat(valor))) {
             this.datosPaises[code][key] = parseFloat(valor);
+            console.log(`✅ ${code} - ${key}: ${valor}`);
           } else {
             this.datosPaises[code][key] = null;
+            console.log(`⚠️ ${code} - ${key}: sin datos válidos`);
           }
         } catch(e) {
           this.datosPaises[code][key] = null;
+          console.error(`❌ Error en ${code} - ${key}:`, e);
         }
       }
       // Pequeña pausa para no saturar la API
       await new Promise(r => setTimeout(r, 50));
     }
+    console.log("✅ Datos de todos los países cargados:", this.datosPaises);
   },
 
   // Define el color del país según su PIB per cápita
@@ -132,7 +147,10 @@ const MapaMundial = {
 
   // Obtiene la serie histórica de un indicador para un país
   async obtenerSerieHistorica(code, indicador, años = 10) {
-    const url = `https://api.worldbank.org/v2/country/${code}/indicator/${indicador}?format=json&per_page=${años}&sort=year%20desc`;
+    // Convertir código de país para la API
+    let apiCountryCode = code;
+    if (code === 'ESP') apiCountryCode = 'ES';
+    const url = `https://api.worldbank.org/v2/country/${apiCountryCode}/indicator/${indicador}?format=json&per_page=${años}&sort=year%20desc`;
     try {
       const res = await fetch(url);
       const data = await res.json();
