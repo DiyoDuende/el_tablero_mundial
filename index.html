@@ -2,19 +2,19 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-i18n="titulo_pagina">🌍 TABLERO MUNDIAL - Simulador Geopolítico Global</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>🌍 TABLERO MUNDIAL - Datos reales · Simulador Geopolítico Global</title>
     
-    <!-- Leaflet para el mapa -->
+    <!-- Leaflet (Mapa) -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
-    <!-- Estilos -->
+    <!-- Estilos Personalizados -->
     <link rel="stylesheet" href="css/estilo.css">
 </head>
 <body>
     <div class="app">
-        <!-- BARRA SUPERIOR -->
+        <!-- BARRA SUPERIOR NAVEGACIÓN -->
         <div class="top-bar">
             <div class="logo">
                 <span class="logo-icon">🌍</span>
@@ -31,7 +31,7 @@
             </div>
         </div>
 
-        <!-- CONTENEDOR PRINCIPAL (MAPA 70% + PANEL LATERAL 30%) -->
+        <!-- CONTENEDOR PRINCIPAL: MAPA + PANEL LATERAL -->
         <div class="main-container">
             <!-- MAPA (70%) -->
             <div class="mapa-container">
@@ -78,44 +78,6 @@
             </div>
         </div>
 
-        <!-- VERIFICADOR CIUDADANO -->
-        <div class="verificador-container" id="verificador-panel">
-            <div class="verificador-header">
-                <h3 data-i18n="verificadorTitulo">✅ VERIFICADOR CIUDADANO · Explicación automática</h3>
-                <button class="btn-cerrar" id="btn-cerrar-verificador">✕</button>
-            </div>
-            <div class="verificador-input">
-                <input type="text" id="verificador-pregunta" data-i18n="verificadorPlaceholder" placeholder="Ej: ¿Por qué está subiendo la gasolina? ¿Es verdad que...?">
-                <button id="btn-verificar" class="btn-verde" data-i18n="verificar">VERIFICAR</button>
-            </div>
-            <div class="verificador-respuesta" id="verificador-respuesta">
-                <p class="placeholder" data-i18n="noInfo">Escribe una pregunta para obtener una explicación basada en datos reales</p>
-            </div>
-        </div>
-
-        <!-- CADENA DE IMPACTO -->
-        <div class="cadena-container" id="cadena-container">
-            <div id="cadena-contenido"></div>
-        </div>
-
-        <!-- MAPA DE RELACIONES GLOBALES -->
-        <div class="relaciones-globales-container" id="relaciones-globales-panel">
-            <div class="relaciones-globales-header">
-                <h4 data-i18n="mapaGlobalRelaciones">🌐 MAPA GLOBAL DE RELACIONES</h4>
-                <button class="btn-cerrar" id="btn-cerrar-relaciones-globales">✕</button>
-            </div>
-            <div id="relaciones-contenido"></div>
-        </div>
-
-        <!-- VISOR DE LÍNEA TEMPORAL GLOBAL -->
-        <div class="timeline-global-container" id="timeline-panel">
-            <div class="timeline-global-header">
-                <h4 data-i18n="visorTimelineGlobal">🌐 VISOR DE LÍNEA TEMPORAL GLOBAL</h4>
-                <button class="btn-cerrar" id="btn-cerrar-timeline">✕</button>
-            </div>
-            <div id="timeline-contenido"></div>
-        </div>
-
         <!-- ZONA DE SIMULACIÓN -->
         <div class="simulador-container" id="simulador-panel">
             <div class="simulador-header">
@@ -131,21 +93,19 @@
             </div>
         </div>
 
-        <!-- AVISO LEGAL -->
+        <!-- AVISO LEGAL Y PIE DE PÁGINA -->
         <div class="aviso-legal" id="aviso-legal">
             <p data-i18n="avisoLegal1">🔍 Esta visualización muestra relaciones entre indicadores económicos, energéticos, sociales y políticos basadas en datos observados.</p>
             <p data-i18n="avisoLegal2">⚠️ No implica causalidad directa absoluta. Los sistemas globales son complejos y pueden intervenir múltiples factores no representados.</p>
             <p data-i18n="avisoLegal3">📚 Las correlaciones mostradas están basadas en datos históricos y modelos estadísticos. Siempre consulte las fuentes originales.</p>
         </div>
-
-        <!-- PIE DE PÁGINA -->
         <div class="footer" id="footer">
             <p data-i18n="fuentes">📚 FUENTES: INE · Eurostat · Banco Mundial · IEA · datos.gob.es</p>
             <p data-i18n="tiempoReal">🔄 Datos en tiempo real · Siempre mostramos las fuentes</p>
         </div>
     </div>
 
-    <!-- SCRIPTS (el orden es importante) -->
+    <!-- SCRIPTS DE LA APLICACIÓN -->
     <script src="js/core/00-config.js"></script>
     <script src="js/core/01-territorios.js"></script>
     <script src="js/core/02-actores.js"></script>
