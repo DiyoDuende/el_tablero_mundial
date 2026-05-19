@@ -1,106 +1,77 @@
-// js/ui/00-mapa.js
+// ============================================
+// MAPA MUNDIAL (Leaflet)
+// ============================================
+
 const MapaMundial = {
-  mapa: null,
-
-  // Mapeo de nombres en inglés (GeoJSON) -> IDs en español (TERRITORIOS)
-  nombreInglesAId: {
-    'Spain': 'españa',
-    'France': 'francia',
-    'Germany': 'alemania',
-    'Portugal': 'portugal',
-    'Italy': 'italia',
-    'United Kingdom': 'reino_unido',
-    'United States': 'eeuu',
-    'China': 'china',
-    'Russia': 'rusia'
-    // Puedes añadir más según necesites
-  },
-
-  irAPais: function(paisId) {
-    const pais = TERRITORIOS[paisId];
-    if (pais && pais.geo) {
-        this.mapa.setView([pais.geo.lat, pais.geo.lon], 6);
-    }
-},
-  init: function() {
-  if (this.mapa) {
-    console.log('Mapa ya inicializado, se omite');
-    return;
-  }
-    // Crear mapa centrado en España
-    this.mapa = L.map('mapa-mundial').setView([40.0, -3.0], 5);
     
-    // Capa base de calles (fondo)
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; CartoDB',
-      subdomains: 'abcd',
-      maxZoom: 19
-    }).addTo(this.mapa);
+    map: null,
+    capas: {},
     
-    // Cargar países
-    this.cargarPaises();
-  },
-
-  cargarPaises: function() {
-    const urlGeoJSON = 'https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson';
+    init: function() {
+        this.map = L.map('mapa-mundial').setView([20, 0], 2);
+        
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap'
+        }).addTo(this.map);
+        
+        this.cargarPaises();
+        
+        setTimeout(() => {
+            this.irAPais('españa');
+        }, 1000);
+    },
     
-    fetch(urlGeoJSON)
-      .then(response => response.json())
-      .then(data => {
-        L.geoJSON(data, {
-          style: {
-            color: '#4fc3f7',
-            weight: 1,
-            fillColor: '#2c3e50',
-            fillOpacity: 0.3
-          },
-          onEachFeature: (feature, layer) => {
-            // El nombre en inglés (como viene del GeoJSON)
-            let nombreIngles = feature.properties.ADMIN;
-            if (!nombreIngles) return;
+    cargarPaises: function() {
+        // Simulación de países (en producción cargaría GeoJSON)
+        const paises = [
+            { name: 'España', coords: [40.4, -3.7] },
+            { name: 'Francia', coords: [46.6, 2.4] },
+            { name: 'Portugal', coords: [39.5, -8.0] },
+            { name: 'Alemania', coords: [51.1, 10.5] },
+            { name: 'Italia', coords: [41.9, 12.5] },
+            { name: 'EEUU', coords: [39.8, -98.5] },
+            { name: 'China', coords: [35.8, 104.1] }
+        ];
+        
+        paises.forEach(pais => {
+            const marker = L.circleMarker(pais.coords, {
+                radius: 8,
+                color: '#4fc3f7',
+                fillColor: '#2a7faa',
+                fillOpacity: 0.8
+            }).addTo(this.map);
             
-            // Traducir a ID español
-            const idPais = this.nombreInglesAId[nombreIngles];
-            
-            // Tooltip con el nombre original (inglés)
-            layer.bindTooltip(nombreIngles, { sticky: true });
-            
-            // Evento click
-            layer.on('click', () => {
-              console.log('Clic en:', nombreIngles, '-> ID:', idPais);
-              if (idPais && TERRITORIOS[idPais]) {
-                // Llamar al panel de información
-                if (typeof UIPanelInfo !== 'undefined') {
-                  UIPanelInfo.mostrarPais(idPais);
-                } else {
-                  console.error('UIPanelInfo no está definido');
-                }
-              } else {
-                console.warn('País no reconocido en TERRITORIOS:', nombreIngles);
-                // Mostrar mensaje en el dashboard
-                const container = document.getElementById('dashboard-container');
-                if (container) {
-                  container.innerHTML = `<div class="aviso">🌍 ${nombreIngles} no está aún en nuestra base de datos. ¡Lo añadiremos pronto!</div>`;
-                }
-              }
+            marker.on('click', () => {
+                this.irAPais(pais.name.toLowerCase());
             });
-          }
-        }).addTo(this.mapa);
-      })
-      .catch(error => {
-        console.error('Error cargando el mapa de países:', error);
-        alert('No se pudo cargar el mapa. Recarga la página o inténtalo más tarde.');
-      });
-  }
+            
+            marker.bindTooltip(pais.name);
+        });
+    },
+    
+    irAPais: function(paisId) {
+        const centros = {
+            españa: [40.4, -3.7],
+            francia: [46.6, 2.4],
+            portugal: [39.5, -8.0],
+            alemania: [51.1, 10.5],
+            italia: [41.9, 12.5],
+            eeuu: [39.8, -98.5],
+            china: [35.8, 104.1]
+        };
+        
+        const centro = centros[paisId] || [20, 0];
+        this.map.setView(centro, 6);
+        
+        if (window.UIPanelInfo) {
+            UIPanelInfo.mostrarPais(paisId);
+        }
+    },
+    
+    activarCapa: function(capa, activa) {
+        // Implementar cuando tengamos datos GeoJSON
+        console.log(`Capa ${capa} ${activa ? 'activada' : 'desactivada'}`);
+    }
 };
-
-// Iniciar cuando el DOM esté listo
-document.addEventListener('DOMContentLoaded', () => {
-  if (typeof L !== 'undefined') {
-    MapaMundial.init();
-  } else {
-    console.error('Leaflet no se ha cargado correctamente');
-  }
-});
 
 window.MapaMundial = MapaMundial;
