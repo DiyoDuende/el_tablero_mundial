@@ -57,4 +57,3 @@ const UITimeline = {
 };
 
 window.UITimeline = UITimeline;
-
