@@ -79,6 +79,3 @@ const FLUJOS = {
 };
 
 window.FLUJOS = FLUJOS;
-
-
-
