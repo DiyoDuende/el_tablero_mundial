@@ -1,96 +1,73 @@
-// js/ui/00-mapa.js
-const MapaMundial = {
-  mapa: null,
-
-  // Mapeo de nombres en inglés (GeoJSON) -> IDs en español (TERRITORIOS)
-  nombreInglesAId: {
-    'Spain': 'españa',
-    'France': 'francia',
-    'Germany': 'alemania',
-    'Portugal': 'portugal',
-    'Italy': 'italia',
-    'United Kingdom': 'reino_unido',
-    'United States': 'eeuu',
-    'China': 'china',
-    'Russia': 'rusia'
-    // Puedes añadir más según necesites
+1// js/core/01-territorios.js
+const TERRITORIOS = {
+  // Países
+  españa: {
+    id: 'españa',
+    nombre: 'España',
+    tipo: 'pais',
+    poblacion: 48400000,
+    capital: 'Madrid',
+    continente: 'Europa',
+    regiones: ['andalucia', 'catalunya', 'madrid', 'valencia', 'galicia'],
+    geo: { lat: 40.4168, lon: -3.7038 }
   },
-
-  init: function() {
-    // Crear mapa centrado en España
-    this.mapa = L.map('mapa-mundial').setView([40.0, -3.0], 5);
-    
-    // Capa base de calles (fondo)
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; CartoDB',
-      subdomains: 'abcd',
-      maxZoom: 19
-    }).addTo(this.mapa);
-    
-    // Cargar países
-    this.cargarPaises();
+  francia: {
+    id: 'francia',
+    nombre: 'Francia',
+    tipo: 'pais',
+    poblacion: 67750000,
+    capital: 'París',
+    continente: 'Europa',
+    geo: { lat: 46.603354, lon: 1.888334 }
   },
-
-  cargarPaises: function() {
-    const urlGeoJSON = 'https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson';
-    
-    fetch(urlGeoJSON)
-      .then(response => response.json())
-      .then(data => {
-        L.geoJSON(data, {
-          style: {
-            color: '#4fc3f7',
-            weight: 1,
-            fillColor: '#2c3e50',
-            fillOpacity: 0.3
-          },
-          onEachFeature: (feature, layer) => {
-            // El nombre en inglés (como viene del GeoJSON)
-            let nombreIngles = feature.properties.ADMIN;
-            if (!nombreIngles) return;
-            
-            // Traducir a ID español
-            const idPais = this.nombreInglesAId[nombreIngles];
-            
-            // Tooltip con el nombre original (inglés)
-            layer.bindTooltip(nombreIngles, { sticky: true });
-            
-            // Evento click
-            layer.on('click', () => {
-              console.log('Clic en:', nombreIngles, '-> ID:', idPais);
-              if (idPais && TERRITORIOS[idPais]) {
-                // Llamar al panel de información
-                if (typeof UIPanelInfo !== 'undefined') {
-                  UIPanelInfo.mostrarPais(idPais);
-                } else {
-                  console.error('UIPanelInfo no está definido');
-                }
-              } else {
-                console.warn('País no reconocido en TERRITORIOS:', nombreIngles);
-                // Mostrar mensaje en el dashboard
-                const container = document.getElementById('dashboard-container');
-                if (container) {
-                  container.innerHTML = `<div class="aviso">🌍 ${nombreIngles} no está aún en nuestra base de datos. ¡Lo añadiremos pronto!</div>`;
-                }
-              }
-            });
-          }
-        }).addTo(this.mapa);
-      })
-      .catch(error => {
-        console.error('Error cargando el mapa de países:', error);
-        alert('No se pudo cargar el mapa. Recarga la página o inténtalo más tarde.');
-      });
+  alemania: {
+    id: 'alemania',
+    nombre: 'Alemania',
+    tipo: 'pais',
+    poblacion: 83200000,
+    capital: 'Berlín',
+    continente: 'Europa',
+    geo: { lat: 51.1657, lon: 10.4515 }
+  },
+  // Añade más países si quieres...
+  
+  // Comunidades autónomas de España (ejemplo)
+  madrid: {
+    id: 'madrid',
+    nombre: 'Comunidad de Madrid',
+    tipo: 'region',
+    pais: 'españa',
+    poblacion: 6700000,
+    capital: 'Madrid',
+    geo: { lat: 40.4168, lon: -3.7038 }
+  },
+  andalucia: {
+    id: 'andalucia',
+    nombre: 'Andalucía',
+    tipo: 'region',
+    pais: 'españa',
+    poblacion: 8460000,
+    capital: 'Sevilla',
+    geo: { lat: 37.3891, lon: -5.9845 }
+  },
+  catalunya: {
+    id: 'catalunya',
+    nombre: 'Cataluña',
+    tipo: 'region',
+    pais: 'españa',
+    poblacion: 7700000,
+    capital: 'Barcelona',
+    geo: { lat: 41.3851, lon: 2.1734 }
   }
+  // ... puedes añadir más
 };
 
-// Iniciar cuando el DOM esté listo
-document.addEventListener('DOMContentLoaded', () => {
-  if (typeof L !== 'undefined') {
-    MapaMundial.init();
-  } else {
-    console.error('Leaflet no se ha cargado correctamente');
-  }
-});
+// Función de búsqueda (opcional)
+TERRITORIOS.buscar = function(texto) {
+  texto = texto.toLowerCase();
+  return Object.values(this).filter(t => 
+    t.nombre && t.nombre.toLowerCase().includes(texto)
+  );
+};
 
-window.MapaMundial = MapaMundial;
+window.TERRITORIOS = TERRITORIOS;
