@@ -7,14 +7,9 @@
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
-        /* Aquí van tus estilos, puedes copiarlos del index.html que tienes actualmente */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             background: #0a0f1e;
             color: #eef2ff;
             height: 100vh;
@@ -48,7 +43,6 @@
             border-radius: 1.5rem;
             padding: 1.2rem;
             border: 1px solid #334155;
-            transition: all 0.2s;
         }
         .card h3 {
             font-size: 1.2rem;
@@ -68,7 +62,7 @@
             text-align: center;
         }
         .indicador .label {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             text-transform: uppercase;
             color: #94a3b8;
         }
@@ -85,9 +79,9 @@
             border-radius: 2rem;
             font-weight: bold;
             cursor: pointer;
-            transition: 0.2s;
             width: 100%;
             margin-top: 0.5rem;
+            transition: all 0.2s ease;
         }
         button:hover {
             background: #3b82f6;
@@ -111,6 +105,10 @@
             color: #5b6e8c;
             margin-top: 1rem;
         }
+        hr {
+            margin: 1rem 0;
+            border-color: #2d3a5e;
+        }
         @media (max-width: 800px) {
             .sidebar { flex: 1.5; padding: 1rem; }
             .indicador .value { font-size: 1.2rem; }
@@ -121,6 +119,7 @@
 <div class="app">
     <div id="map"></div>
     <div class="sidebar">
+        <!-- Panel de España -->
         <div class="card">
             <h3>🇪🇸 ESPAÑA · TABLERO ESTRATÉGICO</h3>
             <div class="indicador-grid">
@@ -129,20 +128,22 @@
                 <div class="indicador"><div class="label">🏛️ APOYO GOBIERNO</div><div class="value" id="apoyo_valor">--%</div></div>
                 <div class="indicador"><div class="label">⚠️ IND. PROTESTAS</div><div class="value" id="protestas_valor">--</div></div>
                 <div class="indicador"><div class="label">🤖 TECNOLOGÍA</div><div class="value" id="tecnologia_valor">--</div></div>
-                <div class="indicador"><div class="label">⚡ CONSUMO ENERGÍA</div><div class="value" id="energia_valor">--</div></div>
+                <div class="indicador"><div class="label">⚡ ENERGÍA (TWh)</div><div class="value" id="energia_valor">--</div></div>
             </div>
         </div>
 
+        <!-- Decisiones -->
         <div class="card">
             <h3>🎮 DECISIONES DEL TABLERO</h3>
             <button id="btn_subir_impuestos">💰 Subir impuestos</button>
             <button id="btn_bajar_gasto">📉 Bajar gasto social</button>
             <button id="btn_invertir_tech">🚀 Invertir en tecnología</button>
-            <hr style="margin: 1rem 0; border-color:#2d3a5e;">
+            <hr>
             <button id="btn_toggle_modo" class="modo-toggle">🔁 CAMBIAR MODO (REAL/SIMULACIÓN)</button>
             <div id="modo_actual" style="margin-top: 8px; font-size:0.8rem; text-align:center;"></div>
         </div>
 
+        <!-- Verificador ciudadano -->
         <div class="card">
             <h3>🗣️ VERIFICADOR CIUDADANO</h3>
             <div id="feedback_mensaje" class="feedback">🌍 Pulsa en cualquier país o prueba las decisiones.</div>
@@ -151,26 +152,57 @@
     </div>
 </div>
 
-<!-- Scripts: Carga del mapa y lógica de simulación -->
+<!-- Scripts: Leaflet y módulos del proyecto -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="js/core/00-config.js"></script>
 <script src="js/core/00-poderes.js"></script>
 <script src="js/core/01-territorios.js"></script>
+<script src="js/core/02-actores.js"></script>
 <script src="js/core/03-estado-global.js"></script>
+<script src="js/core/03-estado.js"></script>
+<script src="js/core/04-flujos.js"></script>
+<script src="js/core/05-verificador.js"></script>
+<script src="js/simulador/00-poderes.js"></script>
 <script src="js/simulador/01-motor-base.js"></script>
+<script src="js/simulador/01-sectores.js"></script>
+<script src="js/simulador/02-objetivos.js"></script>
+<script src="js/simulador/03-influencia.js"></script>
 <script src="js/simulador/03-motor-cambios.js"></script>
+<script src="js/simulador/04-eventos.js"></script>
+<script src="js/simulador/05-propagacion.js"></script>
+<script src="js/simulador/06-decaimiento.js"></script>
+<script src="js/simulador/07-motor.js"></script>
+<script src="js/simulador/08-explicador.js"></script>
+<script src="js/simulador/09-cadena-impacto.js"></script>
+<script src="js/simulador/10-visor-cadena.js"></script>
+<script src="js/simulador/11-timeline-global.js"></script>
+<script src="js/simulador/12-eventos-futuros.js"></script>
+<script src="js/ui/00-mapa.js"></script>
 <script src="js/ui/01-panel-info.js"></script>
+<script src="js/ui/02-verificador.js"></script>
 <script src="js/ui/03-interacciones.js"></script>
+<script src="js/ui/03-simulador.js"></script>
+<script src="js/ui/04-dominio.js"></script>
+<script src="js/ui/05-relaciones.js"></script>
+<script src="js/ui/06-relaciones-globales.js"></script>
+<script src="js/ui/07-timeline.js"></script>
+<script src="lang/es.js"></script>
+
 <script>
-    // Inicialización del mapa Leaflet
-    const map = L.map('map').setView([40.416775, -3.703790], 5);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> & CartoDB',
-        subdomains: 'abcd',
-        maxZoom: 19
-    }).addTo(map);
-    L.marker([40.416775, -3.703790]).addTo(map)
-        .bindPopup('📍 Centro de control · Tablero Mundial')
-        .openPopup();
+    // Inicializar mapa centrado en España
+    if (typeof window.initMap === 'function') {
+        window.initMap();
+    } else {
+        const map = L.map('map').setView([40.416775, -3.703790], 5);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> & CartoDB',
+            subdomains: 'abcd',
+            maxZoom: 19
+        }).addTo(map);
+        L.marker([40.416775, -3.703790]).addTo(map)
+            .bindPopup('📍 Centro de control · Tablero Mundial')
+            .openPopup();
+    }
 </script>
 </body>
 </html>
