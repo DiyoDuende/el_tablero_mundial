@@ -74,4 +74,3 @@ const TERRITORIOS = {
 };
 
 window.TERRITORIOS = TERRITORIOS;
-
