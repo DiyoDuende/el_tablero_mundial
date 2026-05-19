@@ -1,4 +1,4 @@
-No// 01-panel-info.js - Refresca todos los valores en UI
+// 01-panel-info.js - Refresca todos los valores en UI
 function refrescarPanelCompleto() {
     if (!window.estadoJuego) return;
     const ind = window.estadoJuego.indicadores;
@@ -19,7 +19,7 @@ function refrescarPanelCompleto() {
     if (feedbackDiv && window.estadoJuego.mensajeFeedback) {
         feedbackDiv.innerText = window.estadoJuego.mensajeFeedback;
     }
-    // Estabilidad visual adicional
+    // Estabilidad visual adicional (opcional)
     const estabilidad = window.SimuladorBase?.calcularEstabilidadGeneral(ind) || 50;
     const estabilidadDiv = document.getElementById("estabilidad_valor");
     if (estabilidadDiv) estabilidadDiv.innerText = estabilidad;
