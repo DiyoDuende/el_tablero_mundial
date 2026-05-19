@@ -2,7 +2,7 @@
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('🚀 Tablero Mundial v4.0 iniciando...');
     await Idioma.init();
-    
+
     // MapaMundial.init(); // <--- ELIMINA ESTA LÍNEA para evitar el error "Map container is already initialized"
     UIPanelInfo.init();
     UIVerificador.init();
@@ -11,9 +11,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     UIRelaciones.init();
     UIRelacionesGlobales.init();
     UITimeline.init();
-    
+
     UIPanelInfo.mostrarPais('españa');
-    
+
     document.getElementById('btn-modo-real').addEventListener('click', () => {
         CONFIG.modo = 'realidad';
         document.getElementById('btn-modo-real').classList.add('active');
@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('btn-modo-juego').classList.add('active');
         document.getElementById('btn-modo-real').classList.remove('active');
     });
-    
+
     document.getElementById('buscador-global').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
             const busqueda = e.target.value.trim();
@@ -36,6 +36,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
     });
-    
+
     console.log('✅ Tablero Mundial listo');
 });
