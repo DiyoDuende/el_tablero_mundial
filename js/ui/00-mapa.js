@@ -16,6 +16,12 @@ const MapaMundial = {
     // Puedes añadir más según necesites
   },
 
+  irAPais: function(paisId) {
+    const pais = TERRITORIOS[paisId];
+    if (pais && pais.geo) {
+      this.mapa.setView([pais.geo.lat, pais.geo.lon], 6);
+    }
+  },
   init: function() {
   if (this.mapa) {
     console.log('Mapa ya inicializado, se omite');
