@@ -96,3 +96,4 @@ const EstadoTablero = {
 };
 
 window.EstadoTablero = EstadoTablero;
+
