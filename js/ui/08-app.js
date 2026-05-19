@@ -3,7 +3,7 @@
 // ============================================
 
 document.addEventListener('DOMContentLoaded', async () => {
-    console.log('🚀 Tablero Mundial v3.0 iniciando...');
+    console.log('🚀 Tablero Mundial v4.0 iniciando...');
     
     // Inicializar idioma primero
     await Idioma.init();
