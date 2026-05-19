@@ -56,4 +56,3 @@ const UIRelaciones = {
 };
 
 window.UIRelaciones = UIRelaciones;
-
