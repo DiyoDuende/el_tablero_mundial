@@ -40,4 +40,3 @@ const UIDomino = {
 };
 
 window.UIDomino = UIDomino;
-
