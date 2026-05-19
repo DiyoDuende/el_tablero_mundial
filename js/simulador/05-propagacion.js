@@ -1,3 +1,4 @@
+
 // ============================================
 // PROPAGACIÓN - Efectos en cadena
 // ============================================
@@ -75,4 +76,3 @@ const Propagacion = {
 };
 
 window.Propagacion = Propagacion;
-
