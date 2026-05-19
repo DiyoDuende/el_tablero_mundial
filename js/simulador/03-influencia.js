@@ -51,4 +51,3 @@ const INFLUENCIA = {
 };
 
 window.INFLUENCIA = INFLUENCIA;
-
