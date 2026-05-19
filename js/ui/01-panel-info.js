@@ -1,3 +1,35 @@
+// 01-panel-info.js
+// Actualiza todos los paneles con los datos del estado global
+
+function refrescarPanelCompleto() {
+    const ind = window.estadoJuego.indicadores;
+    const modoTexto = window.estadoJuego.modo.toUpperCase();
+
+    // Actualizar elementos HTML (ajusta los IDs según tu index.html)
+    const spanParo = document.getElementById("paro_valor");
+    if (spanParo) spanParo.innerText = ind.desempleo.toFixed(1) + "%";
+
+    const spanInflacion = document.getElementById("inflacion_valor");
+    if (spanInflacion) spanInflacion.innerText = ind.inflacion.toFixed(1) + "%";
+
+    const spanApoyo = document.getElementById("apoyo_valor");
+    if (spanApoyo) spanApoyo.innerText = ind.apoyoGobierno + "%";
+
+    const spanProtestas = document.getElementById("protestas_valor");
+    if (spanProtestas) spanProtestas.innerText = ind.indiceProtestas;
+
+    const feedbackDiv = document.getElementById("feedback_mensaje");
+    if (feedbackDiv) feedbackDiv.innerText = window.estadoJuego.mensajeFeedback;
+
+    const modoDiv = document.getElementById("modo_actual");
+    if (modoDiv) modoDiv.innerText = `⚡ Modo: ${modoTexto}`;
+}
+
+// Escuchar cambios en el estado
+window.addEventListener('estadoActualizado', refrescarPanelCompleto);
+
+// Al cargar la página, mostrar datos iniciales
+document.addEventListener('DOMContentLoaded', refrescarPanelCompleto);
 // ============================================
 // PANEL DE INFORMACIÓN DEL PAÍS
 // ============================================
