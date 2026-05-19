@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     await Idioma.init();
     
     // Inicializar componentes UI
-    MapaMundial.init();
+    
     UIPanelInfo.init();
     UIVerificador.init();
     UISimulador.init();
@@ -26,20 +26,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         CONFIG.modo = 'realidad';
         document.getElementById('btn-modo-real').classList.add('active');
         document.getElementById('btn-modo-juego').classList.remove('active');
-        document.getElementById('modo-badge').innerHTML = '🌐 MODO REAL';
-        document.getElementById('modo-badge').style.background = '#2e7d32';
+        
     });
     
     document.getElementById('btn-modo-juego').addEventListener('click', () => {
         CONFIG.modo = 'juego';
         document.getElementById('btn-modo-juego').classList.add('active');
         document.getElementById('btn-modo-real').classList.remove('active');
-        document.getElementById('modo-badge').innerHTML = '🎮 MODO JUEGO';
-        document.getElementById('modo-badge').style.background = '#b27c2c';
+        
     });
     
     // Buscador rápido
-    document.getElementById('buscador-rapido').addEventListener('keypress', (e) => {
+    document.getElementById('buscador-global').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
             const busqueda = e.target.value.trim();
             if (busqueda) {
