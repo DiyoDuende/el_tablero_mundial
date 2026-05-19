@@ -17,6 +17,10 @@ const MapaMundial = {
   },
 
   init: function() {
+  if (this.mapa) {
+    console.log('Mapa ya inicializado, se omite');
+    return;
+  }
     // Crear mapa centrado en España
     this.mapa = L.map('mapa-mundial').setView([40.0, -3.0], 5);
     
