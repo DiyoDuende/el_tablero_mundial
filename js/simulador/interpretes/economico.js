@@ -1,4 +1,3 @@
-// Intérprete base (para evitar error 404)
-const InterpreteEconomico = {
+window.InterpreteEconomico = {
   traducir: (datos) => datos
 };
