@@ -1,4 +1,3 @@
-// Intérprete base (para evitar error 404)
-const InterpreteGeopolitico = {
+window.InterpreteGeopolitico = {
   traducir: (datos) => datos
 };
