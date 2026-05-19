@@ -4,25 +4,21 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>🌍 TABLERO MUNDIAL - Simulador Geopolítico Global</title>
-
-  <!-- Leaflet (mapa) -->
+  <!-- Leaflet: mapa -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-  <!-- Estilos personalizados -->
+  <!-- Tu hoja de estilos -->
   <link rel="stylesheet" href="css/estilo.css">
 </head>
 <body>
 <div class="app">
-  <!-- ==================== BARRA SUPERIOR ==================== -->
+  <!-- BARRA SUPERIOR -->
   <div class="top-bar">
     <div class="logo">
       <span class="logo-icon">🌍</span>
       <span class="logo-text">TABLERO MUNDIAL</span>
     </div>
     <div class="top-nav">
-      <!-- Aquí se insertará dinámicamente el selector de idioma -->
-      <div id="selector-idioma-placeholder"></div>
       <a href="Readme.md" class="nav-link">📘 README</a>
       <a href="Normas.md" class="nav-link">📋 NORMAS</a>
       <button id="btn-modo-real" class="nav-btn nav-btn-real active">🌐 REAL</button>
@@ -33,7 +29,7 @@
     </div>
   </div>
 
-  <!-- ==================== BUSCADOR Y CAPAS ==================== -->
+  <!-- BUSCADOR Y CAPAS -->
   <div class="buscador-global">
     <input type="text" id="buscador-global" placeholder="🔍 Buscar país, ciudad, empresa, ley...">
     <button id="btn-buscar">BUSCAR</button>
@@ -50,10 +46,10 @@
     <button class="capa-btn" data-capa="corporaciones">🏢 Corporaciones</button>
   </div>
 
-  <!-- ==================== MAPA + VERIFICADOR ==================== -->
+  <!-- MAPA + VERIFICADOR -->
   <div class="contenedor-principal">
     <div class="mapa-contenedor">
-      <div id="mapa-mundial"></div>
+      <div id="mapa-mundial" style="height: 500px;"></div>
     </div>
     <div class="verificador-contenedor">
       <h3>📝 VERIFICADOR CIUDADANO</h3>
@@ -64,10 +60,10 @@
     </div>
   </div>
 
-  <!-- ==================== PANEL DE INFORMACIÓN ==================== -->
+  <!-- INFORMACIÓN DEL PAÍS -->
   <div id="dashboard-container" class="dashboard-container"></div>
 
-  <!-- ==================== ZONA DE SIMULACIÓN ==================== -->
+  <!-- ZONA DE SIMULACIÓN -->
   <div class="simulador-contenedor" id="simulador-panel">
     <div class="simulador-header">
       <h3>⚡ ZONA DE SIMULACIÓN</h3>
@@ -84,15 +80,14 @@
     </div>
   </div>
 
-  <!-- ==================== PIE DE PÁGINA ==================== -->
+  <!-- PIE DE PÁGINA -->
   <div class="footer">
     <p>📚 FUENTES: INE · Eurostat · Banco Mundial · IEA · datos.gob.es · Última actualización: marzo 2026</p>
     <p>🌐 MODO REAL: datos verificados · 🎮 MODO JUEGO: simulación · 🔍 Siempre mostramos las fuentes</p>
   </div>
 </div>
 
-<!-- ==================== SCRIPTS ==================== -->
-<!-- Core -->
+<!-- SCRIPTS (ORDEN ESTRICTO) -->
 <script src="js/core/00-config.js"></script>
 <script src="js/core/01-territorios.js"></script>
 <script src="js/core/02-actores.js"></script>
@@ -101,7 +96,6 @@
 <script src="js/core/05-verificador.js"></script>
 <script src="js/core/06-idioma.js"></script>
 
-<!-- Simulador -->
 <script src="js/simulador/00-poderes.js"></script>
 <script src="js/simulador/01-sectores.js"></script>
 <script src="js/simulador/02-objetivos.js"></script>
@@ -116,13 +110,11 @@
 <script src="js/simulador/11-timeline-global.js"></script>
 <script src="js/simulador/12-eventos-futuros.js"></script>
 
-<!-- Intérpretes -->
 <script src="js/simulador/interpretes/geopolitico.js"></script>
 <script src="js/simulador/interpretes/economico.js"></script>
 <script src="js/simulador/interpretes/legislativo.js"></script>
 <script src="js/simulador/interpretes/social.js"></script>
 
-<!-- UI -->
 <script src="js/ui/00-mapa.js"></script>
 <script src="js/ui/01-panel-info.js"></script>
 <script src="js/ui/02-verificador.js"></script>
