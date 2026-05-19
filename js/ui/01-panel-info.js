@@ -1,9 +1,32 @@
-// 01-panel-info.js
-// Actualiza todos los paneles con los datos del estado global
-
+No// 01-panel-info.js - Refresca todos los valores en UI
 function refrescarPanelCompleto() {
+    if (!window.estadoJuego) return;
     const ind = window.estadoJuego.indicadores;
-    const modoTexto = window.estadoJuego.modo.toUpperCase();
+    const modoTexto = window.estadoJuego.modo?.toUpperCase() || "REAL";
+    const setText = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.innerText = value;
+    };
+    setText("paro_valor", (ind.desempleo || 0).toFixed(1) + "%");
+    setText("inflacion_valor", (ind.inflacion || 0).toFixed(1) + "%");
+    setText("apoyo_valor", (ind.apoyoGobierno || 0) + "%");
+    setText("protestas_valor", (ind.indiceProtestas || 0));
+    setText("tecnologia_valor", (ind.nivelTecnologico || 0));
+    setText("energia_valor", (ind.consumoEnergia || 0));
+    const modoDiv = document.getElementById("modo_actual");
+    if (modoDiv) modoDiv.innerText = `⚡ MODO: ${modoTexto}`;
+    const feedbackDiv = document.getElementById("feedback_mensaje");
+    if (feedbackDiv && window.estadoJuego.mensajeFeedback) {
+        feedbackDiv.innerText = window.estadoJuego.mensajeFeedback;
+    }
+    // Estabilidad visual adicional
+    const estabilidad = window.SimuladorBase?.calcularEstabilidadGeneral(ind) || 50;
+    const estabilidadDiv = document.getElementById("estabilidad_valor");
+    if (estabilidadDiv) estabilidadDiv.innerText = estabilidad;
+}
+window.addEventListener('estadoActualizado', refrescarPanelCompleto);
+document.addEventListener('DOMContentLoaded', refrescarPanelCompleto);
+console.log("✅ ui/01-panel-info.js cargado");
 
     // Actualizar elementos HTML (ajusta los IDs según tu index.html)
     const spanParo = document.getElementById("paro_valor");
