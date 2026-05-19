@@ -1,23 +1,47 @@
-// 03-interacciones.js
-// Asocia botones del HTML con las decisiones del simulador
+// ============================================
+// SIMULADOR (modo juego)
+// ============================================
 
-document.addEventListener('DOMContentLoaded', function() {
-    const btnSubir = document.getElementById("btn_subir_impuestos");
-    const btnBajar = document.getElementById("btn_bajar_gasto");
-    const btnTech = document.getElementById("btn_invertir_tech");
-    const btnToggle = document.getElementById("btn_toggle_modo");
-
-    if (btnSubir) btnSubir.onclick = () => window.procesarDecision("subir_impuestos");
-    if (btnBajar) btnBajar.onclick = () => window.procesarDecision("bajar_gasto_social");
-    if (btnTech) btnTech.onclick = () => window.procesarDecision("invertir_tecnologia");
-
-    if (btnToggle) {
-        btnToggle.onclick = () => {
-            window.estadoJuego.modo = (window.estadoJuego.modo === "real") ? "simulacion" : "real";
-            window.estadoJuego.mensajeFeedback = window.estadoJuego.modo === "real" 
-                ? "🔒 Modo Real activado. Los datos vuelven a valores reales." 
-                : "🎲 Modo Simulación. ¡Tus decisiones afectan el tablero!";
-            window.dispatchEvent(new Event('estadoActualizado'));
+const UISimulador = {
+    
+    init: function() {
+        document.getElementById('btn-simular').addEventListener('click', () => {
+            this.simular();
+        });
+        
+        document.getElementById('simulador-pregunta').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') this.simular();
+        });
+    },
+    
+    simular: function() {
+        if (CONFIG.modo !== 'juego') {
+            alert('Activa primero el MODO JUEGO para simular');
+            return;
+        }
+        
+        const escenario = document.getElementById('simulador-pregunta').value.trim();
+        if (!escenario) return;
+        
+        // Simulación de ejemplo
+        const resultados = {
+            economico: -8,
+            social: 12,
+            politico: 5,
+            probabilidad: 65
         };
+        
+        let html = `
+            <h4>📊 RESULTADOS DE LA SIMULACIÓN</h4>
+            <p>• Impacto económico: ${resultados.economico > 0 ? '+' : ''}${resultados.economico}%</p>
+            <p>• Impacto social: +${resultados.social}% protestas</p>
+            <p>• Impacto político: +${resultados.politico}% tensión</p>
+            <p>• Probabilidad de éxito: ${resultados.probabilidad}%</p>
+            <p class="fuente">⚠️ ESTO ES UNA SIMULACIÓN</p>
+        `;
+        
+        document.getElementById('simulador-resultados').innerHTML = html;
     }
-});
+};
+
+window.UISimulador = UISimulador;
