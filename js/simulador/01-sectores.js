@@ -31,4 +31,3 @@ const SECTORES = {
 };
 
 window.SECTORES = SECTORES;
-
