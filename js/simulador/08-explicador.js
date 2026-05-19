@@ -1,3 +1,5 @@
+
+
 // ============================================
 // EXPLICADOR AUTOMÁTICO
 // ============================================
@@ -49,4 +51,3 @@ const Explicador = {
 };
 
 window.Explicador = Explicador;
-
