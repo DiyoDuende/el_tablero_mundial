@@ -1,4 +1,3 @@
-// Intérprete base (para evitar error 404)
-const InterpreteSocial = {
+window.InterpreteSocial = {
   traducir: (datos) => datos
 };
