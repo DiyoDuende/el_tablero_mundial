@@ -1,5 +1,4 @@
 // Intérprete base (para evitar error 404)
-const Interprete = {
+const InterpreteLegislativo = {
   traducir: (datos) => datos
 };
-window.Interprete = Interprete;
