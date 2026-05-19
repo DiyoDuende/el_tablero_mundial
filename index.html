@@ -4,21 +4,25 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>🌍 TABLERO MUNDIAL - Simulador Geopolítico Global</title>
-  <!-- Leaflet CSS + JS -->
+
+  <!-- Leaflet (mapa) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <!-- Hoja de estilos personalizada -->
+
+  <!-- Estilos personalizados -->
   <link rel="stylesheet" href="css/estilo.css">
 </head>
 <body>
 <div class="app">
-  <!-- BARRA SUPERIOR -->
+  <!-- ==================== BARRA SUPERIOR ==================== -->
   <div class="top-bar">
     <div class="logo">
       <span class="logo-icon">🌍</span>
       <span class="logo-text">TABLERO MUNDIAL</span>
     </div>
     <div class="top-nav">
+      <!-- Aquí se insertará dinámicamente el selector de idioma -->
+      <div id="selector-idioma-placeholder"></div>
       <a href="Readme.md" class="nav-link">📘 README</a>
       <a href="Normas.md" class="nav-link">📋 NORMAS</a>
       <button id="btn-modo-real" class="nav-btn nav-btn-real active">🌐 REAL</button>
@@ -29,7 +33,7 @@
     </div>
   </div>
 
-  <!-- BUSCADOR GLOBAL Y CAPAS DE PODER -->
+  <!-- ==================== BUSCADOR Y CAPAS ==================== -->
   <div class="buscador-global">
     <input type="text" id="buscador-global" placeholder="🔍 Buscar país, ciudad, empresa, ley...">
     <button id="btn-buscar">BUSCAR</button>
@@ -46,10 +50,10 @@
     <button class="capa-btn" data-capa="corporaciones">🏢 Corporaciones</button>
   </div>
 
-  <!-- CONTENEDOR PRINCIPAL: MAPA + VERIFICADOR -->
+  <!-- ==================== MAPA + VERIFICADOR ==================== -->
   <div class="contenedor-principal">
     <div class="mapa-contenedor">
-      <div id="mapa-mundial"></div>   <!-- Aquí aparece el mapa -->
+      <div id="mapa-mundial"></div>
     </div>
     <div class="verificador-contenedor">
       <h3>📝 VERIFICADOR CIUDADANO</h3>
@@ -60,10 +64,10 @@
     </div>
   </div>
 
-  <!-- INFORMACIÓN DEL PAÍS SELECCIONADO -->
+  <!-- ==================== PANEL DE INFORMACIÓN ==================== -->
   <div id="dashboard-container" class="dashboard-container"></div>
 
-  <!-- ZONA DE SIMULACIÓN -->
+  <!-- ==================== ZONA DE SIMULACIÓN ==================== -->
   <div class="simulador-contenedor" id="simulador-panel">
     <div class="simulador-header">
       <h3>⚡ ZONA DE SIMULACIÓN</h3>
@@ -80,20 +84,24 @@
     </div>
   </div>
 
-  <!-- PIE DE PÁGINA -->
+  <!-- ==================== PIE DE PÁGINA ==================== -->
   <div class="footer">
     <p>📚 FUENTES: INE · Eurostat · Banco Mundial · IEA · datos.gob.es · Última actualización: marzo 2026</p>
     <p>🌐 MODO REAL: datos verificados · 🎮 MODO JUEGO: simulación · 🔍 Siempre mostramos las fuentes</p>
   </div>
 </div>
 
-<!-- SCRIPTS (Mantén el orden) -->
+<!-- ==================== SCRIPTS ==================== -->
+<!-- Core -->
 <script src="js/core/00-config.js"></script>
 <script src="js/core/01-territorios.js"></script>
 <script src="js/core/02-actores.js"></script>
 <script src="js/core/03-estado.js"></script>
 <script src="js/core/04-flujos.js"></script>
 <script src="js/core/05-verificador.js"></script>
+<script src="js/core/06-idioma.js"></script>
+
+<!-- Simulador -->
 <script src="js/simulador/00-poderes.js"></script>
 <script src="js/simulador/01-sectores.js"></script>
 <script src="js/simulador/02-objetivos.js"></script>
@@ -102,17 +110,28 @@
 <script src="js/simulador/05-propagacion.js"></script>
 <script src="js/simulador/06-decaimiento.js"></script>
 <script src="js/simulador/07-motor.js"></script>
+<script src="js/simulador/08-explicador.js"></script>
+<script src="js/simulador/09-cadena-impacto.js"></script>
 <script src="js/simulador/10-visor-cadena.js"></script>
+<script src="js/simulador/11-timeline-global.js"></script>
+<script src="js/simulador/12-eventos-futuros.js"></script>
+
+<!-- Intérpretes -->
 <script src="js/simulador/interpretes/geopolitico.js"></script>
 <script src="js/simulador/interpretes/economico.js"></script>
 <script src="js/simulador/interpretes/legislativo.js"></script>
 <script src="js/simulador/interpretes/social.js"></script>
+
+<!-- UI -->
 <script src="js/ui/00-mapa.js"></script>
 <script src="js/ui/01-panel-info.js"></script>
 <script src="js/ui/02-verificador.js"></script>
+<script src="js/ui/03-interacciones.js"></script>
 <script src="js/ui/03-simulador.js"></script>
+<script src="js/ui/04-dominio.js"></script>
+<script src="js/ui/05-relaciones.js"></script>
 <script src="js/ui/06-relaciones-globales.js"></script>
 <script src="js/ui/07-timeline.js"></script>
-<script src="js/ui/04-app.js"></script>
+<script src="js/ui/08-app.js"></script>
 </body>
 </html>
