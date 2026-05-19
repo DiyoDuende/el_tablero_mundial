@@ -1,96 +1,116 @@
-// js/ui/01-panel-info.js
+// ============================================
+// PANEL DE INFORMACIÓN DEL PAÍS
+// ============================================
+
 const UIPanelInfo = {
-  // Referencia al contenedor del dashboard
-  container: null,
-
-  init: function() {
-    this.container = document.getElementById('dashboard-container');
-    if (!this.container) {
-      console.warn('No se encontró el elemento #dashboard-container');
-    }
-  },
-
-  // Muestra la información completa de un país/región
-  mostrarPais: function(paisId) {
-    if (!this.container) return;
-
-    const territorio = TERRITORIOS[paisId];
-    if (!territorio) {
-      this.container.innerHTML = `<div class="error">⚠️ No se encontró información para "${paisId}"</div>`;
-      return;
-    }
-
-    // Datos de ejemplo - luego se conectarán con el EstadoTablero
-    const poblacion = territorio.poblacion ? territorio.poblacion.toLocaleString() : '—';
-    const capital = territorio.capital || '—';
-    const continente = territorio.continente || '—';
     
-// Reemplaza esta sección en mostrarPais (líneas 17-39 en tu archivo)
-let html = `
-  <div class="dashboard-pais">
-    <div class="info-header">
-      <h3>${this.getBandera(paisId)} ${territorio.nombre}</h3>
-      <span class="pais-estado">🟢 ESTABLE</span>
-    </div>
-    <div class="info-objetivos">
-      🎯 Objetivos: <span id="objetivos-valor">68%</span>
-    </div>
-    <div class="info-botones">
-      <button class="info-btn" data-seccion="economia">📊 Economía</button>
-      <button class="info-btn" data-seccion="leyes">⚖️ Leyes</button>
-      <button class="info-btn" data-seccion="geopolitica">🏛️ Geopolítica</button>
-      <button class="info-btn" data-seccion="social">👥 Social</button>
-      <button class="info-btn" data-seccion="clima">🌍 Clima</button>
-    </div>
-    <div class="info-alertas">
-      <h4>⚠️ Alertas</h4>
-      <div class="alerta-item alerta-roja">🔴 Seguridad energética</div>
-      <div class="alerta-item alerta-amarilla">🟡 Desempleo alto</div>
-    </div>
-    <div class="info-datos-basicos">
-      <p><strong>Población:</strong> ${poblacion}</p>
-      <p><strong>Capital:</strong> ${capital}</p>
-      <p><strong>Continente:</strong> ${continente}</p>
-    </div>
-  </div>
-`;
-    this.container.innerHTML = html;
-
-    // Agregar eventos a los botones (opcional)
-    this.agregarEventosBotones(paisId);
-  },
-
-  // Bandera simple según el país (puedes ampliarlo)
-  getBandera: function(paisId) {
-    const flags = {
-      españa: '🇪🇸',
-      francia: '🇫🇷',
-      alemania: '🇩🇪',
-      madrid: '🏙️',
-      andalucia: '🌞',
-      catalunya: '🏛️'
-    };
-    return flags[paisId] || '🌍';
-  },
-
-  agregarEventosBotones: function(paisId) {
-    const botones = document.querySelectorAll('.info-btn');
-    botones.forEach(btn => {
-      btn.removeEventListener('click', this.handleBotonClick);
-      btn.addEventListener('click', this.handleBotonClick.bind(this, paisId));
-    });
-  },
-
-  handleBotonClick: function(paisId, event) {
-    const seccion = event.currentTarget.dataset.seccion;
-    alert(`Mostrando detalles de ${seccion} para ${paisId} (próximamente)`);
-    // Aquí después se cargará contenido dinámico
-  }
+    datosMock: {
+        españa: {
+            nombre: 'España',
+            estado: 'ESTABLE',
+            color: '#2e7d32',
+            objetivos: 68,
+            alertas: [
+                { tipo: 'roja', texto: 'Seguridad energética' },
+                { tipo: 'amarilla', texto: 'Desempleo alto' }
+            ],
+            economia: {
+                pib: 2.3,
+                inflacion: 2.1,
+                deuda: 98,
+                desempleo: 11.2
+            }
+        },
+        francia: {
+            nombre: 'Francia',
+            estado: 'ESTABLE',
+            color: '#2e7d32',
+            objetivos: 72,
+            alertas: [
+                { tipo: 'amarilla', texto: 'Protestas sociales' }
+            ],
+            economia: {
+                pib: 1.8,
+                inflacion: 2.5,
+                deuda: 112,
+                desempleo: 7.5
+            }
+        },
+        portugal: {
+            nombre: 'Portugal',
+            estado: 'INQUIETO',
+            color: '#f57c00',
+            objetivos: 55,
+            alertas: [
+                { tipo: 'roja', texto: 'Deuda pública' },
+                { tipo: 'amarilla', texto: 'Crecimiento lento' }
+            ],
+            economia: {
+                pib: 1.2,
+                inflacion: 2.8,
+                deuda: 127,
+                desempleo: 6.8
+            }
+        }
+    },
+    
+    init: function() {
+        document.querySelectorAll('.info-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const seccion = e.target.dataset.seccion;
+                this.mostrarSeccion(seccion);
+            });
+        });
+    },
+    
+    mostrarPais: function(paisId) {
+        const datos = this.datosMock[paisId] || this.datosMock.españa;
+        
+        document.getElementById('pais-nombre').innerHTML = `🇪🇸 ${datos.nombre}`;
+        document.getElementById('pais-estado').innerHTML = `🟢 ${datos.estado}`;
+        document.getElementById('pais-estado').style.background = datos.color;
+        document.getElementById('objetivos-valor').innerHTML = `${datos.objetivos}%`;
+        
+        let alertasHtml = '';
+        datos.alertas.forEach(a => {
+            alertasHtml += `<div class="alerta-item alerta-${a.tipo}">${a.tipo === 'roja' ? '🔴' : '🟡'} ${a.texto}</div>`;
+        });
+        document.getElementById('info-alertas').innerHTML = `<h4 data-i18n="alertas">⚠️ Alertas</h4>${alertasHtml}`;
+    },
+    
+    mostrarSeccion: function(seccion) {
+        const pais = document.getElementById('pais-nombre').innerText.split(' ')[1].toLowerCase();
+        const datos = this.datosMock[pais] || this.datosMock.españa;
+        
+        let html = '';
+        
+        switch(seccion) {
+            case 'economia':
+                html = `
+                    <h5>📊 Datos económicos</h5>
+                    <p>PIB: ${datos.economia.pib}%</p>
+                    <p>Inflación: ${datos.economia.inflacion}%</p>
+                    <p>Deuda/PIB: ${datos.economia.deuda}%</p>
+                    <p>Desempleo: ${datos.economia.desempleo}%</p>
+                `;
+                break;
+            case 'leyes':
+                html = '<p>⚖️ Información legislativa próximamente</p>';
+                break;
+            case 'geopolitica':
+                html = '<p>🏛️ Análisis geopolítico próximamente</p>';
+                break;
+            case 'social':
+                html = '<p>👥 Datos sociales próximamente</p>';
+                break;
+            case 'clima':
+                html = '<p>🌍 Datos climáticos próximamente</p>';
+                break;
+        }
+        
+        // Crear modal o panel flotante
+        alert(html.replace(/<[^>]*>/g, ' ')); // Simplificado, en producción sería un modal
+    }
 };
-
-// Inicializar al cargar la página
-document.addEventListener('DOMContentLoaded', () => {
-  UIPanelInfo.init();
-});
 
 window.UIPanelInfo = UIPanelInfo;
