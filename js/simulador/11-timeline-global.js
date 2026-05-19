@@ -1,3 +1,4 @@
+
 // ============================================
 // TIMELINE GLOBAL - Línea temporal dinámica
 // ============================================
@@ -58,4 +59,3 @@ const TimelineGlobal = {
 };
 
 window.TimelineGlobal = TimelineGlobal;
-
