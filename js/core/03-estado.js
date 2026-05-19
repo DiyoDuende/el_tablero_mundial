@@ -1,3 +1,4 @@
+
 // ============================================
 // ESTADO - Real vs Simulación por territorio
 // ============================================
@@ -96,4 +97,3 @@ const EstadoTablero = {
 };
 
 window.EstadoTablero = EstadoTablero;
-
