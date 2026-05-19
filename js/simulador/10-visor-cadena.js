@@ -1,3 +1,4 @@
+
 // ============================================
 // VISOR DE CADENA DE IMPACTO - Efectos verificados
 // ============================================
@@ -98,4 +99,3 @@ const VisorCadena = {
 };
 
 window.VisorCadena = VisorCadena;
-
