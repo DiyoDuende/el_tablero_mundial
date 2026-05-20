@@ -1,19 +1,15 @@
-// Inicialización principal
+// js/ui/08-app.js
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('🚀 Iniciando Tablero Mundial...');
 
-    // Inicializar mapa primero
-    if (window.MapaMundial && typeof MapaMundial.init === 'function') MapaMundial.init();
+    if (window.Idioma && window.Idioma.init) await Idioma.init();
 
-    // Idioma
-    if (window.Idioma && typeof Idioma.init === 'function') await Idioma.init();
-
-    // Inicializar componentes UI
-    if (window.UIPanelInfo && typeof UIPanelInfo.init === 'function') UIPanelInfo.init();
-    if (window.UIVerificador && typeof UIVerificador.init === 'function') UIVerificador.init();
-    if (window.UISimulador && typeof UISimulador.init === 'function') UISimulador.init();
-    if (window.UIRelacionesGlobales && typeof UIRelacionesGlobales.init === 'function') UIRelacionesGlobales.init();
-    if (window.UITimeline && typeof UITimeline.init === 'function') UITimeline.init();
+    // Inicializar componentes (el mapa se inicia solo en 00-mapa.js)
+    if (window.UIPanelInfo && window.UIPanelInfo.init) UIPanelInfo.init();
+    if (window.UIVerificador && window.UIVerificador.init) UIVerificador.init();
+    if (window.UISimulador && window.UISimulador.init) UISimulador.init();
+    if (window.UIRelacionesGlobales && window.UIRelacionesGlobales.init) UIRelacionesGlobales.init();
+    if (window.UITimeline && window.UITimeline.init) UITimeline.init();
 
     // Botones de modo
     const btnReal = document.getElementById('btn-modo-real');
@@ -34,10 +30,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // Mostrar España
-    if (window.UIPanelInfo && typeof UIPanelInfo.mostrarPais === 'function') {
-        UIPanelInfo.mostrarPais('españa');
-    }
-
+    if (window.UIPanelInfo && window.UIPanelInfo.mostrarPais) UIPanelInfo.mostrarPais('españa');
     console.log('✅ Tablero Mundial listo');
 });
