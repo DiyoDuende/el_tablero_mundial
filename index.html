@@ -14,8 +14,8 @@
         <div class="top-bar">
             <div class="logo"><span class="logo-icon">🌍</span><span class="logo-text">TABLERO MUNDIAL</span></div>
             <div class="top-nav">
-                <a href="README.md" class="nav-link">📘 README</a>
-                <a href="Normas.md" class="nav-link">📋 NORMAS</a>
+                <button id="btn-readme" class="nav-link">📘 README</button>
+                <button id="btn-normas" class="nav-link">📋 NORMAS</button>
                 <span class="nav-sep">|</span>
                 <button id="btn-modo-real" class="nav-btn nav-btn-real active">🌐 REAL</button>
                 <button id="btn-modo-juego" class="nav-btn nav-btn-sim">🎮 ¿QUÉ PASARÍA SI?</button>
@@ -60,10 +60,26 @@
             </div>
         </div>
 
+        <!-- Modal de README -->
+        <div class="modal-overlay" id="modal-readme" style="display: none;">
+            <div class="modal-content">
+                <button class="btn-cerrar" id="btn-cerrar-readme">✕</button>
+                <div id="readme-contenido"></div>
+            </div>
+        </div>
+
+        <!-- Modal de NORMAS -->
+        <div class="modal-overlay" id="modal-normas" style="display: none;">
+            <div class="modal-content">
+                <button class="btn-cerrar" id="btn-cerrar-normas">✕</button>
+                <div id="normas-contenido"></div>
+            </div>
+        </div>
+
         <!-- Verificador ciudadano -->
         <div class="verificador-container" id="verificador-panel">
             <div class="verificador-header"><h3>✅ VERIFICADOR CIUDADANO · Explicación automática</h3><button class="btn-cerrar" id="btn-cerrar-verificador">✕</button></div>
-            <div class="verificador-input"><input type="text" id="verificador-pregunta" placeholder="Ej: ¿Por qué está subiendo la gasolina?"><button id="btn-verificar" class="btn-verde">VERIFICAR</button></div>
+            <div class="verificador-input"><input type="text" id="verificador-pregunta" placeholder="Ej: ¿Por qué está subiendo la gasolina?"><button id="btn-verificar" class="btn-verde">VERIFI[...]
             <div class="verificador-respuesta" id="verificador-respuesta"><p class="placeholder">Escribe una pregunta para obtener una explicación basada en datos reales</p></div>
         </div>
 
@@ -73,7 +89,7 @@
         <!-- Simulación -->
         <div class="simulador-container" id="simulador-panel">
             <div class="simulador-header"><h3>⚡ ZONA DE SIMULACIÓN</h3><span class="modo-badge" id="modo-badge">🌐 MODO REAL</span></div>
-            <div class="simulador-input"><input type="text" id="simulador-pregunta" placeholder="🎲 ¿Qué pasaría si... (ej: sube el petróleo un 20%)"><button id="btn-simular" class="btn-naranja">SIMULAR</button></div>
+            <div class="simulador-input"><input type="text" id="simulador-pregunta" placeholder="🎲 ¿Qué pasaría si... (ej: sube el petróleo un 20%)"><button id="btn-simular" class="btn-nara[...]
             <div class="simulador-resultados" id="simulador-resultados"><p class="placeholder">Activa el modo JUEGO y escribe un escenario para simular</p></div>
         </div>
 
