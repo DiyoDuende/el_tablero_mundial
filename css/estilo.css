@@ -192,7 +192,7 @@ body {
     grid-template-columns: 70% 30%;
     gap: 15px;
     margin-bottom: 20px;
-    min-height: 500px;
+    height: 500px;
 }
 
 .mapa-container {
@@ -200,6 +200,7 @@ body {
     border-radius: 16px;
     overflow: hidden;
     border: 1px solid var(--border);
+    height: 100%;
 }
 
 .mapa {
@@ -217,7 +218,7 @@ body {
     flex-direction: column;
     gap: 15px;
     overflow-y: auto;
-    max-height: 500px;
+    height: 100%;
 }
 
 .panel-buscador input {
@@ -349,6 +350,11 @@ body {
     margin-bottom: 20px;
     border: 2px solid var(--accent);
     transition: all 0.3s;
+    display: none;
+}
+
+.verificador-container.active {
+    display: block;
 }
 
 .verificador-header {
@@ -470,6 +476,11 @@ body {
     padding: 20px;
     margin: 20px 0;
     border: 2px solid var(--info);
+    display: none;
+}
+
+.cadena-container.active {
+    display: block;
 }
 
 .cadena-header {
@@ -603,6 +614,10 @@ body {
     display: none;
     max-height: 800px;
     overflow-y: auto;
+}
+
+.relaciones-globales-container.active {
+    display: block;
 }
 
 .relaciones-globales-header {
@@ -783,6 +798,10 @@ body {
     display: none;
     max-height: 800px;
     overflow-y: auto;
+}
+
+.timeline-global-container.active {
+    display: block;
 }
 
 .timeline-global-header {
@@ -998,23 +1017,173 @@ body {
     color: var(--info);
 }
 
-/* Ajustes para el selector de idioma */
-.selector-idioma-universal {
-    margin-right: 20px;
-    min-width: 250px;
+/* ===== SIMULADOR (ZONA DE SIMULACIÓN) ===== */
+.simulador-container {
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 2px solid var(--warning);
+    display: none;
+    transition: all 0.3s;
 }
-.selector-wrapper {
-    position: relative;
+
+.simulador-container.active {
+    display: block;
+}
+
+.simulador-header {
     display: flex;
-    flex-direction: column;
-    gap: 5px;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
 }
-.idioma-select.universal {
-    background: var(--bg-panel, #1c2c36);
+
+.simulador-header h3 {
+    color: var(--warning);
+    font-size: 1.3rem;
+}
+
+.modo-badge {
+    background: var(--bg-panel);
+    color: var(--warning);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: bold;
+}
+
+.simulador-input {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.simulador-input input {
+    flex: 1;
+    padding: 15px 20px;
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 50px;
     color: white;
-    border: 1px solid var(--border, #2a4050);
-    border-radius: 30px;
-    padding: 8px 12px;
-    font-size: 0.9rem;
-    cursor: pointer;
+    font-size: 1rem;
 }
+
+.btn-naranja {
+    background: var(--warning);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 0 30px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-naranja:hover {
+    background: #ff8f00;
+    transform: scale(1.02);
+}
+
+.simulador-resultados {
+    background: var(--bg-panel);
+    border-radius: 12px;
+    padding: 20px;
+    min-height: 150px;
+}
+
+.simulacion-resultado {
+    margin-bottom: 20px;
+}
+
+.resultado-impacto {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.impacto-card {
+    background: var(--bg-card);
+    border-left: 4px solid var(--info);
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.impacto-card.negativo {
+    border-left-color: var(--danger);
+}
+
+.impacto-card.positivo {
+    border-left-color: var(--success);
+}
+
+.impacto-titulo {
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: var(--text);
+}
+
+.impacto-valor {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: var(--info);
+}
+
+.impacto-valor.negativo {
+    color: var(--danger);
+}
+
+.impacto-valor.positivo {
+    color: var(--success);
+}
+
+/* ===== FOOTER ===== */
+.footer {
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    border: 1px solid var(--border);
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.footer p {
+    margin: 5px 0;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1200px) {
+    .main-container {
+        grid-template-columns: 60% 40%;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-container {
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+
+    .mapa-container {
+        height: 400px;
+    }
+
+    .panel-lateral {
+        max-height: none;
+        height: auto;
+    }
+
+    .top-nav {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .resultado-impacto {
+        grid-template-columns: 1fr;
+    }
+}
+
