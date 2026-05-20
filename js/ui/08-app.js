@@ -1,25 +1,21 @@
-// js/ui/08-app.js
-
+// Inicialización principal
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('🚀 Iniciando Tablero Mundial...');
 
-    // 1. Inicializar idioma
-    if (window.Idioma && window.Idioma.init) await Idioma.init();
+    // Idioma
+    if (window.Idioma && typeof Idioma.init === 'function') await Idioma.init();
 
-    // 2. Inicializar componentes principales
-    // MapaMundial.init();   // <--- ESTA LÍNEA ESTÁ COMENTADA, EL MAPA YA SE INICIA EN 00-mapa.js
-    if (window.UIPanelInfo && window.UIPanelInfo.init) UIPanelInfo.init();
-    if (window.UIVerificador && window.UIVerificador.init) UIVerificador.init();
+    // Inicializar componentes UI (el mapa se inicia solo en 00-mapa.js)
+    if (window.UIPanelInfo && typeof UIPanelInfo.init === 'function') UIPanelInfo.init();
+    if (window.UIVerificador && typeof UIVerificador.init === 'function') UIVerificador.init();
+    if (window.UISimulador && typeof UISimulador.init === 'function') UISimulador.init();
+    if (window.UIRelacionesGlobales && typeof UIRelacionesGlobales.init === 'function') UIRelacionesGlobales.init();
+    if (window.UITimeline && typeof UITimeline.init === 'function') UITimeline.init();
 
-    // 3. Inicializar módulos nuevos
-    if (window.UIRelacionesGlobales && window.UIRelacionesGlobales.init) UIRelacionesGlobales.init();
-    if (window.UITimeline && window.UITimeline.init) UITimeline.init();
-
-    // 4. Configurar modo de juego (Realidad / Juego)
+    // Botones de modo
     const btnReal = document.getElementById('btn-modo-real');
     const btnJuego = document.getElementById('btn-modo-juego');
     const badge = document.getElementById('modo-badge');
-
     if (btnReal && btnJuego && badge) {
         btnReal.addEventListener('click', () => {
             window.CONFIG.modo = 'realidad';
@@ -35,8 +31,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // Mostrar información de España por defecto
-    if (window.UIPanelInfo && window.UIPanelInfo.mostrarPais) {
+    // Mostrar España
+    if (window.UIPanelInfo && typeof UIPanelInfo.mostrarPais === 'function') {
         UIPanelInfo.mostrarPais('españa');
     }
 
