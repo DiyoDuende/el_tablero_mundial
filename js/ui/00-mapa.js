@@ -18,7 +18,7 @@ const MapaMundial = {
         
         setTimeout(() => {
             this.irAPais('españa');
-        }, 1000);
+        }, 500);
     },
     
     cargarPaises: function() {
