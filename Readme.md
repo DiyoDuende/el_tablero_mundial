@@ -1,4 +1,3 @@
-[Readme.md](https://github.com/user-attachments/files/28026647/Readme.md)
 # 🌍 TABLERO MUNDIAL
 
 ## Simulador Geopolítico Global · Datos reales · Verificador ciudadano
