@@ -997,3 +997,24 @@ body {
     font-size: 0.85rem;
     color: var(--info);
 }
+
+/* Ajustes para el selector de idioma */
+.selector-idioma-universal {
+    margin-right: 20px;
+    min-width: 250px;
+}
+.selector-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.idioma-select.universal {
+    background: var(--bg-panel, #1c2c36);
+    color: white;
+    border: 1px solid var(--border, #2a4050);
+    border-radius: 30px;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
