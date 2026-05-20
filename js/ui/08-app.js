@@ -2,10 +2,13 @@
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('🚀 Iniciando Tablero Mundial...');
 
+    // Inicializar mapa primero
+    if (window.MapaMundial && typeof MapaMundial.init === 'function') MapaMundial.init();
+
     // Idioma
     if (window.Idioma && typeof Idioma.init === 'function') await Idioma.init();
 
-    // Inicializar componentes UI (el mapa se inicia solo en 00-mapa.js)
+    // Inicializar componentes UI
     if (window.UIPanelInfo && typeof UIPanelInfo.init === 'function') UIPanelInfo.init();
     if (window.UIVerificador && typeof UIVerificador.init === 'function') UIVerificador.init();
     if (window.UISimulador && typeof UISimulador.init === 'function') UISimulador.init();
