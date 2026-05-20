@@ -40,9 +40,12 @@
             
             <!-- PANEL LATERAL (30%) -->
             <div class="panel-lateral" id="panel-lateral">
+                <!-- BUSCADOR RÁPIDO -->
                 <div class="panel-buscador">
                     <input type="text" id="buscador-rapido" data-i18n="buscar" placeholder="🔍 Buscar país, ciudad...">
                 </div>
+                
+                <!-- CAPAS DE PODER -->
                 <div class="panel-capas">
                     <div class="capas-grid">
                         <button class="capa-icon" data-capa="politico" title="Político">🏛️</button>
@@ -54,14 +57,18 @@
                         <button class="capa-icon" data-capa="corporaciones" title="Corporaciones">🏢</button>
                     </div>
                 </div>
+                
+                <!-- INFO DEL PAÍS SELECCIONADO -->
                 <div class="panel-info" id="panel-info">
                     <div class="info-header">
                         <h3 id="pais-nombre">🇪🇸 España</h3>
                         <span class="pais-estado" id="pais-estado">🟢 ESTABLE</span>
                     </div>
+                    
                     <div class="info-objetivos">
                         <span data-i18n="objetivos">🎯 Objetivos</span>: <span id="objetivos-valor">68%</span>
                     </div>
+                    
                     <div class="info-botones">
                         <button class="info-btn" data-seccion="economia" data-i18n="economico">📊 Economía</button>
                         <button class="info-btn" data-seccion="leyes" data-i18n="legislativo">⚖️ Leyes</button>
@@ -69,6 +76,7 @@
                         <button class="info-btn" data-seccion="social" data-i18n="social">👥 Social</button>
                         <button class="info-btn" data-seccion="clima" data-i18n="clima">🌍 Clima</button>
                     </div>
+                    
                     <div class="info-alertas" id="info-alertas">
                         <h4 data-i18n="alertas">⚠️ Alertas</h4>
                         <div class="alerta-item alerta-roja">🔴 Seguridad energética</div>
@@ -84,10 +92,12 @@
                 <h3 data-i18n="verificadorTitulo">✅ VERIFICADOR CIUDADANO · Explicación automática</h3>
                 <button class="btn-cerrar" id="btn-cerrar-verificador">✕</button>
             </div>
+            
             <div class="verificador-input">
                 <input type="text" id="verificador-pregunta" data-i18n="verificadorPlaceholder" placeholder="Ej: ¿Por qué está subiendo la gasolina? ¿Es verdad que...?">
                 <button id="btn-verificar" class="btn-verde" data-i18n="verificar">VERIFICAR</button>
             </div>
+            
             <div class="verificador-respuesta" id="verificador-respuesta">
                 <p class="placeholder" data-i18n="noInfo">Escribe una pregunta para obtener una explicación basada en datos reales</p>
             </div>
@@ -122,10 +132,12 @@
                 <h3 data-i18n="simuladorTitulo">⚡ ZONA DE SIMULACIÓN</h3>
                 <span class="modo-badge" id="modo-badge" data-i18n="modoReal">🌐 MODO REAL</span>
             </div>
+            
             <div class="simulador-input">
                 <input type="text" id="simulador-pregunta" data-i18n="simuladorPlaceholder" placeholder="🎲 ¿Qué pasaría si... (ej: sube el petróleo un 20%)">
-                <button id="btn-simular" class="btn-naranja" data-i18n="simular">SIMULAR</button>
+                <button id="btn-simular" class="btn-naranja" data-i18n="simulador">SIMULAR</button>
             </div>
+            
             <div class="simulador-resultados" id="simulador-resultados">
                 <p class="placeholder" data-i18n="activaJuego">Activa el modo JUEGO y escribe un escenario para simular</p>
             </div>
@@ -146,6 +158,7 @@
     </div>
 
     <!-- SCRIPTS -->
+    <!-- Core -->
     <script src="js/core/00-config.js"></script>
     <script src="js/core/01-territorios.js"></script>
     <script src="js/core/02-actores.js"></script>
@@ -154,6 +167,7 @@
     <script src="js/core/05-verificador.js"></script>
     <script src="js/core/06-idioma.js"></script>
     
+    <!-- Simulador -->
     <script src="js/simulador/00-poderes.js"></script>
     <script src="js/simulador/01-sectores.js"></script>
     <script src="js/simulador/02-objetivos.js"></script>
@@ -168,17 +182,18 @@
     <script src="js/simulador/11-timeline-global.js"></script>
     <script src="js/simulador/12-eventos-futuros.js"></script>
     
-    <!-- Intérpretes (corregidos con nombres únicos) -->
+    <!-- Intérpretes -->
     <script src="js/simulador/interpretes/geopolitico.js"></script>
     <script src="js/simulador/interpretes/economico.js"></script>
     <script src="js/simulador/interpretes/legislativo.js"></script>
     <script src="js/simulador/interpretes/social.js"></script>
     
+    <!-- UI -->
     <script src="js/ui/00-mapa.js"></script>
     <script src="js/ui/01-panel-info.js"></script>
     <script src="js/ui/02-verificador.js"></script>
     <script src="js/ui/03-simulador.js"></script>
-    <script src="js/ui/04-domino.js"></script>
+    <script src="js/ui/04-dominio.js"></script>
     <script src="js/ui/05-relaciones.js"></script>
     <script src="js/ui/06-relaciones-globales.js"></script>
     <script src="js/ui/07-timeline.js"></script>
