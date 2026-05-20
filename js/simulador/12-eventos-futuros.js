@@ -55,7 +55,7 @@ const EventosFuturos = {
 
 window.EventosFuturos = EventosFuturos;
 
-const FactorTerritorio = {
-    calcular(datos) { return 1.0; }
+const EventosFuturos = {
+    proyectar() { return []; }
 };
-window.FactorTerritorio = FactorTerritorio;
+window.EventosFuturos = EventosFuturos;
