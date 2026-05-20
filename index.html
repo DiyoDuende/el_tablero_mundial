@@ -1,67 +1,77 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>🌍 TABLERO MUNDIAL · Geopolitical Simulator</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <link rel="stylesheet" href="css/estilo.css">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌍</text></svg>">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>🌍 TABLERO MUNDIAL · Geopolitical Simulator</title>
+    <!-- Leaflet (mapa) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Hoja de estilos personalizada -->
+    <link rel="stylesheet" href="css/estilo.css">
 </head>
 <body>
 <div class="app">
-  <div class="top-bar">
-    <div class="logo"><span class="logo-icon">🌍</span><span class="logo-text">TABLERO MUNDIAL</span></div>
-    <div class="top-nav">
-      <a href="Readme.md" class="nav-link" data-i18n="documentacion">📘 README</a>
-      <a href="Normas.md" class="nav-link" data-i18n="normas">📋 NORMAS</a>
-      <button id="btn-modo-real" class="nav-btn nav-btn-real active" data-i18n="real">🌐 REAL</button>
-      <button id="btn-modo-juego" class="nav-btn nav-btn-sim" data-i18n="simulacion">🎮 ¿QUÉ PASARÍA SI?</button>
-      <button id="btn-verificador-panel" class="nav-btn" data-i18n="verificador">✅ Verificador</button>
-      <button id="btn-relaciones-globales" class="nav-btn nav-btn-relaciones-globales" data-i18n="redGlobal">🌐 Red Global</button>
-      <button id="btn-timeline-panel" class="nav-btn nav-btn-timeline" data-i18n="timeline">📅 Timeline Global</button>
+    <!-- BARRA SUPERIOR -->
+    <div class="top-bar">
+        <div class="logo"><span class="logo-icon">🌍</span><span class="logo-text">TABLERO MUNDIAL</span></div>
+        <div class="top-nav">
+            <a href="Readme.md" class="nav-link" data-i18n="documentacion">📘 README</a>
+            <a href="Normas.md" class="nav-link" data-i18n="normas">📋 NORMAS</a>
+            <button id="btn-modo-real" class="nav-btn nav-btn-real active" data-i18n="real">🌐 REAL</button>
+            <button id="btn-modo-juego" class="nav-btn nav-btn-sim" data-i18n="simulacion">🎮 ¿QUÉ PASARÍA SI?</button>
+            <button id="btn-verificador-panel" class="nav-btn" data-i18n="verificador">✅ Verificador</button>
+            <button id="btn-relaciones-globales" class="nav-btn nav-btn-relaciones-globales" data-i18n="redGlobal">🌐 Red Global</button>
+            <button id="btn-timeline-panel" class="nav-btn nav-btn-timeline" data-i18n="timeline">📅 Timeline Global</button>
+        </div>
     </div>
-  </div>
 
-  <div class="buscador-global">
-    <input type="text" id="buscador-global" placeholder="🔍 Buscar país, ciudad, empresa, ley..." data-i18n="buscarPlaceholder">
-    <button id="btn-buscar" data-i18n="buscar">BUSCAR</button>
-  </div>
-  <div class="capas-poder">
-    <button class="capa-btn" data-capa="politico">🏛️ Político</button> <button class="capa-btn" data-capa="economico">💰 Económico</button>
-    <button class="capa-btn" data-capa="militar">⚔️ Militar</button> <button class="capa-btn" data-capa="judicial">⚖️ Judicial</button>
-    <button class="capa-btn" data-capa="legislativo">📜 Legislativo</button> <button class="capa-btn" data-capa="medios">📺 Medios</button>
-    <button class="capa-btn" data-capa="social">👥 Social</button> <button class="capa-btn" data-capa="ecosistema">🌍 Ecosistema</button>
-    <button class="capa-btn" data-capa="corporaciones">🏢 Corporaciones</button>
-  </div>
-
-  <div class="contenedor-principal">
-    <div class="mapa-contenedor"><div id="mapa-mundial"></div></div>
-    <div class="verificador-contenedor">
-      <h3 data-i18n="verificadorTitulo">📝 VERIFICADOR CIUDADANO</h3>
-      <p data-i18n="verificadorTexto">¿Has oído algo que te suena raro? Verifícalo aquí:</p>
-      <input type="text" id="verificador-pregunta" placeholder="Ej: ¿han subido el sueldo a los diputados?" data-i18n="verificadorPlaceholder">
-      <button id="btn-verificar" class="btn-verde" data-i18n="verificar">VERIFICAR</button>
-      <div id="verificador-respuesta" class="verificador-resultado"></div>
+    <!-- BUSCADOR Y CAPAS DE PODER -->
+    <div class="buscador-global">
+        <input type="text" id="buscador-global" placeholder="🔍 Buscar país, ciudad, empresa, ley..." data-i18n="buscarPlaceholder">
+        <button id="btn-buscar" data-i18n="buscar">BUSCAR</button>
     </div>
-  </div>
-
-  <div id="dashboard-container" class="dashboard-container"></div>
-  <div id="cadena-contenido" class="cadena-container"></div>
-
-  <div class="simulador-contenedor" id="simulador-panel">
-    <div class="simulador-header"><h3 data-i18n="simuladorTitulo">⚡ ZONA DE SIMULACIÓN</h3><div class="modos-simulacion"><span class="modo-indicador" id="modo-actual">🌐 MODO REAL ACTIVADO</span></div></div>
-    <div class="simulador-input">
-      <input type="text" id="simulador-pregunta" placeholder="🎲 ¿Qué pasaría si... (ej: 'sube el petróleo un 20%')" data-i18n="simuladorPlaceholder">
-      <button id="btn-simular" class="btn-naranja" data-i18n="simular">SIMULAR</button>
+    <div class="capas-poder">
+        <button class="capa-btn" data-capa="politico">🏛️ Político</button> <button class="capa-btn" data-capa="economico">💰 Económico</button>
+        <button class="capa-btn" data-capa="militar">⚔️ Militar</button> <button class="capa-btn" data-capa="judicial">⚖️ Judicial</button>
+        <button class="capa-btn" data-capa="legislativo">📜 Legislativo</button> <button class="capa-btn" data-capa="medios">📺 Medios</button>
+        <button class="capa-btn" data-capa="social">👥 Social</button> <button class="capa-btn" data-capa="ecosistema">🌍 Ecosistema</button>
+        <button class="capa-btn" data-capa="corporaciones">🏢 Corporaciones</button>
     </div>
-    <div id="simulador-resultados" class="simulador-resultados"><p class="placeholder" data-i18n="activaJuego">Activa el modo JUEGO y escribe un escenario para simular</p></div>
-  </div>
 
-  <div class="footer"><p data-i18n="fuentes">📚 FUENTES: INE · Eurostat · Banco Mundial · IEA · datos.gob.es · Última actualización: marzo 2026</p><p data-i18n="modosInfo">🌐 MODO REAL: datos verificados · 🎮 MODO JUEGO: simulación · 🔍 Siempre mostramos las fuentes</p></div>
+    <!-- CONTENEDOR PRINCIPAL: MAPA + VERIFICADOR -->
+    <div class="contenedor-principal">
+        <div class="mapa-contenedor"><div id="mapa-mundial" class="mapa"></div></div>
+        <div class="verificador-contenedor">
+            <h3 data-i18n="verificadorTitulo">📝 VERIFICADOR CIUDADANO</h3>
+            <p data-i18n="verificadorTexto">¿Has oído algo que te suena raro? Verifícalo aquí:</p>
+            <input type="text" id="verificador-pregunta" placeholder="Ej: ¿han subido el sueldo a los diputados?" data-i18n="verificadorPlaceholder">
+            <button id="btn-verificar" class="btn-verde" data-i18n="verificar">VERIFICAR</button>
+            <div id="verificador-respuesta" class="verificador-resultado"></div>
+        </div>
+    </div>
+
+    <!-- PANEL DE INFORMACIÓN DEL PAÍS -->
+    <div id="dashboard-container" class="dashboard-container"></div>
+
+    <!-- ZONA DE SIMULACIÓN -->
+    <div class="simulador-contenedor" id="simulador-panel">
+        <div class="simulador-header"><h3 data-i18n="simuladorTitulo">⚡ ZONA DE SIMULACIÓN</h3><div class="modos-simulacion"><span class="modo-indicador" id="modo-actual">🌐 MODO REAL ACTIVADO</span></div></div>
+        <div class="simulador-input">
+            <input type="text" id="simulador-pregunta" placeholder="🎲 ¿Qué pasaría si... (ej: 'sube el petróleo un 20%')" data-i18n="simuladorPlaceholder">
+            <button id="btn-simular" class="btn-naranja" data-i18n="simular">SIMULAR</button>
+        </div>
+        <div id="simulador-resultados" class="simulador-resultados"><p class="placeholder" data-i18n="activaJuego">Activa el modo JUEGO y escribe un escenario para simular</p></div>
+    </div>
+
+    <div class="footer"><p data-i18n="fuentes">📚 FUENTES: INE · Eurostat · Banco Mundial · IEA · datos.gob.es · Última actualización: marzo 2026</p><p data-i18n="modosInfo">🌐 MODO REAL: datos verificados · 🎮 MODO JUEGO: simulación · 🔍 Siempre mostramos las fuentes</p></div>
 </div>
 
+<!-- ============================================ -->
+<!-- CARGAR SCRIPTS (RESPETA ESTE ORDEN) -->
+<!-- ============================================ -->
+
+<!-- Core -->
 <script src="js/core/00-config.js"></script>
 <script src="js/core/01-territorios.js"></script>
 <script src="js/core/02-actores.js"></script>
@@ -71,6 +81,7 @@
 <script src="js/core/06-idioma.js"></script>
 <script src="js/core/07-buscador.js"></script>
 
+<!-- Simulador -->
 <script src="js/simulador/00-poderes.js"></script>
 <script src="js/simulador/01-sectores.js"></script>
 <script src="js/simulador/02-objetivos.js"></script>
@@ -86,11 +97,13 @@
 <script src="js/simulador/12-eventos-futuros.js"></script>
 <script src="js/simulador/13-factor-territorio.js"></script>
 
+<!-- Interpretes -->
 <script src="js/simulador/interpretes/geopolitico.js"></script>
 <script src="js/simulador/interpretes/economico.js"></script>
 <script src="js/simulador/interpretes/legislativo.js"></script>
 <script src="js/simulador/interpretes/social.js"></script>
 
+<!-- UI (Interfaz de Usuario) -->
 <script src="js/ui/00-mapa.js"></script>
 <script src="js/ui/01-panel-info.js"></script>
 <script src="js/ui/02-verificador.js"></script>
@@ -100,5 +113,6 @@
 <script src="js/ui/06-relaciones-globales.js"></script>
 <script src="js/ui/07-timeline.js"></script>
 <script src="js/ui/08-app.js"></script>
+
 </body>
 </html>
