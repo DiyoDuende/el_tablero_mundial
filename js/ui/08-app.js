@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     await Idioma.init();
     
     // Inicializar componentes UI
-    // MapaMundial.init();   // <--- COMENTADA para evitar doble inicialización (ya se inicia en 00-mapa.js)
     UIPanelInfo.init();
     UIVerificador.init();
     UISimulador.init();
