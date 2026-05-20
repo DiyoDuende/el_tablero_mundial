@@ -5,7 +5,10 @@
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('🚀 Tablero Mundial v3.0 iniciando...');
     
-    // Inicializar idioma primero
+    // Inicializar mapa primero
+    MapaMundial.init();
+    
+    // Inicializar idioma
     await Idioma.init();
     
     // Inicializar componentes UI
