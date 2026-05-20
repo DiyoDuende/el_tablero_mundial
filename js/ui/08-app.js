@@ -1,5 +1,4 @@
 // js/ui/08-app.js
-import CONFIG from '../core/00-config.js'; // Ajusta la ruta si es necesario
 
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('🚀 Iniciando Tablero Mundial...');
@@ -7,8 +6,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 1. Inicializar idioma
     if (window.Idioma && window.Idioma.init) await Idioma.init();
 
-    // 2. Inicializar componentes principales (que ya existen)
-    if (window.MapaMundial && window.MapaMundial.init) MapaMundial.init();
+    // 2. Inicializar componentes principales
+    // MapaMundial.init();   // <--- ESTA LÍNEA ESTÁ COMENTADA, EL MAPA YA SE INICIA EN 00-mapa.js
     if (window.UIPanelInfo && window.UIPanelInfo.init) UIPanelInfo.init();
     if (window.UIVerificador && window.UIVerificador.init) UIVerificador.init();
 
@@ -23,13 +22,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (btnReal && btnJuego && badge) {
         btnReal.addEventListener('click', () => {
-            CONFIG.modo = 'realidad';
+            window.CONFIG.modo = 'realidad';
             btnReal.classList.add('active');
             btnJuego.classList.remove('active');
             badge.textContent = '🌐 MODO REAL';
         });
         btnJuego.addEventListener('click', () => {
-            CONFIG.modo = 'juego';
+            window.CONFIG.modo = 'juego';
             btnJuego.classList.add('active');
             btnReal.classList.remove('active');
             badge.textContent = '🎮 MODO JUEGO';
