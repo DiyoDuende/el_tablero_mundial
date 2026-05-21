@@ -32,15 +32,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Botones de README y NORMAS
-const btnReadme = document.getElementById('btn-Readme');
-const btnNormas = document.getElementById('btn-Normas');
-const modalReadme = document.getElementById('modal-Readme');
-const modalNormas = document.getElementById('modal-Normas');
-const btnCerrarReadme = document.getElementById('btn-cerrar-Readme');
-const btnCerrarNormas = document.getElementById('btn-cerrar-Normas');
-const readmeContenido = document.getElementById('Readme-contenido');
-const normasContenido = document.getElementById('Normas-contenido');
-
+const btnReadme = document.getElementById('btn-readme');           // antes era 'btn-Readme'
+const btnNormas = document.getElementById('btn-normas');           // antes era 'btn-Normas'
+const modalReadme = document.getElementById('modal-readme');       // antes era 'modal-Readme'
+const modalNormas = document.getElementById('modal-normas');       // antes era 'modal-Normas'
+const btnCerrarReadme = document.getElementById('btn-cerrar-readme'); // antes era 'btn-cerrar-Readme'
+const btnCerrarNormas = document.getElementById('btn-cerrar-normas'); // antes era 'btn-cerrar-Normas'
+const readmeContenido = document.getElementById('readme-contenido'); // antes era 'Readme-contenido'
+const normasContenido = document.getElementById('normas-contenido'); // antes era 'Normas-contenido'
 async function cargarMarkdown(url, elementoHtml) {
     try {
         const response = await fetch(url);
