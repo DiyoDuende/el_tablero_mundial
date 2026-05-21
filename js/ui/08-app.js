@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (btnReadme) {
         btnReadme.addEventListener('click', async () => {
             try {
-                const response = await fetch('README.md');   // ✅ Correcto (con mayúsculas)
+                const response = await fetch('Readme.md');   // ✅ CORREGIDO: Readme.md con 'e' minúscula
                 const markdown = await response.text();
                 readmeContenido.innerHTML = markdown.replace(/^# /gm, '<h1>').replace(/\n/g, '<br>');
                 modalReadme.style.display = 'flex';
@@ -126,3 +126,4 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (window.UIPanelInfo && window.UIPanelInfo.mostrarPais) UIPanelInfo.mostrarPais('españa');
     console.log('✅ Tablero Mundial listo');
 });
+
