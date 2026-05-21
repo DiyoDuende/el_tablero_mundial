@@ -62,7 +62,7 @@ async function cargarMarkdown(url, elementoHtml) {
 
 if (btnReadme) {
     btnReadme.addEventListener('click', async () => {
-        await cargarMarkdown('README.md', readmeContenido);
+        await cargarMarkdown('Readme.md', readmeContenido);
         modalReadme.style.display = 'flex';
     });
 }
