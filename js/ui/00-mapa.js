@@ -1,4 +1,4 @@
-// ============================================
+//// ============================================
 // MAPA MUNDIAL (Leaflet)
 // ============================================
 
@@ -25,6 +25,10 @@ const MapaMundial = {
         // Simulación de países (en producción cargaría GeoJSON)
         const paises = [
             { name: 'España', coords: [40.4, -3.7] },
+            { name: 'Barcelona', coords: [41.3851, 2.1734] },
+            { name: 'Sevilla', coords: [37.3891, -5.9845] },
+            { name: 'Valencia', coords: [39.4699, -0.3763] },
+            { name: 'Bilbao', coords: [43.2630, -2.9350] },
             { name: 'Francia', coords: [46.6, 2.4] },
             { name: 'Portugal', coords: [39.5, -8.0] },
             { name: 'Alemania', coords: [51.1, 10.5] },
@@ -52,6 +56,10 @@ const MapaMundial = {
     irAPais: function(paisId) {
         const centros = {
             españa: [40.4, -3.7],
+            barcelona: [41.3851, 2.1734],
+            sevilla: [37.3891, -5.9845],
+            valencia: [39.4699, -0.3763],
+            bilbao: [43.2630, -2.9350],
             francia: [46.6, 2.4],
             portugal: [39.5, -8.0],
             alemania: [51.1, 10.5],
