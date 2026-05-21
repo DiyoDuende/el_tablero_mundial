@@ -15,13 +15,34 @@ const UISimulador = {
     },
     
     simular: function() {
-        if (CONFIG.modo !== 'juego') {
-            alert('Activa primero el MODO JUEGO para simular');
-            return;
-        }
-        
-        const escenario = document.getElementById('simulador-pregunta').value.trim();
-        if (!escenario) return;
+    if (CONFIG.modo !== 'juego') {
+        alert('Activa primero el MODO JUEGO para simular');
+        return;
+    }
+
+    const escenario = document.getElementById('simulador-pregunta').value.trim();
+    if (!escenario) return;
+
+    // Simulación de ejemplo (luego conectarás con el motor real)
+    const resultados = {
+        economico: -8,
+        social: 12,
+        politico: 5,
+        probabilidad: 65
+    };
+
+    const contenedor = document.getElementById('simulador-resultados');
+    if (contenedor) {
+        contenedor.innerHTML = `
+            <h4>📊 RESULTADOS DE LA SIMULACIÓN</h4>
+            <p>• Impacto económico: ${resultados.economico > 0 ? '+' : ''}${resultados.economico}%</p>
+            <p>• Impacto social: +${resultados.social}% protestas</p>
+            <p>• Impacto político: +${resultados.politico}% tensión</p>
+            <p>• Probabilidad de éxito: ${resultados.probabilidad}%</p>
+            <p class="fuente">⚠️ ESTO ES UNA SIMULACIÓN</p>
+        `;
+    }
+}
         
         // Simulación de ejemplo
         const resultados = {
