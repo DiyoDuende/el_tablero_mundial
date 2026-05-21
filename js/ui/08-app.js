@@ -48,7 +48,7 @@ async function cargarMarkdown(url, elementoHtml) {
         // Convertir markdown a HTML de forma muy básica
         let html = markdown
             .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-            .replace(/^## (.*$)/gim, '<h2>$2</h2>')
+            .replace(/^## (.*$)/gim, '<h2>$1</h2>')   // ✅ correcto
             .replace(/^\* (.*$)/gim, '<li>$1</li>')
             .replace(/<\/li>\n<li>/g, '</li><li>')
             .replace(/(<li>.*<\/li>)/gim, '<ul>$1</ul>')
