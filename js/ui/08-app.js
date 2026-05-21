@@ -103,7 +103,7 @@ if (btnModoJuego && btnModoReal && badge && simuladorPanel) {
         btnModoReal.classList.add('active');
         btnModoJuego.classList.remove('active');
         badge.textContent = '🌐 MODO REAL';
-        simuladorPanel.style.display = 'none';  // oculta el panel
+        simuladorPanel.style.display = 'none';
     });
     
     btnModoJuego.addEventListener('click', () => {
@@ -111,7 +111,6 @@ if (btnModoJuego && btnModoReal && badge && simuladorPanel) {
         btnModoJuego.classList.add('active');
         btnModoReal.classList.remove('active');
         badge.textContent = '🎮 MODO JUEGO';
-        simuladorPanel.style.display = 'flex';  // muestra el panel
+        simuladorPanel.style.display = 'block';
     });
 }
-
