@@ -13,14 +13,7 @@ const UISimulador = {
         });
     },
     
-    simular: function() {
-        if (CONFIG.modo !== 'juego') {
-            alert('Activa primero el MODO JUEGO para simular');
-            return;
-        }
-
-        const escenario = document.getElementById('simulador-pregunta').value.trim();
-        if (!escenario) return;
+    const response = await fetch('README.md');   // ✅ Correcto (con mayúsculas)
 
         // Simulación de ejemplo (luego conectarás con el motor real)
         const resultados = {
