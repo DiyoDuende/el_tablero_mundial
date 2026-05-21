@@ -1,4 +1,4 @@
-# 📜 NORMAS DEL TABLERO MUNDIAL
+# NORMAS DEL TABLERO MUNDIAL
 
 ## Principios fundamentales
 
@@ -13,12 +13,12 @@
 
 ### 3. Los traductores del sistema
 | Intérprete | Función |
-|------------|---------|
+|---|---|
 | **Geopolítico** | Explica poder y estrategia |
 | **Económico** | Traduce indicadores financieros |
 | **Legislativo** | Convierte leyes en lenguaje ciudadano |
 
-### 4. Las capas de poder
+### 4. Las 5 capas de poder
 1. **Estados** - Países y gobiernos
 2. **Corporaciones** - Empresas globales
 3. **Instituciones** - UE, OTAN, ONU
@@ -37,7 +37,6 @@ MODO JUEGO
 ├── Simular decisiones
 ├── Ver impactos en cadena
 └── Analizar resultados
-
 
 ### 6. Transparencia
 - No se guardan datos personales
