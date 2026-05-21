@@ -32,14 +32,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Botones de README y NORMAS
-const btnReadme = document.getElementById('btn-readme');
-const btnNormas = document.getElementById('btn-normas');
-const modalReadme = document.getElementById('modal-readme');
-const modalNormas = document.getElementById('modal-normas');
-const btnCerrarReadme = document.getElementById('btn-cerrar-readme');
-const btnCerrarNormas = document.getElementById('btn-cerrar-normas');
-const readmeContenido = document.getElementById('readme-contenido');
-const normasContenido = document.getElementById('normas-contenido');
+const btnReadme = document.getElementById('btn-Readme');
+const btnNormas = document.getElementById('btn-Normas');
+const modalReadme = document.getElementById('modal-Readme');
+const modalNormas = document.getElementById('modal-Normas');
+const btnCerrarReadme = document.getElementById('btn-cerrar-Readme');
+const btnCerrarNormas = document.getElementById('btn-cerrar-Normas');
+const readmeContenido = document.getElementById('Readme-contenido');
+const normasContenido = document.getElementById('Normas-contenido');
 
 async function cargarMarkdown(url, elementoHtml) {
     try {
