@@ -93,17 +93,25 @@ if (btnNormas) {
 
     // Botón de simulación
     const btnModoJuego = document.getElementById('btn-modo-juego');
-    const simuladorPanel = document.getElementById('simulador-panel');
+const btnModoReal = document.getElementById('btn-modo-real');
+const badge = document.getElementById('modo-badge');
+const simuladorPanel = document.getElementById('simulador-panel');
 
-    if (btnModoJuego && simuladorPanel) {
-        btnModoJuego.addEventListener('click', () => {
-            if (simuladorPanel.style.display !== 'flex') {
-                simuladorPanel.style.display = 'flex';
-            }
-        });
-    }
-
-    if (window.UIPanelInfo && window.UIPanelInfo.mostrarPais) UIPanelInfo.mostrarPais('españa');
-    console.log('✅ Tablero Mundial listo');
-});
+if (btnModoJuego && btnModoReal && badge && simuladorPanel) {
+    btnModoReal.addEventListener('click', () => {
+        window.CONFIG.modo = 'realidad';
+        btnModoReal.classList.add('active');
+        btnModoJuego.classList.remove('active');
+        badge.textContent = '🌐 MODO REAL';
+        simuladorPanel.style.display = 'none';  // oculta el panel
+    });
+    
+    btnModoJuego.addEventListener('click', () => {
+        window.CONFIG.modo = 'juego';
+        btnModoJuego.classList.add('active');
+        btnModoReal.classList.remove('active');
+        badge.textContent = '🎮 MODO JUEGO';
+        simuladorPanel.style.display = 'flex';  // muestra el panel
+    });
+}
 
