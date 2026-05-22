@@ -1,6 +1,6 @@
 // js/ui/01-panel-info.js
 const UIPanelInfo = {
-    paisActual: 'espana',
+    paisActual: 'españa',   // ← con ñ
 
     init: function() {
         console.log('✅ UIPanelInfo iniciado');
@@ -31,7 +31,7 @@ const UIPanelInfo = {
         const poblacion = territorio.poblacion ? territorio.poblacion.toLocaleString() : '—';
         const capital = territorio.capital || '—';
 
-        const container = document.getElementById('panel-info');
+        const container = document.getElementById('dashboard-container'); // ← corregido
         if (!container) return;
 
         container.innerHTML = `
@@ -60,13 +60,12 @@ const UIPanelInfo = {
             </div>
         `;
 
-        // Re-vincular porque el innerHTML ha destruido los botones anteriores
         this.vincularBotones();
     },
 
     mostrarSeccion: function(seccion) {
         console.log(`📄 Mostrar sección: ${seccion} para ${this.paisActual}`);
-        const container = document.getElementById('panel-info');
+        const container = document.getElementById('dashboard-container'); // ← corregido
         if (!container) return;
 
         const nombre = this.paisActual.toUpperCase();
@@ -89,7 +88,6 @@ const UIPanelInfo = {
 
         container.innerHTML = contenido;
 
-        // Botón volver (con evento único)
         const btnVolver = document.querySelector('#btnVolverEconomia, #btnVolverDefault');
         if (btnVolver) {
             btnVolver.addEventListener('click', () => {
@@ -97,6 +95,9 @@ const UIPanelInfo = {
             });
         }
     }
+};
+
+window.UIPanelInfo = UIPanelInfo;
 };
 
 window.UIPanelInfo = UIPanelInfo;
