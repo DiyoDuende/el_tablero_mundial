@@ -3,113 +3,109 @@
 // ============================================
 
 const UIPanelInfo = {
-    
-    datosMock: {
-        españa: {
-            nombre: 'España',
-            estado: 'ESTABLE',
-            color: '#2e7d32',
-            objetivos: 68,
-            alertas: [
-                { tipo: 'roja', texto: 'Seguridad energética' },
-                { tipo: 'amarilla', texto: 'Desempleo alto' }
-            ],
-            economia: {
-                pib: 2.3,
-                inflacion: 2.1,
-                deuda: 98,
-                desempleo: 11.2
-            }
-        },
-        francia: {
-            nombre: 'Francia',
-            estado: 'ESTABLE',
-            color: '#2e7d32',
-            objetivos: 72,
-            alertas: [
-                { tipo: 'amarilla', texto: 'Protestas sociales' }
-            ],
-            economia: {
-                pib: 1.8,
-                inflacion: 2.5,
-                deuda: 112,
-                desempleo: 7.5
-            }
-        },
-        portugal: {
-            nombre: 'Portugal',
-            estado: 'INQUIETO',
-            color: '#f57c00',
-            objetivos: 55,
-            alertas: [
-                { tipo: 'roja', texto: 'Deuda pública' },
-                { tipo: 'amarilla', texto: 'Crecimiento lento' }
-            ],
-            economia: {
-                pib: 1.2,
-                inflacion: 2.8,
-                deuda: 127,
-                desempleo: 6.8
-            }
-        }
-    },
+    paisActual: 'españa',  // país por defecto
     
     init: function() {
+        // Conectar botones del panel
         document.querySelectorAll('.info-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const seccion = e.target.dataset.seccion;
-                this.mostrarSeccion(seccion);
+                const seccion = e.currentTarget.dataset.seccion;
+                if (seccion) this.mostrarSeccion(seccion);
             });
         });
     },
     
     mostrarPais: function(paisId) {
-        const datos = this.datosMock[paisId] || this.datosMock.españa;
+        this.paisActual = paisId;
+        const territorio = TERRITORIOS[paisId];
+        if (!territorio) return;
         
-        document.getElementById('pais-nombre').innerHTML = `🇪🇸 ${datos.nombre}`;
-        document.getElementById('pais-estado').innerHTML = `🟢 ${datos.estado}`;
-        document.getElementById('pais-estado').style.background = datos.color;
-        document.getElementById('objetivos-valor').innerHTML = `${datos.objetivos}%`;
+        // Datos de ejemplo (se pueden ampliar)
+        const poblacion = territorio.poblacion ? territorio.poblacion.toLocaleString() : '—';
+        const capital = territorio.capital || '—';
         
-        let alertasHtml = '';
-        datos.alertas.forEach(a => {
-            alertasHtml += `<div class="alerta-item alerta-${a.tipo}">${a.tipo === 'roja' ? '🔴' : '🟡'} ${a.texto}</div>`;
-        });
-        document.getElementById('info-alertas').innerHTML = `<h4 data-i18n="alertas">⚠️ Alertas</h4>${alertasHtml}`;
+        // Estado estratégico simulado (luego se calculará con poderes)
+        let estado = '🟢 ESTABLE';
+        let colorEstado = '#2e7d32';
+        
+        this.mostrarPanelBasico(territorio.nombre, estado, colorEstado, poblacion, capital);
+    },
+    
+    mostrarPanelBasico: function(nombre, estado, colorEstado, poblacion, capital) {
+        const container = document.getElementById('dashboard-container');
+        if (!container) return;
+        
+        container.innerHTML = `
+            <div class="dashboard-pais">
+                <div class="info-header">
+                    <h3>🇪🇸 ${nombre}</h3>
+                    <span class="pais-estado" style="background: ${colorEstado}">${estado}</span>
+                </div>
+                <div class="info-objetivos">
+                    🎯 Objetivos: <span id="objetivos-valor">68%</span>
+                </div>
+                <div class="info-botones">
+                    <button class="info-btn" data-seccion="economia">📊 Economía</button>
+                    <button class="info-btn" data-seccion="leyes">⚖️ Leyes</button>
+                    <button class="info-btn" data-seccion="geopolitica">🏛️ Geopolítica</button>
+                    <button class="info-btn" data-seccion="social">👥 Social</button>
+                    <button class="info-btn" data-seccion="clima">🌍 Clima</button>
+                </div>
+                <div class="info-datos-basicos">
+                    <p><strong>Población:</strong> ${poblacion}</p>
+                    <p><strong>Capital:</strong> ${capital}</p>
+                </div>
+                <div class="info-alertas" id="info-alertas">
+                    <h4>⚠️ Alertas</h4>
+                    <div class="alerta-item alerta-roja">🔴 Seguridad energética</div>
+                    <div class="alerta-item alerta-amarilla">🟡 Desempleo alto</div>
+                </div>
+            </div>
+        `;
+        
+        // Reconectar eventos de los botones (por si se pierden al reemplazar el HTML)
+        this.init();
     },
     
     mostrarSeccion: function(seccion) {
-        const pais = document.getElementById('pais-nombre').innerText.split(' ')[1].toLowerCase();
-        const datos = this.datosMock[pais] || this.datosMock.españa;
+        const paisId = this.paisActual;
+        const datos = EstadoTablero.real.territorios[paisId];
+        if (!datos) return;
         
         let html = '';
-        
         switch(seccion) {
             case 'economia':
+                const pib = (datos.poderes.económico * 3).toFixed(1);
+                const inflacion = (datos.poderes.financiero * 4).toFixed(1);
+                const deuda = (datos.poderes.financiero * 120).toFixed(0);
+                const desempleo = ((1 - datos.poderes.social) * 20).toFixed(1);
                 html = `
-                    <h5>📊 Datos económicos</h5>
-                    <p>PIB: ${datos.economia.pib}%</p>
-                    <p>Inflación: ${datos.economia.inflacion}%</p>
-                    <p>Deuda/PIB: ${datos.economia.deuda}%</p>
-                    <p>Desempleo: ${datos.economia.desempleo}%</p>
+                    <h4>📊 Datos económicos de ${paisId.toUpperCase()}</h4>
+                    <p><strong>PIB (variación):</strong> ${pib > 0 ? '+' : ''}${pib}%</p>
+                    <p><strong>Inflación:</strong> ${inflacion}%</p>
+                    <p><strong>Deuda/PIB:</strong> ${deuda}%</p>
+                    <p><strong>Desempleo:</strong> ${desempleo}%</p>
+                    <p class="fuente">📚 Datos simulados (próximamente datos reales INE/Eurostat)</p>
                 `;
                 break;
             case 'leyes':
-                html = '<p>⚖️ Información legislativa próximamente</p>';
+                html = <p>⚖️ Leyes destacadas de ${paisId.toUpperCase()}:<br>• Ley de Transición Energética 2026<br>• Reforma Sanitaria 2026<br>• Ley de Soberanía Digital</p><p class="fuente">📚 Fuente: BOE (simulado)</p>;
                 break;
             case 'geopolitica':
-                html = '<p>🏛️ Análisis geopolítico próximamente</p>';
+                html = <p>🏛️ Relaciones internacionales de ${paisId.toUpperCase()}:<br>• UE: aliado estratégico<br>• OTAN: miembro<br>• Relaciones con Francia: cordiales</p>;
                 break;
             case 'social':
-                html = '<p>👥 Datos sociales próximamente</p>';
+                html = <p>👥 Indicadores sociales de ${paisId.toUpperCase()}:<br>• Confianza institucional: 45%<br>• Índice de protestas: bajo<br>• Satisfacción con servicios públicos: 52%</p>;
                 break;
             case 'clima':
-                html = '<p>🌍 Datos climáticos próximamente</p>';
+                html = <p>🌍 Datos climáticos de ${paisId.toUpperCase()}:<br>• Temperatura media: 15°C<br>• Riesgo de sequía: moderado<br>• Emisiones CO2: 5.8 ton/hab</p>;
                 break;
+            default:
+                html = <p>Información no disponible</p>;
         }
         
-        // Crear modal o panel flotante
-        alert(html.replace(/<[^>]*>/g, ' ')); // Simplificado, en producción sería un modal
+        const container = document.getElementById('dashboard-container');
+        if (container) container.innerHTML = html;
     }
 };
 
