@@ -529,13 +529,48 @@ body {
     margin-top: 10px;
 }
 
+/* =========================================================
+   PANELES ACTIVOS
+   ========================================================= */
+
 .verificador-container.active,
 .simulador-container.active,
 .relaciones-globales-container.active,
 .timeline-global-container.active,
 .cadena-container.active {
 
-    display: block;
+    display: flex;
+
+    flex-direction: column;
+}
+
+/* =========================================================
+   PANELES FLOTANTES
+   ========================================================= */
+
+.verificador-container,
+.simulador-container,
+.relaciones-globales-container,
+.timeline-global-container,
+.cadena-container {
+
+    position: fixed;
+
+    top: 110px;
+
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    width: min(1200px, 95vw);
+
+    max-height: calc(100vh - 140px);
+
+    overflow-y: auto;
+
+    z-index: 99999;
+
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
 }
 
 .verificador-header,
