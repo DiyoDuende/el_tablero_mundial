@@ -1,18 +1,21 @@
-// ============================================
-// PANEL DE INFORMACIÓN DEL PAÍS
-// ============================================
-
+// js/ui/01-panel-info.js
 const UIPanelInfo = {
-    paisActual: 'españa',  // país por defecto
+    paisActual: 'españa',
     
     init: function() {
-        // Conectar botones del panel
+        this.vincularBotones();
+    },
+    
+    vincularBotones: function() {
         document.querySelectorAll('.info-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const seccion = e.currentTarget.dataset.seccion;
-                if (seccion) this.mostrarSeccion(seccion);
-            });
+            btn.removeEventListener('click', this.handleBotonClick);
+            btn.addEventListener('click', this.handleBotonClick.bind(this));
         });
+    },
+    
+    handleBotonClick: function(e) {
+        const seccion = e.currentTarget.dataset.seccion;
+        if (seccion) this.mostrarSeccion(seccion);
     },
     
     mostrarPais: function(paisId) {
@@ -20,13 +23,10 @@ const UIPanelInfo = {
         const territorio = TERRITORIOS[paisId];
         if (!territorio) return;
         
-        // Datos de ejemplo (se pueden ampliar)
         const poblacion = territorio.poblacion ? territorio.poblacion.toLocaleString() : '—';
         const capital = territorio.capital || '—';
-        
-        // Estado estratégico simulado (luego se calculará con poderes)
-        let estado = '🟢 ESTABLE';
-        let colorEstado = '#2e7d32';
+        const estado = '🟢 ESTABLE';
+        const colorEstado = '#2e7d32';
         
         this.mostrarPanelBasico(territorio.nombre, estado, colorEstado, poblacion, capital);
     },
@@ -55,7 +55,7 @@ const UIPanelInfo = {
                     <p><strong>Población:</strong> ${poblacion}</p>
                     <p><strong>Capital:</strong> ${capital}</p>
                 </div>
-                <div class="info-alertas" id="info-alertas">
+                <div class="info-alertas">
                     <h4>⚠️ Alertas</h4>
                     <div class="alerta-item alerta-roja">🔴 Seguridad energética</div>
                     <div class="alerta-item alerta-amarilla">🟡 Desempleo alto</div>
@@ -63,49 +63,106 @@ const UIPanelInfo = {
             </div>
         `;
         
-        // Reconectar eventos de los botones (por si se pierden al reemplazar el HTML)
-        this.init();
+        // Volver a vincular los botones (porque el innerHTML los ha recreado)
+        this.vincularBotones();
     },
     
     mostrarSeccion: function(seccion) {
         const paisId = this.paisActual;
-        const datos = EstadoTablero.real.territorios[paisId];
-        if (!datos) return;
+        // Intentar obtener datos reales, si no existen usar valores por defecto
+        let datosTerritorio = null;
+        if (EstadoTablero && EstadoTablero.real && EstadoTablero.real.territorios) {
+            datosTerritorio = EstadoTablero.real.territorios[paisId];
+        }
+        
+        // Valores por defecto si no hay datos
+        const poderEconomico = datosTerritorio?.poderes?.económico ?? 0.5;
+        const poderFinanciero = datosTerritorio?.poderes?.financiero ?? 0.5;
+        const poderSocial = datosTerritorio?.poderes?.social ?? 0.5;
         
         let html = '';
+        const nombrePais = paisId.toUpperCase();
+        
         switch(seccion) {
             case 'economia':
-                const pib = (datos.poderes.económico * 3).toFixed(1);
-                const inflacion = (datos.poderes.financiero * 4).toFixed(1);
-                const deuda = (datos.poderes.financiero * 120).toFixed(0);
-                const desempleo = ((1 - datos.poderes.social) * 20).toFixed(1);
+                const pib = (poderEconomico * 3).toFixed(1);
+                const inflacion = (poderFinanciero * 4).toFixed(1);
+                const deuda = (poderFinanciero * 120).toFixed(0);
+                const desempleo = ((1 - poderSocial) * 20).toFixed(1);
                 html = `
-                    <h4>📊 Datos económicos de ${paisId.toUpperCase()}</h4>
-                    <p><strong>PIB (variación):</strong> ${pib > 0 ? '+' : ''}${pib}%</p>
-                    <p><strong>Inflación:</strong> ${inflacion}%</p>
-                    <p><strong>Deuda/PIB:</strong> ${deuda}%</p>
-                    <p><strong>Desempleo:</strong> ${desempleo}%</p>
-                    <p class="fuente">📚 Datos simulados (próximamente datos reales INE/Eurostat)</p>
+                    <div class="dashboard-seccion">
+                        <h4>📊 Datos económicos de ${nombrePais}</h4>
+                        <p><strong>PIB (variación):</strong> ${pib > 0 ? '+' : ''}${pib}%</p>
+                        <p><strong>Inflación:</strong> ${inflacion}%</p>
+                        <p><strong>Deuda/PIB:</strong> ${deuda}%</p>
+                        <p><strong>Desempleo:</strong> ${desempleo}%</p>
+                        <p class="fuente">📚 Datos simulados (próximamente datos reales)</p>
+                        <button class="btn-volver">◀ Volver al panel</button>
+                    </div>
                 `;
                 break;
             case 'leyes':
-                html = <p>⚖️ Leyes destacadas de ${paisId.toUpperCase()}:<br>• Ley de Transición Energética 2026<br>• Reforma Sanitaria 2026<br>• Ley de Soberanía Digital</p><p class="fuente">📚 Fuente: BOE (simulado)</p>;
+                html = `
+                    <div class="dashboard-seccion">
+                        <h4>⚖️ Leyes destacadas de ${nombrePais}</h4>
+                        <ul>
+                            <li>Ley de Transición Energética 2026</li>
+                            <li>Reforma Sanitaria 2026</li>
+                            <li>Ley de Soberanía Digital</li>
+                        </ul>
+                        <p class="fuente">📚 Fuente: BOE (simulado)</p>
+                        <button class="btn-volver">◀ Volver al panel</button>
+                    </div>
+                `;
                 break;
             case 'geopolitica':
-                html = <p>🏛️ Relaciones internacionales de ${paisId.toUpperCase()}:<br>• UE: aliado estratégico<br>• OTAN: miembro<br>• Relaciones con Francia: cordiales</p>;
+                html = `
+                    <div class="dashboard-seccion">
+                        <h4>🏛️ Relaciones internacionales de ${nombrePais}</h4>
+                        <p>• UE: aliado estratégico</p>
+                        <p>• OTAN: miembro</p>
+                        <p>• Relaciones con Francia: cordiales</p>
+                        <button class="btn-volver">◀ Volver al panel</button>
+                    </div>
+                `;
                 break;
             case 'social':
-                html = <p>👥 Indicadores sociales de ${paisId.toUpperCase()}:<br>• Confianza institucional: 45%<br>• Índice de protestas: bajo<br>• Satisfacción con servicios públicos: 52%</p>;
+                html = `
+                    <div class="dashboard-seccion">
+                        <h4>👥 Indicadores sociales de ${nombrePais}</h4>
+                        <p><strong>Confianza institucional:</strong> 45%</p>
+                        <p><strong>Índice de protestas:</strong> bajo</p>
+                        <p><strong>Satisfacción con servicios públicos:</strong> 52%</p>
+                        <button class="btn-volver">◀ Volver al panel</button>
+                    </div>
+                `;
                 break;
             case 'clima':
-                html = <p>🌍 Datos climáticos de ${paisId.toUpperCase()}:<br>• Temperatura media: 15°C<br>• Riesgo de sequía: moderado<br>• Emisiones CO2: 5.8 ton/hab</p>;
+                html = `
+                    <div class="dashboard-seccion">
+                        <h4>🌍 Datos climáticos de ${nombrePais}</h4>
+                        <p><strong>Temperatura media:</strong> 15°C</p>
+                        <p><strong>Riesgo de sequía:</strong> moderado</p>
+                        <p><strong>Emisiones CO2:</strong> 5.8 ton/hab</p>
+                        <button class="btn-volver">◀ Volver al panel</button>
+                    </div>
+                `;
                 break;
             default:
-                html = <p>Información no disponible</p>;
+                html = `<p>Información no disponible</p>`;
         }
         
         const container = document.getElementById('dashboard-container');
-        if (container) container.innerHTML = html;
+        if (container) {
+            container.innerHTML = html;
+            // Vincular el botón "Volver" si existe
+            const btnVolver = container.querySelector('.btn-volver');
+            if (btnVolver) {
+                btnVolver.addEventListener('click', () => {
+                    this.mostrarPais(this.paisActual);
+                });
+            }
+        }
     }
 };
 
