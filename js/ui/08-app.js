@@ -123,6 +123,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const simuladorPanel =
         document.getElementById('simulador-panel');
 
+    const btnCerrarSimulador =
+        document.getElementById('btn-cerrar-simulador');
+    
     const verificadorPanel =
         document.getElementById('verificador-panel');
 
@@ -207,6 +210,34 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    // =====================================================
+// CERRAR SIMULADOR
+// =====================================================
+
+if (btnCerrarSimulador && simuladorPanel) {
+
+    btnCerrarSimulador.addEventListener('click', () => {
+
+        simuladorPanel.classList.remove('active');
+
+        if (btnJuego) {
+            btnJuego.classList.remove('active');
+        }
+
+        if (btnReal) {
+            btnReal.classList.add('active');
+        }
+
+        window.CONFIG.modo = 'realidad';
+
+        if (badge) {
+            badge.textContent = '🌐 MODO REAL';
+        }
+
+        console.log('❌ Simulador cerrado');
+    });
+}
+    
     // =====================================================
     // VERIFICADOR
     // =====================================================
