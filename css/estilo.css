@@ -837,3 +837,45 @@ body {
         grid-template-columns: repeat(2, 1fr);
     }
 }
+
+/* =========================================================
+   HEADER SIMULADOR
+   ========================================================= */
+
+.simulador-header-right {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+}
+
+.btn-cerrar {
+
+    background: transparent;
+
+    border: 1px solid var(--border);
+
+    color: var(--text);
+
+    width: 36px;
+    height: 36px;
+
+    border-radius: 50%;
+
+    cursor: pointer;
+
+    font-size: 1rem;
+
+    transition: 0.2s;
+}
+
+.btn-cerrar:hover {
+
+    background: var(--danger);
+
+    border-color: var(--danger);
+
+    color: white;
+}
