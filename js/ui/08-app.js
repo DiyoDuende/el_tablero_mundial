@@ -484,32 +484,31 @@ if (btnCerrarSimulador && simuladorPanel) {
     });
 
     // =====================================================
-    // BUSCADOR RÁPIDO
-    // =====================================================
+// BUSCADOR RÁPIDO (con Nominatim - búsqueda global)
+// =====================================================
 
-    const buscador =
-        document.getElementById('buscador-rapido');
+const buscador =
+    document.getElementById('buscador-rapido');
 
-    if (buscador) {
+if (buscador) {
 
-        buscador.addEventListener('keydown', (e) => {
+    buscador.addEventListener('keydown', (e) => {
 
-            if (e.key !== 'Enter') return;
+        if (e.key !== 'Enter') return;
 
-            const valor =
-                buscador.value.trim().toLowerCase();
+        const valor = buscador.value.trim();  // No usar toLowerCase() para mantener nombres propios
 
-            if (!valor) return;
+        if (!valor) return;
 
-            if (
-                window.MapaMundial &&
-                typeof MapaMundial.irAPais === 'function'
-            ) {
+        if (
+            window.MapaMundial &&
+            typeof MapaMundial.buscarLugar === 'function'
+        ) {
 
-                MapaMundial.irAPais(valor);
-            }
-        });
-    }
+            MapaMundial.buscarLugar(valor);
+        }
+    });
+}
 
     // =====================================================
     // CAPAS
