@@ -1,6 +1,6 @@
 // js/ui/01-panel-info.js
 const UIPanelInfo = {
-    paisActual: 'españa',
+    paisActual: 'espana',
 
     init: function() {
         console.log('✅ UIPanelInfo iniciado');
@@ -31,7 +31,7 @@ const UIPanelInfo = {
         const poblacion = territorio.poblacion ? territorio.poblacion.toLocaleString() : '—';
         const capital = territorio.capital || '—';
 
-        const container = document.getElementById('dashboard-container');
+        const container = document.getElementById('panel-info');
         if (!container) return;
 
         container.innerHTML = `
@@ -66,7 +66,7 @@ const UIPanelInfo = {
 
     mostrarSeccion: function(seccion) {
         console.log(`📄 Mostrar sección: ${seccion} para ${this.paisActual}`);
-        const container = document.getElementById('dashboard-container');
+        const container = document.getElementById('panel-info');
         if (!container) return;
 
         const nombre = this.paisActual.toUpperCase();
