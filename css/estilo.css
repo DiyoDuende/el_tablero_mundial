@@ -485,6 +485,10 @@ body {
 .timeline-global-container,
 .cadena-container {
 
+    position: relative;
+
+    z-index: 2000;
+
     background: var(--bg-card);
 
     border-radius: var(--radius);
@@ -496,6 +500,10 @@ body {
     display: none;
 
     overflow-y: auto;
+
+    width: 100%;
+
+    margin-top: 10px;
 }
 
 .verificador-container.active,
