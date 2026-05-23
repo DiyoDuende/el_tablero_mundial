@@ -31,10 +31,6 @@ const UIPanelInfo = {
                 const seccion =
                     e.currentTarget.dataset.seccion;
 
-                console.log(
-                    `🖱️ Click en botón: ${seccion}`
-                );
-
                 this.mostrarSeccion(seccion);
             };
         });
@@ -42,65 +38,23 @@ const UIPanelInfo = {
 
     mostrarPais: function (paisId) {
 
-        console.log(`📍 Mostrar país: ${paisId}`);
-
         this.paisActual = paisId;
-
-        const territorio =
-            window.TERRITORIOS?.[paisId];
-
-        const nombre =
-            territorio?.nombre || paisId;
-
-        const poblacion =
-            territorio?.poblacion
-                ? territorio.poblacion.toLocaleString()
-                : '—';
-
-        const capital =
-            territorio?.capital || '—';
 
         const panel =
             document.getElementById('panel-info');
 
-        if (!panel) {
-
-            console.warn(
-                '⚠️ No existe #panel-info'
-            );
-
-            return;
-        }
+        if (!panel) return;
 
         panel.innerHTML = `
             <div class="info-header">
 
-                <h3 id="pais-nombre">
-                    🌍 ${nombre}
+                <h3>
+                    🌍 ${paisId.toUpperCase()}
                 </h3>
 
                 <span class="pais-estado">
                     🟢 ESTABLE
                 </span>
-
-            </div>
-
-            <div class="info-objetivos">
-                <span>🎯 Objetivos:</span>
-                <span>68%</span>
-            </div>
-
-            <div class="info-datos-basicos">
-
-                <p>
-                    <strong>Capital:</strong>
-                    ${capital}
-                </p>
-
-                <p>
-                    <strong>Población:</strong>
-                    ${poblacion}
-                </p>
 
             </div>
 
@@ -122,38 +76,10 @@ const UIPanelInfo = {
 
                 <button
                     class="info-btn"
-                    data-seccion="geopolitica"
-                >
-                    🏛️ Geopolítica
-                </button>
-
-                <button
-                    class="info-btn"
                     data-seccion="social"
                 >
                     👥 Social
                 </button>
-
-                <button
-                    class="info-btn"
-                    data-seccion="clima"
-                >
-                    🌍 Clima
-                </button>
-
-            </div>
-
-            <div class="info-alertas">
-
-                <h4>⚠️ Alertas</h4>
-
-                <div class="alerta-item alerta-roja">
-                    🔴 Seguridad energética
-                </div>
-
-                <div class="alerta-item alerta-amarilla">
-                    🟡 Desempleo alto
-                </div>
 
             </div>
         `;
@@ -163,102 +89,42 @@ const UIPanelInfo = {
 
     mostrarSeccion: function (seccion) {
 
-        console.log(
-            `📄 Mostrar sección: ${seccion}`
-        );
-
         const panel =
             document.getElementById('panel-info');
 
         if (!panel) return;
 
-        let contenido = '';
+        panel.innerHTML = `
+            <div class="panel-seccion">
 
-        switch (seccion) {
+                <h3>
+                    ${seccion.toUpperCase()}
+                </h3>
 
-            case 'economia':
+                <p>
+                    Información de ${seccion}
+                </p>
 
-                contenido = `
-                    <div class="panel-seccion">
+                <button
+                    class="info-btn"
+                    id="btn-volver"
+                >
+                    ◀ Volver
+                </button>
 
-                        <h3>
-                            📊 Economía · ${this.paisActual}
-                        </h3>
+            </div>
+        `;
 
-                        <p>PIB: +2.3%</p>
-                        <p>Inflación: 2.1%</p>
-                        <p>Deuda: 98%</p>
-                        <p>Desempleo: 11.2%</p>
+        const btn =
+            document.getElementById('btn-volver');
 
-                        <button
-                            class="btn-volver-panel"
-                        >
-                            ◀ Volver
-                        </button>
+        if (btn) {
 
-                    </div>
-                `;
+            btn.onclick = () => {
 
-                break;
-
-            case 'leyes':
-
-                contenido = `
-                    <div class="panel-seccion">
-
-                        <h3>
-                            ⚖️ Leyes · ${this.paisActual}
-                        </h3>
-
-                        <p>
-                            Reformas activas:
-                            4
-                        </p>
-
-                        <button
-                            class="btn-volver-panel"
-                        >
-                            ◀ Volver
-                        </button>
-
-                    </div>
-                `;
-
-                break;
-
-            default:
-
-                contenido = `
-                    <div class="panel-seccion">
-
-                        <h3>
-                            🚧 ${seccion}
-                        </h3>
-
-                        <p>
-                            Sección en construcción
-                        </p>
-
-                        <button
-                            class="btn-volver-panel"
-                        >
-                            ◀ Volver
-                        </button>
-
-                    </div>
-                `;
-        }
-
-        panel.innerHTML = contenido;
-
-        const btnVolver =
-            panel.querySelector('.btn-volver-panel');
-
-        if (btnVolver) {
-
-            btnVolver.onclick = () => {
-
-                this.mostrarPais(this.paisActual);
+                this.mostrarPais(
+                    this.paisActual
+                );
             };
         }
     }
