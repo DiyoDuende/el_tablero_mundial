@@ -1,6 +1,14 @@
 // js/core/05-verificador.js
 const Verificador = {
-    // Base de conocimiento ampliada
+    // Función para eliminar acentos y convertir a minúsculas
+    normalizar: function(texto) {
+        return texto.toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/ñ/g, 'n');
+    },
+
+    // Base de conocimiento ampliada (claves sin acentos ni ñ)
     baseConocimiento: {
         'gasolina': {
             estado: 'verdadero',
@@ -15,7 +23,7 @@ const Verificador = {
         },
         'inflacion': {
             estado: 'verdadero',
-            respuesta: 'La inflación actual del 2.8% se debe principalmente al aumento de precios energéticos y al encarecimiento de alimentos procesados por problemas en cadenas de suministro.',
+            respuesta: 'La inflación actual del 2.8% se debe principalmente al aumento de precios energéticos y al encarecimiento de alimentos procesados.',
             factores: [
                 { nombre: 'Energía', porcentaje: 45, descripcion: 'Precio electricidad +8%, gas +12%' },
                 { nombre: 'Alimentos', porcentaje: 30, descripcion: 'Materias primas +6%, transporte +5%' },
@@ -37,7 +45,7 @@ const Verificador = {
         },
         'cambio climatico': {
             estado: 'verdadero',
-            respuesta: 'El cambio climático es un fenómeno real y acelerado. Las emisiones de CO2 han aumentado un 2% globalmente en el último año, y los eventos extremos se han multiplicado por 3 en la última década.',
+            respuesta: 'El cambio climático es un fenómeno real y acelerado. Las emisiones de CO2 han aumentado un 2% globalmente en el último año.',
             factores: [
                 { nombre: 'Emisiones industriales', porcentaje: 60, descripcion: 'Aumento del 2% anual' },
                 { nombre: 'Deforestación', porcentaje: 20, descripcion: 'Pérdida de sumideros de carbono' },
@@ -59,9 +67,9 @@ const Verificador = {
     },
 
     verificar: function(duda) {
-        const dudaLower = duda.toLowerCase();
+        const dudaNormalizada = this.normalizar(duda);
         for (let [clave, valor] of Object.entries(this.baseConocimiento)) {
-            if (dudaLower.includes(clave)) {
+            if (dudaNormalizada.includes(clave)) {
                 return {
                     encontrado: true,
                     ...valor,
