@@ -31,7 +31,7 @@ const UIPanelInfo = {
                 </div>
             </div>
         `;
-        this.init(); // reconectar botones
+        this.init();
     },
 
     mostrarSeccion: function(seccion) {
@@ -48,3 +48,5 @@ const UIPanelInfo = {
         if (btn) btn.addEventListener('click', () => this.mostrarPais(this.paisActual));
     }
 };
+
+window.UIPanelInfo = UIPanelInfo;
