@@ -1,14 +1,7 @@
-// Buscador global
 const Buscador = {
-    buscar: function(texto, datos) {
-        const resultados = [];
-        const textoLower = texto.toLowerCase();
-        for (const id in datos) {
-            if (datos[id] && datos[id].nombre && datos[id].nombre.toLowerCase().includes(textoLower)) {
-                resultados.push({ id, ...datos[id] });
-            }
-        }
-        return resultados;
+    buscar(texto, data) {
+        const lower = texto.toLowerCase();
+        return Object.values(data).filter(item => item.nombre && item.nombre.toLowerCase().includes(lower));
     }
 };
 window.Buscador = Buscador;
