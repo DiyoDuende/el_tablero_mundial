@@ -1,116 +1,204 @@
-// js/ui/01-panel-info.js
-const UIPanelInfo = {
-    paisActual: 'españa',
+// ============================================
+// 🌍 TABLERO MUNDIAL
+// 00-mapa.js
+// MAPA MUNDIAL (Leaflet)
+// ============================================
 
-    init: function() {
-        console.log('✅ UIPanelInfo iniciado');
-        this.vincularBotones();
-    },
+const MapaMundial = {
 
-    vincularBotones: function() {
-        const botones = document.querySelectorAll('.info-btn');
-        console.log(`🔘 Botones encontrados: ${botones.length}`);
-        botones.forEach(btn => {
-            btn.removeEventListener('click', this.clickHandler);
-            btn.addEventListener('click', this.clickHandler.bind(this));
+    map: null,
+    markers: [],
+
+    init: function () {
+
+        console.log('🗺️ Inicializando mapa...');
+
+        if (this.map) {
+            this.map.remove();
+        }
+
+        this.map = L.map('mapa-mundial', {
+            zoomControl: true,
+            minZoom: 2,
+            maxZoom: 18
+        }).setView([20, 0], 2);
+
+        L.tileLayer(
+            'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            {
+                attribution: '© OpenStreetMap'
+            }
+        ).addTo(this.map);
+
+        this.cargarPaises();
+
+        this.map.whenReady(() => {
+
+            console.log('✅ Mapa listo');
+
+            this.irAPais('espana');
+
+            setTimeout(() => {
+
+                this.map.invalidateSize();
+
+            }, 300);
+        });
+
+        window.addEventListener('resize', () => {
+
+            if (this.map) {
+
+                this.map.invalidateSize();
+            }
         });
     },
 
-    clickHandler: function(e) {
-        const seccion = e.currentTarget.dataset.seccion;
-        console.log(`🖱️ Click en botón: ${seccion}`);
-        if (seccion) this.mostrarSeccion(seccion);
-    },
+    cargarPaises: function () {
 
-    mostrarPais: function(paisId) {
-        console.log(`📍 Mostrar país: ${paisId}`);
-        this.paisActual = paisId;
-        const territorio = TERRITORIOS[paisId];
-        if (!territorio) {
-            console.error(`Territorio ${paisId} no encontrado`);
-            return;
-        }
+        const paises = [
 
-        const poblacion = territorio.poblacion ? territorio.poblacion.toLocaleString() : '—';
-        const capital = territorio.capital || '—';
+            {
+                id: 'espana',
+                nombre: 'España',
+                coords: [40.4, -3.7]
+            },
 
-        const container = document.getElementById('dashboard-container');
-        if (!container) {
-            console.error('No se encontró #dashboard-container');
-            return;
-        }
+            {
+                id: 'francia',
+                nombre: 'Francia',
+                coords: [46.6, 2.4]
+            },
 
-        container.innerHTML = `
-            <div class="dashboard-pais">
-                <div class="info-header">
-                    <h3>🇪🇸 ${territorio.nombre}</h3>
-                    <span class="pais-estado">🟢 ESTABLE</span>
-                </div>
-                <div class="info-objetivos">🎯 Objetivos: 68%</div>
-                <div class="info-botones">
-                    <button class="info-btn" data-seccion="economia">📊 Economía</button>
-                    <button class="info-btn" data-seccion="leyes">⚖️ Leyes</button>
-                    <button class="info-btn" data-seccion="geopolitica">🏛️ Geopolítica</button>
-                    <button class="info-btn" data-seccion="social">👥 Social</button>
-                    <button class="info-btn" data-seccion="clima">🌍 Clima</button>
-                </div>
-                <div class="info-datos-basicos">
-                    <p><strong>Población:</strong> ${poblacion}</p>
-                    <p><strong>Capital:</strong> ${capital}</p>
-                </div>
-                <div class="info-alertas">
-                    <h4>⚠️ Alertas</h4>
-                    <div class="alerta-item alerta-roja">🔴 Seguridad energética</div>
-                    <div class="alerta-item alerta-amarilla">🟡 Desempleo alto</div>
-                </div>
-            </div>
-        `;
-        this.vincularBotones();
-    },
+            {
+                id: 'portugal',
+                nombre: 'Portugal',
+                coords: [39.5, -8.0]
+            },
 
-    mostrarSeccion: function(seccion) {
-        console.log(`📄 Mostrar sección: ${seccion} para ${this.paisActual}`);
-        const container = document.getElementById('dashboard-container');
-        if (!container) return;
+            {
+                id: 'alemania',
+                nombre: 'Alemania',
+                coords: [51.1, 10.5]
+            },
 
-        const nombre = this.paisActual.toUpperCase();
-        let contenido = '';
+            {
+                id: 'italia',
+                nombre: 'Italia',
+                coords: [41.9, 12.5]
+            },
 
-        switch(seccion) {
-            case 'economia':
-                contenido = `
-                    <div class="dashboard-seccion">
-                        <h4>📊 Datos económicos de ${nombre}</h4>
-                        <p>PIB: +2.3%</p>
-                        <p>Inflación: 2.1%</p>
-                        <p>Deuda/PIB: 98%</p>
-                        <p>Desempleo: 11.2%</p>
-                        <button class="btn-volver">◀ Volver</button>
-                    </div>
-                `;
-                break;
-            case 'leyes':
-                contenido = `
-                    <div class="dashboard-seccion">
-                        <h4>⚖️ Leyes destacadas de ${nombre}</h4>
-                        <ul><li>Ley de Transición Energética 2026</li><li>Reforma Sanitaria 2026</li></ul>
-                        <button class="btn-volver">◀ Volver</button>
-                    </div>
-                `;
-                break;
-            default:
-                contenido = `<p>Sección ${seccion} en construcción</p><button class="btn-volver">◀ Volver</button>`;
-        }
+            {
+                id: 'eeuu',
+                nombre: 'EEUU',
+                coords: [39.8, -98.5]
+            },
 
-        container.innerHTML = contenido;
+            {
+                id: 'china',
+                nombre: 'China',
+                coords: [35.8, 104.1]
+            }
+        ];
 
-        const btnVolver = container.querySelector('.btn-volver');
-        if (btnVolver) {
-            btnVolver.addEventListener('click', () => {
-                this.mostrarPais(this.paisActual);
+        paises.forEach(pais => {
+
+            const marker = L.circleMarker(
+                pais.coords,
+                {
+                    radius: 8,
+                    color: '#4fc3f7',
+                    fillColor: '#2a7faa',
+                    fillOpacity: 0.8,
+                    weight: 2
+                }
+            ).addTo(this.map);
+
+            marker.bindTooltip(pais.nombre);
+
+            marker.on('click', () => {
+
+                this.irAPais(pais.id);
             });
+
+            this.markers.push(marker);
+        });
+    },
+
+    irAPais: function (paisId) {
+
+        const paises = {
+
+            espana: {
+                centro: [40.4, -3.7],
+                zoom: 6
+            },
+
+            francia: {
+                centro: [46.6, 2.4],
+                zoom: 5
+            },
+
+            portugal: {
+                centro: [39.5, -8.0],
+                zoom: 6
+            },
+
+            alemania: {
+                centro: [51.1, 10.5],
+                zoom: 5
+            },
+
+            italia: {
+                centro: [41.9, 12.5],
+                zoom: 5
+            },
+
+            eeuu: {
+                centro: [39.8, -98.5],
+                zoom: 4
+            },
+
+            china: {
+                centro: [35.8, 104.1],
+                zoom: 4
+            }
+        };
+
+        const destino = paises[paisId];
+
+        if (!destino) {
+
+            console.warn(
+                `⚠️ País no encontrado: ${paisId}`
+            );
+
+            return;
         }
+
+        this.map.flyTo(
+            destino.centro,
+            destino.zoom,
+            {
+                duration: 1.5
+            }
+        );
+
+        if (
+            window.UIPanelInfo &&
+            typeof UIPanelInfo.mostrarPais === 'function'
+        ) {
+
+            UIPanelInfo.mostrarPais(paisId);
+        }
+    },
+
+    activarCapa: function (capa, activa) {
+
+        console.log(
+            `Capa ${capa} ${activa ? 'activada' : 'desactivada'}`
+        );
     }
 };
 
-window.UIPanelInfo = UIPanelInfo;
+window.MapaMundial = MapaMundial;
