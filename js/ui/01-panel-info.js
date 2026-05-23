@@ -1,6 +1,6 @@
 // js/ui/01-panel-info.js
 const UIPanelInfo = {
-    paisActual: 'españa',   // ← con ñ
+    paisActual: 'españa',
 
     init: function() {
         console.log('✅ UIPanelInfo iniciado');
@@ -19,20 +19,26 @@ const UIPanelInfo = {
     clickHandler: function(e) {
         const seccion = e.currentTarget.dataset.seccion;
         console.log(`🖱️ Click en botón: ${seccion}`);
-        this.mostrarSeccion(seccion);
+        if (seccion) this.mostrarSeccion(seccion);
     },
 
     mostrarPais: function(paisId) {
         console.log(`📍 Mostrar país: ${paisId}`);
         this.paisActual = paisId;
         const territorio = TERRITORIOS[paisId];
-        if (!territorio) return;
+        if (!territorio) {
+            console.error(`Territorio ${paisId} no encontrado`);
+            return;
+        }
 
         const poblacion = territorio.poblacion ? territorio.poblacion.toLocaleString() : '—';
         const capital = territorio.capital || '—';
 
-        const container = document.getElementById('dashboard-container'); // ← corregido
-        if (!container) return;
+        const container = document.getElementById('dashboard-container');
+        if (!container) {
+            console.error('No se encontró #dashboard-container');
+            return;
+        }
 
         container.innerHTML = `
             <div class="dashboard-pais">
@@ -65,7 +71,7 @@ const UIPanelInfo = {
 
     mostrarSeccion: function(seccion) {
         console.log(`📄 Mostrar sección: ${seccion} para ${this.paisActual}`);
-        const container = document.getElementById('dashboard-container'); // ← corregido
+        const container = document.getElementById('dashboard-container');
         if (!container) return;
 
         const nombre = this.paisActual.toUpperCase();
@@ -74,30 +80,38 @@ const UIPanelInfo = {
         switch(seccion) {
             case 'economia':
                 contenido = `
-                    <h4>📊 Datos económicos de ${nombre}</h4>
-                    <p>PIB: +2.3%</p>
-                    <p>Inflación: 2.1%</p>
-                    <p>Deuda/PIB: 98%</p>
-                    <p>Desempleo: 11.2%</p>
-                    <button id="btnVolverEconomia">◀ Volver</button>
+                    <div class="dashboard-seccion">
+                        <h4>📊 Datos económicos de ${nombre}</h4>
+                        <p>PIB: +2.3%</p>
+                        <p>Inflación: 2.1%</p>
+                        <p>Deuda/PIB: 98%</p>
+                        <p>Desempleo: 11.2%</p>
+                        <button class="btn-volver">◀ Volver</button>
+                    </div>
+                `;
+                break;
+            case 'leyes':
+                contenido = `
+                    <div class="dashboard-seccion">
+                        <h4>⚖️ Leyes destacadas de ${nombre}</h4>
+                        <ul><li>Ley de Transición Energética 2026</li><li>Reforma Sanitaria 2026</li></ul>
+                        <button class="btn-volver">◀ Volver</button>
+                    </div>
                 `;
                 break;
             default:
-                contenido = `<p>Sección ${seccion} en construcción</p><button id="btnVolverDefault">◀ Volver</button>`;
+                contenido = `<p>Sección ${seccion} en construcción</p><button class="btn-volver">◀ Volver</button>`;
         }
 
         container.innerHTML = contenido;
 
-        const btnVolver = document.querySelector('#btnVolverEconomia, #btnVolverDefault');
+        const btnVolver = container.querySelector('.btn-volver');
         if (btnVolver) {
             btnVolver.addEventListener('click', () => {
                 this.mostrarPais(this.paisActual);
             });
         }
     }
-};
-
-window.UIPanelInfo = UIPanelInfo;
 };
 
 window.UIPanelInfo = UIPanelInfo;
