@@ -11,12 +11,13 @@ const MapaMundial = {
             attribution: '© OpenStreetMap'
         }).addTo(this.map);
         
-        // Cargar marcadores (opcional, puedes mantenerlos)
+        // Cargar marcadores de ciudades principales (opcional, pero útiles como atajo)
         this.cargarMarcadores();
         
-        // Cargar GeoJSON de países para las capas
+        // Cargar GeoJSON de países (para las capas de poder)
         this.cargarGeoJSON();
         
+        // Centrar en España tras un breve retraso
         setTimeout(() => {
             this.irAPais('españa');
         }, 500);
@@ -53,7 +54,6 @@ const MapaMundial = {
     },
     
     cargarGeoJSON: function() {
-        // Usar un GeoJSON de países (dominio público)
         const url = 'https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson';
         
         fetch(url)
@@ -71,21 +71,17 @@ const MapaMundial = {
                         if (nombre) {
                             layer.bindTooltip(nombre);
                             layer.on('click', () => {
-                                // Buscar el id del país en TERRITORIOS (normalizando)
                                 const id = this.normalizarId(nombre);
-                                if (window.UIPanelInfo) {
-                                    UIPanelInfo.mostrarPais(id);
-                                }
+                                if (window.UIPanelInfo) UIPanelInfo.mostrarPais(id);
                             });
                         }
                     }
                 }).addTo(this.map);
             })
-            .catch(error => console.error('Error cargando GeoJSON:', error));
+            .catch(error => console.error('Error cargando GeoJSON de países:', error));
     },
     
     normalizarId: function(nombre) {
-        // Convertir "Spain" -> "españa", "France" -> "francia", etc.
         const mapa = {
             'Spain': 'españa',
             'France': 'francia',
@@ -118,47 +114,77 @@ const MapaMundial = {
         if (window.UIPanelInfo) UIPanelInfo.mostrarPais(paisId);
     },
     
-    // Función para colorear países según una capa (valores simulados)
-    activarCapa: function(capa, activa) {
+    // Activar capa de poder con datos reales (asíncrono)
+    activarCapa: async function(capa, activa) {
         if (!this.capaPaises) return;
-        
-        // Si ya había una capa activa y es la misma, la desactivamos
+
+        // Si ya estaba activa la misma capa, la desactivamos
         if (this.capaActiva === capa && activa) {
             this.resetearColores();
             this.capaActiva = null;
             return;
         }
-        
+
         if (!activa) {
             this.resetearColores();
             this.capaActiva = null;
             return;
         }
-        
+
         this.capaActiva = capa;
-        
-        // Valores simulados para cada país según la capa (0-1)
-        const valores = this.obtenerValoresSimulados(capa);
-        
-        // Aplicar colores a cada feature
+        console.log(`🔄 Cargando capa: ${capa}`);
+
+        let valores = {};
+        // Intentar obtener datos reales si está disponible el módulo
+        if (window.DatosReales && typeof DatosReales.obtenerValores === 'function') {
+            valores = await DatosReales.obtenerValores(capa);
+        }
+
+        // Si no hay datos reales, usar simulación
+        if (Object.keys(valores).length === 0) {
+            console.warn(`⚠️ No se obtuvieron datos reales para ${capa}, usando simulación`);
+            valores = this.obtenerValoresSimulados(capa);
+        }
+
+        // Aplicar colores a cada país
         this.capaPaises.eachLayer(layer => {
-            const props = layer.feature.properties;
-            const nombre = props.ADMIN;
-            let valor = valores[nombre] || 0.5;
-            // Escala de color: verde (bueno) a rojo (malo)
-            const color = this.valorAColor(valor);
+            const nombre = layer.feature?.properties?.ADMIN;
+            if (!nombre) return;
+
+            let valor = valores[nombre];
+            if (valor === undefined) valor = 0.5;
+
+            // Normalizar valor según la capa (para escala de color)
+            let intensidad;
+            if (capa === 'economico') {
+                // GDP per cápita: escalamos suponiendo un máximo de 100.000 USD
+                intensidad = Math.min(1, valor / 100000);
+            } else {
+                intensidad = valor; // asumimos que ya viene normalizado 0-1
+            }
+
+            const color = this.valorAColor(intensidad);
             layer.setStyle({
                 fillColor: color,
                 fillOpacity: 0.7,
                 color: '#fff',
                 weight: 1
             });
-            // Actualizar tooltip con el valor
-            const tooltip = `${nombre}<br>${capa}: ${Math.round(valor*100)}%`;
-            layer.bindTooltip(tooltip);
+
+            // Tooltip personalizado según la capa
+            let tooltipText = nombre;
+            if (capa === 'economico' && valor !== undefined && valor !== 0.5) {
+                tooltipText += `<br>💰 PIB per cápita: ${new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'USD' }).format(valor)}`;
+            } else {
+                tooltipText += `<br>${capa}: ${typeof valor === 'number' ? Math.round(valor * 100) : valor}%`;
+            }
+            layer.bindTooltip(tooltipText);
         });
+
+        console.log(`✅ Capa ${capa} aplicada`);
     },
     
+    // Función para desactivar todas las capas y restaurar colores originales
     resetearColores: function() {
         if (!this.capaPaises) return;
         this.capaPaises.eachLayer(layer => {
@@ -168,20 +194,18 @@ const MapaMundial = {
                 color: '#4fc3f7',
                 weight: 1
             });
-            // Restaurar tooltip original
-            const nombre = layer.feature.properties.ADMIN;
+            const nombre = layer.feature?.properties?.ADMIN || '';
             layer.bindTooltip(nombre);
         });
     },
     
+    // Fallback simulado para capas sin datos reales (o por si falla la API)
     obtenerValoresSimulados: function(capa) {
-        // Aquí luego vendrán datos reales. Por ahora, valores fijos por país.
         const base = {
             'Spain': 0.7, 'France': 0.8, 'Germany': 0.9, 'Italy': 0.6,
-            'Portugal': 0.5, 'United States': 0.9, 'China': 0.8,
-            'Russia': 0.6, 'Brazil': 0.5, 'India': 0.4, 'Japan': 0.8
+            'Portugal': 0.5, 'United States': 0.9, 'China': 0.8, 'Russia': 0.6,
+            'Brazil': 0.5, 'India': 0.4, 'Japan': 0.8
         };
-        // Ajustar según capa: simular variación
         const valores = {};
         for (let [pais, v] of Object.entries(base)) {
             if (capa === 'economico') valores[pais] = Math.min(1, v * 1.2);
@@ -192,18 +216,20 @@ const MapaMundial = {
         return valores;
     },
     
+    // Escala de color: verde (bueno) -> amarillo -> rojo (malo)
     valorAColor: function(valor) {
-        // Gradiente: verde (0.3) -> amarillo (0.6) -> rojo (1)
-        if (valor < 0.33) return '#2ecc71';
-        if (valor < 0.66) return '#f1c40f';
-        return '#e74c3c';
+        if (valor < 0.33) return '#2ecc71';  // verde
+        if (valor < 0.66) return '#f1c40f';  // amarillo
+        return '#e74c3c';                    // rojo
     },
     
+    // Búsqueda global con Nominatim
     buscarLugar: function(texto) {
         if (!texto || texto.trim() === '') return;
         const buscarInput = document.getElementById('buscador-rapido');
         const placeholderOriginal = buscarInput ? buscarInput.placeholder : '';
         if (buscarInput) buscarInput.placeholder = '🔍 Buscando...';
+        
         const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(texto)}&limit=1&addressdetails=0`;
         fetch(url, {
             headers: { 'User-Agent': 'TableroMundial/1.0' }
@@ -220,13 +246,13 @@ const MapaMundial = {
                 marker.bindTooltip(lugar.display_name).openTooltip();
                 setTimeout(() => this.map.removeLayer(marker), 5000);
             } else {
-                alert(`No se encontró el lugar: "${texto}".`);
+                alert(`No se encontró el lugar: "${texto}". Intenta con otro nombre.`);
             }
         })
         .catch(error => {
             console.error('Error en Nominatim:', error);
             if (buscarInput) buscarInput.placeholder = placeholderOriginal;
-            alert('Error al buscar.');
+            alert('Error al buscar. Revisa tu conexión o intenta más tarde.');
         });
     }
 };
