@@ -3,7 +3,7 @@ const UIPanelInfo = {
     paisActual: 'españa',
 
     init: function() {
-        console.log('UIPanelInfo iniciado');
+        console.log('UIPanelInfo iniciado (solo una vez)');
         document.querySelectorAll('.info-btn').forEach(btn => {
             btn.removeEventListener('click', this.handleClick);
             btn.addEventListener('click', this.handleClick.bind(this));
@@ -31,7 +31,7 @@ const UIPanelInfo = {
                 </div>
             </div>
         `;
-        this.init();
+        this.init(); // reconectar botones
     },
 
     mostrarSeccion: function(seccion) {
