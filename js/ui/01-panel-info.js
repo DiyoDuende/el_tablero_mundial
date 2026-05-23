@@ -1,15 +1,19 @@
+// ============================================
+// UI PANEL INFO
+// ============================================
+
 const UIPanelInfo = {
 
     paisActual: 'espana',
 
-    init: function() {
+    init: function () {
 
         console.log('✅ UIPanelInfo iniciado');
 
         this.vincularBotones();
     },
 
-    vincularBotones: function() {
+    vincularBotones: function () {
 
         const botones =
             document.querySelectorAll('.info-btn');
@@ -30,7 +34,7 @@ const UIPanelInfo = {
         });
     },
 
-    clickHandler: function(e) {
+    clickHandler: function (e) {
 
         const seccion =
             e.currentTarget.dataset.seccion;
@@ -40,16 +44,23 @@ const UIPanelInfo = {
         this.mostrarSeccion(seccion);
     },
 
-    mostrarPais: function(paisId) {
+    mostrarPais: function (paisId) {
 
         console.log(`📍 Mostrar país: ${paisId}`);
 
         this.paisActual = paisId;
 
         const territorio =
-            TERRITORIOS[paisId];
+            window.TERRITORIOS?.[paisId];
 
-        if (!territorio) return;
+        if (!territorio) {
+
+            console.warn(
+                `⚠️ No existe TERRITORIOS.${paisId}`
+            );
+
+            return;
+        }
 
         const poblacion =
             territorio.poblacion
@@ -59,7 +70,11 @@ const UIPanelInfo = {
         const capital =
             territorio.capital || '—';
 
-        // CORREGIDO
+        // ============================================
+        // IMPORTANTE:
+        // usar panel-info REAL del HTML
+        // ============================================
+
         const container =
             document.getElementById('panel-info');
 
@@ -78,7 +93,7 @@ const UIPanelInfo = {
                 <div class="info-header">
 
                     <h3>
-                        🇪🇸 ${territorio.nombre}
+                        🌍 ${territorio.nombre}
                     </h3>
 
                     <span class="pais-estado">
@@ -88,7 +103,9 @@ const UIPanelInfo = {
                 </div>
 
                 <div class="info-objetivos">
+
                     🎯 Objetivos: 68%
+
                 </div>
 
                 <div class="info-botones">
@@ -161,16 +178,18 @@ const UIPanelInfo = {
             </div>
         `;
 
+        // IMPORTANTE:
+        // reactivar eventos
+
         this.vincularBotones();
     },
 
-    mostrarSeccion: function(seccion) {
+    mostrarSeccion: function (seccion) {
 
         console.log(
             `📄 Mostrar sección: ${seccion}`
         );
 
-        // CORREGIDO
         const container =
             document.getElementById('panel-info');
 
@@ -186,18 +205,57 @@ const UIPanelInfo = {
             case 'economia':
 
                 contenido = `
-                    <h4>
-                        📊 Datos económicos de ${nombre}
-                    </h4>
+                    <div class="panel-seccion">
 
-                    <p>PIB: +2.3%</p>
-                    <p>Inflación: 2.1%</p>
-                    <p>Deuda/PIB: 98%</p>
-                    <p>Desempleo: 11.2%</p>
+                        <h3>
+                            📊 Economía de ${nombre}
+                        </h3>
 
-                    <button id="btnVolverEconomia">
-                        ◀ Volver
-                    </button>
+                        <p>PIB: +2.3%</p>
+
+                        <p>Inflación: 2.1%</p>
+
+                        <p>Deuda/PIB: 98%</p>
+
+                        <p>Desempleo: 11.2%</p>
+
+                        <button
+                            class="info-btn volver-btn"
+                            id="btn-volver"
+                        >
+                            ◀ Volver
+                        </button>
+
+                    </div>
+                `;
+
+                break;
+
+            case 'leyes':
+
+                contenido = `
+                    <div class="panel-seccion">
+
+                        <h3>
+                            ⚖️ Leyes de ${nombre}
+                        </h3>
+
+                        <p>
+                            Reforma laboral activa
+                        </p>
+
+                        <p>
+                            Legislación climática en revisión
+                        </p>
+
+                        <button
+                            class="info-btn volver-btn"
+                            id="btn-volver"
+                        >
+                            ◀ Volver
+                        </button>
+
+                    </div>
                 `;
 
                 break;
@@ -205,32 +263,50 @@ const UIPanelInfo = {
             default:
 
                 contenido = `
-                    <p>
-                        Sección ${seccion}
-                        en construcción
-                    </p>
+                    <div class="panel-seccion">
 
-                    <button id="btnVolverDefault">
-                        ◀ Volver
-                    </button>
+                        <h3>
+                            🚧 ${seccion}
+                        </h3>
+
+                        <p>
+                            Sección en construcción
+                        </p>
+
+                        <button
+                            class="info-btn volver-btn"
+                            id="btn-volver"
+                        >
+                            ◀ Volver
+                        </button>
+
+                    </div>
                 `;
         }
 
         container.innerHTML = contenido;
 
+        // ============================================
+        // BOTÓN VOLVER
+        // ============================================
+
         const btnVolver =
-            document.querySelector(
-                '#btnVolverEconomia, #btnVolverDefault'
-            );
+            document.getElementById('btn-volver');
 
         if (btnVolver) {
 
-            btnVolver.addEventListener('click', () => {
+            btnVolver.addEventListener(
+                'click',
+                () => {
 
-                this.mostrarPais(this.paisActual);
-            });
+                    this.mostrarPais(
+                        this.paisActual
+                    );
+                }
+            );
         }
     }
 };
 
 window.UIPanelInfo = UIPanelInfo;
+```0
