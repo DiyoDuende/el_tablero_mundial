@@ -1,8 +1,7 @@
 // ============================================
 // 🌍 TABLERO MUNDIAL
 // 00-mapa.js
-// VERSIÓN LIMPIA Y DINÁMICA
-// SIN MARCADORES FIJOS
+// MAPA GLOBAL DINÁMICO
 // ============================================
 
 const MapaMundial = {
@@ -12,14 +11,14 @@ const MapaMundial = {
     marcadorBusqueda: null,
 
     // ============================================
-    // INICIALIZAR
+    // INIT
     // ============================================
 
     init: function () {
 
         console.log('🗺️ Inicializando mapa...');
 
-        // Evitar doble inicialización
+        // Evitar doble init
         if (this.map) {
 
             this.map.remove();
@@ -27,10 +26,7 @@ const MapaMundial = {
             this.map = null;
         }
 
-        // ============================================
-        // CREAR MAPA
-        // ============================================
-
+        // Crear mapa
         this.map = L.map('mapa-mundial', {
 
             zoomControl: true,
@@ -41,10 +37,7 @@ const MapaMundial = {
 
         }).setView([20, 0], 2);
 
-        // ============================================
-        // CAPA BASE
-        // ============================================
-
+        // OpenStreetMap
         L.tileLayer(
             'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
             {
@@ -53,10 +46,7 @@ const MapaMundial = {
             }
         ).addTo(this.map);
 
-        // ============================================
-        // MAPA LISTO
-        // ============================================
-
+        // Ready
         this.map.whenReady(() => {
 
             console.log('✅ Mapa listo');
@@ -68,10 +58,7 @@ const MapaMundial = {
             }, 300);
         });
 
-        // ============================================
-        // RESPONSIVE
-        // ============================================
-
+        // Resize
         window.addEventListener('resize', () => {
 
             if (!this.map) return;
@@ -99,15 +86,16 @@ const MapaMundial = {
             const url =
                 `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(texto)}`;
 
-            const response = await fetch(url);
+            const response =
+                await fetch(url);
 
             const resultados =
                 await response.json();
 
-            if (!resultados || !resultados.length) {
+            if (!resultados.length) {
 
                 console.warn(
-                    '⚠️ No se encontraron resultados'
+                    '⚠️ Lugar no encontrado'
                 );
 
                 return;
@@ -121,10 +109,7 @@ const MapaMundial = {
             const lon =
                 parseFloat(lugar.lon);
 
-            // ============================================
-            // MOVER MAPA
-            // ============================================
-
+            // Ir al lugar
             this.map.flyTo(
                 [lat, lon],
                 8,
@@ -133,10 +118,7 @@ const MapaMundial = {
                 }
             );
 
-            // ============================================
-            // ELIMINAR MARCADOR ANTERIOR
-            // ============================================
-
+            // Borrar marcador anterior
             if (this.marcadorBusqueda) {
 
                 this.map.removeLayer(
@@ -144,10 +126,7 @@ const MapaMundial = {
                 );
             }
 
-            // ============================================
-            // NUEVO MARCADOR
-            // ============================================
-
+            // Crear marcador nuevo
             this.marcadorBusqueda =
                 L.marker([lat, lon])
                     .addTo(this.map)
@@ -156,18 +135,17 @@ const MapaMundial = {
                     )
                     .openPopup();
 
-            // ============================================
-            // PANEL INFO
-            // ============================================
+            console.log(
+                `✅ Lugar encontrado: ${lugar.display_name}`
+            );
 
+            // Actualizar panel info
             if (
                 window.UIPanelInfo &&
                 typeof UIPanelInfo.mostrarPais === 'function'
             ) {
 
-                UIPanelInfo.mostrarPais(
-                    texto.toLowerCase()
-                );
+                UIPanelInfo.mostrarPais(texto);
             }
 
         } catch (error) {
@@ -191,8 +169,8 @@ const MapaMundial = {
         console.log(
             `🧩 Capa ${capa}: ${
                 activa
-                    ? 'ACTIVADA'
-                    : 'DESACTIVADA'
+                    ? 'ACTIVA'
+                    : 'INACTIVA'
             }`
         );
 
@@ -200,8 +178,5 @@ const MapaMundial = {
     }
 };
 
-// ============================================
-// EXPORT GLOBAL
-// ============================================
-
+// Export global
 window.MapaMundial = MapaMundial;
