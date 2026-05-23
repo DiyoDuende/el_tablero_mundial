@@ -1,0 +1,4 @@
+const DatosEconomicos = {
+    async obtenerPIB(pais) { return null; }
+};
+window.DatosEconomicos = DatosEconomicos;
