@@ -3,7 +3,6 @@ const DatosReales = {
     cache: {},
     CACHE_DURACION: 3600000, // 1 hora
 
-    // Mapeo de nombres de países (GeoJSON) a códigos ISO3 para la API del Banco Mundial
     iso3Map: {
         'Spain': 'ESP', 'France': 'FRA', 'Germany': 'DEU', 'Italy': 'ITA',
         'Portugal': 'PRT', 'United States': 'USA', 'China': 'CHN', 'Russia': 'RUS',
