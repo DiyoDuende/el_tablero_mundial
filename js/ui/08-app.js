@@ -91,16 +91,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Cerrar simulador
-    if (btnCerrarSimulador && simuladorPanel) {
-        btnCerrarSimulador.addEventListener('click', () => {
-            simuladorPanel.classList.remove('active');
-            if (btnJuego) btnJuego.classList.remove('active');
-            if (btnReal) btnReal.classList.add('active');
-            window.CONFIG.modo = 'realidad';
-            if (badge) badge.textContent = '🌐 MODO REAL';
-            console.log('❌ Simulador cerrado');
-        });
-    }
+// if (btnCerrarSimulador && simuladorPanel) {
+//     btnCerrarSimulador.addEventListener('click', () => {
+//         simuladorPanel.classList.remove('active');
+//         if (btnJuego) btnJuego.classList.remove('active');
+//         if (btnReal) btnReal.classList.add('active');
+//         window.CONFIG.modo = 'realidad';
+//         if (badge) badge.textContent = '🌐 MODO REAL';
+//         console.log('❌ Simulador cerrado');
+//     });
+// }
 
     // Verificador
     const btnVerificador = document.getElementById('btn-verificador-panel');
