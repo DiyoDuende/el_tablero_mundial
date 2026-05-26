@@ -1,7 +1,6 @@
 // ============================================
 // 🌍 TABLERO MUNDIAL
 // 08-app.js
-// APP PRINCIPAL LIMPIA Y ESTABLE
 // ============================================
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -9,15 +8,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.log('🚀 Iniciando Tablero Mundial...');
 
     // =====================================================
-    // CONFIG GLOBAL
+    // CONFIG
     // =====================================================
 
     window.CONFIG = window.CONFIG || {};
-
-    if (!window.CONFIG.modo) {
-
-        window.CONFIG.modo = 'realidad';
-    }
+    window.CONFIG.modo =
+        window.CONFIG.modo || 'realidad';
 
     // =====================================================
     // INICIALIZAR MÓDULOS
@@ -25,40 +21,26 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     try {
 
-        if (window.Idioma?.init) {
-
+        if (window.Idioma?.init)
             await Idioma.init();
-        }
 
-        if (window.MapaMundial?.init) {
-
+        if (window.MapaMundial?.init)
             MapaMundial.init();
-        }
 
-        if (window.UIPanelInfo?.init) {
-
+        if (window.UIPanelInfo?.init)
             UIPanelInfo.init();
-        }
 
-        if (window.UIVerificador?.init) {
-
+        if (window.UIVerificador?.init)
             UIVerificador.init();
-        }
 
-        if (window.UISimulador?.init) {
-
+        if (window.UISimulador?.init)
             UISimulador.init();
-        }
 
-        if (window.UIRelacionesGlobales?.init) {
-
+        if (window.UIRelacionesGlobales?.init)
             UIRelacionesGlobales.init();
-        }
 
-        if (window.UITimeline?.init) {
-
+        if (window.UITimeline?.init)
             UITimeline.init();
-        }
 
     } catch (error) {
 
@@ -70,29 +52,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     // =====================================================
 
     const btnReal =
-        document.getElementById(
-            'btn-modo-real'
-        );
+        document.getElementById('btn-modo-real');
 
     const btnJuego =
-        document.getElementById(
-            'btn-modo-juego'
-        );
+        document.getElementById('btn-modo-juego');
 
     const badge =
-        document.getElementById(
-            'modo-badge'
-        );
+        document.getElementById('modo-badge');
 
     const simuladorPanel =
-        document.getElementById(
-            'simulador-panel'
-        );
+        document.getElementById('simulador-panel');
 
     const verificadorPanel =
-        document.getElementById(
-            'verificador-panel'
-        );
+        document.getElementById('verificador-panel');
 
     const relacionesPanel =
         document.getElementById(
@@ -100,12 +72,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         );
 
     const timelinePanel =
-        document.getElementById(
-            'timeline-panel'
-        );
+        document.getElementById('timeline-panel');
 
     // =====================================================
-    // CERRAR PANELES
+    // CERRAR TODOS
     // =====================================================
 
     function cerrarPaneles() {
@@ -119,12 +89,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (panel) {
 
-                panel.classList.remove(
-                    'active'
-                );
-
-                panel.style.display =
-                    'none';
+                panel.classList.remove('active');
             }
         });
     }
@@ -135,41 +100,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (btnReal) {
 
-        btnReal.addEventListener(
-            'click',
-            () => {
+        btnReal.addEventListener('click', () => {
 
-                window.CONFIG.modo =
-                    'realidad';
+            window.CONFIG.modo = 'realidad';
 
-                btnReal.classList.add(
-                    'active'
-                );
+            btnReal.classList.add('active');
 
-                if (btnJuego) {
+            if (btnJuego)
+                btnJuego.classList.remove('active');
 
-                    btnJuego.classList.remove(
-                        'active'
-                    );
-                }
+            if (badge)
+                badge.textContent =
+                    '🌐 MODO REAL';
 
-                if (badge) {
-
-                    badge.textContent =
-                        '🌐 MODO REAL';
-                }
-
-                if (simuladorPanel) {
-
-                    simuladorPanel.classList.remove(
-                        'active'
-                    );
-
-                    simuladorPanel.style.display =
-                        'none';
-                }
-            }
-        );
+            cerrarPaneles();
+        });
     }
 
     // =====================================================
@@ -178,43 +123,28 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (btnJuego) {
 
-        btnJuego.addEventListener(
-            'click',
-            () => {
+        btnJuego.addEventListener('click', () => {
 
-                window.CONFIG.modo =
-                    'juego';
+            window.CONFIG.modo = 'juego';
 
-                btnJuego.classList.add(
+            btnJuego.classList.add('active');
+
+            if (btnReal)
+                btnReal.classList.remove('active');
+
+            if (badge)
+                badge.textContent =
+                    '🎮 MODO JUEGO';
+
+            cerrarPaneles();
+
+            if (simuladorPanel) {
+
+                simuladorPanel.classList.add(
                     'active'
                 );
-
-                if (btnReal) {
-
-                    btnReal.classList.remove(
-                        'active'
-                    );
-                }
-
-                if (badge) {
-
-                    badge.textContent =
-                        '🎮 MODO JUEGO';
-                }
-
-                cerrarPaneles();
-
-                if (simuladorPanel) {
-
-                    simuladorPanel.classList.add(
-                        'active'
-                    );
-
-                    simuladorPanel.style.display =
-                        'flex';
-                }
             }
-        );
+        });
     }
 
     // =====================================================
@@ -224,11 +154,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const btnVerificador =
         document.getElementById(
             'btn-verificador-panel'
-        );
-
-    const btnCerrarVerificador =
-        document.getElementById(
-            'btn-cerrar-verificador'
         );
 
     if (
@@ -252,29 +177,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     verificadorPanel.classList.add(
                         'active'
                     );
-
-                    verificadorPanel.style.display =
-                        'flex';
                 }
-            }
-        );
-    }
-
-    if (
-        btnCerrarVerificador &&
-        verificadorPanel
-    ) {
-
-        btnCerrarVerificador.addEventListener(
-            'click',
-            () => {
-
-                verificadorPanel.classList.remove(
-                    'active'
-                );
-
-                verificadorPanel.style.display =
-                    'none';
             }
         );
     }
@@ -286,11 +189,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const btnRelaciones =
         document.getElementById(
             'btn-relaciones-globales'
-        );
-
-    const btnCerrarRelaciones =
-        document.getElementById(
-            'btn-cerrar-relaciones-globales'
         );
 
     if (
@@ -314,29 +212,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     relacionesPanel.classList.add(
                         'active'
                     );
-
-                    relacionesPanel.style.display =
-                        'flex';
                 }
-            }
-        );
-    }
-
-    if (
-        btnCerrarRelaciones &&
-        relacionesPanel
-    ) {
-
-        btnCerrarRelaciones.addEventListener(
-            'click',
-            () => {
-
-                relacionesPanel.classList.remove(
-                    'active'
-                );
-
-                relacionesPanel.style.display =
-                    'none';
             }
         );
     }
@@ -348,11 +224,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const btnTimeline =
         document.getElementById(
             'btn-timeline-panel'
-        );
-
-    const btnCerrarTimeline =
-        document.getElementById(
-            'btn-cerrar-timeline'
         );
 
     if (
@@ -376,29 +247,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     timelinePanel.classList.add(
                         'active'
                     );
-
-                    timelinePanel.style.display =
-                        'flex';
                 }
-            }
-        );
-    }
-
-    if (
-        btnCerrarTimeline &&
-        timelinePanel
-    ) {
-
-        btnCerrarTimeline.addEventListener(
-            'click',
-            () => {
-
-                timelinePanel.classList.remove(
-                    'active'
-                );
-
-                timelinePanel.style.display =
-                    'none';
             }
         );
     }
@@ -406,6 +255,36 @@ document.addEventListener('DOMContentLoaded', async () => {
     // =====================================================
     // README / NORMAS
     // =====================================================
+
+    async function cargarMarkdown(
+        url,
+        destino
+    ) {
+
+        try {
+
+            const response =
+                await fetch(url);
+
+            const markdown =
+                await response.text();
+
+            destino.innerHTML = `
+                <pre style="
+                    white-space: pre-wrap;
+                    font-family: inherit;
+                    line-height: 1.6;
+                ">${markdown}</pre>
+            `;
+
+        } catch (error) {
+
+            console.error(error);
+
+            destino.innerHTML =
+                '<p>Error cargando archivo</p>';
+        }
+    }
 
     const btnReadme =
         document.getElementById(
@@ -427,16 +306,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             'modal-normas'
         );
 
-    const btnCerrarReadme =
-        document.getElementById(
-            'btn-cerrar-readme'
-        );
-
-    const btnCerrarNormas =
-        document.getElementById(
-            'btn-cerrar-normas'
-        );
-
     const readmeContenido =
         document.getElementById(
             'readme-contenido'
@@ -447,71 +316,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             'normas-contenido'
         );
 
-    async function cargarMarkdown(
-        url,
-        destino
-    ) {
-
-        try {
-
-            const response =
-                await fetch(url);
-
-            if (!response.ok) {
-
-                throw new Error(
-                    `HTTP ${response.status}`
-                );
-            }
-
-            const markdown =
-                await response.text();
-
-            destino.innerHTML =
-                markdown
-                    .replace(
-                        /^### (.*$)/gim,
-                        '<h3>$1</h3>'
-                    )
-                    .replace(
-                        /^## (.*$)/gim,
-                        '<h2>$1</h2>'
-                    )
-                    .replace(
-                        /^# (.*$)/gim,
-                        '<h1>$1</h1>'
-                    )
-                    .replace(
-                        /\*\*(.*?)\*\*/gim,
-                        '<strong>$1</strong>'
-                    )
-                    .replace(
-                        /\n/g,
-                        '<br>'
-                    );
-
-        } catch (error) {
-
-            console.error(error);
-
-            destino.innerHTML = `
-                <h3>❌ Error cargando archivo</h3>
-                <p>${error.message}</p>
-            `;
-        }
-    }
-
-    if (
-        btnReadme &&
-        modalReadme
-    ) {
+    if (btnReadme && modalReadme) {
 
         btnReadme.addEventListener(
             'click',
             async () => {
 
                 await cargarMarkdown(
-                    'Readme.md',
+                    'README.md',
                     readmeContenido
                 );
 
@@ -521,52 +333,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         );
     }
 
-    if (
-        btnNormas &&
-        modalNormas
-    ) {
+    if (btnNormas && modalNormas) {
 
         btnNormas.addEventListener(
             'click',
             async () => {
 
                 await cargarMarkdown(
-                    'Normas.md',
+                    'NORMAS.md',
                     normasContenido
                 );
 
                 modalNormas.style.display =
                     'flex';
-            }
-        );
-    }
-
-    if (
-        btnCerrarReadme &&
-        modalReadme
-    ) {
-
-        btnCerrarReadme.addEventListener(
-            'click',
-            () => {
-
-                modalReadme.style.display =
-                    'none';
-            }
-        );
-    }
-
-    if (
-        btnCerrarNormas &&
-        modalNormas
-    ) {
-
-        btnCerrarNormas.addEventListener(
-            'click',
-            () => {
-
-                modalNormas.style.display =
-                    'none';
             }
         );
     }
@@ -616,16 +395,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         (e) => {
 
             const btn =
-                e.target.closest(
-                    '.capa-icon'
-                );
+                e.target.closest('.capa-icon');
 
-            if (!btn)
-                return;
+            if (!btn) return;
 
-            btn.classList.toggle(
-                'activo'
-            );
+            btn.classList.toggle('activo');
 
             const capa =
                 btn.dataset.capa;
