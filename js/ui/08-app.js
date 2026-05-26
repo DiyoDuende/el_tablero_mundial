@@ -13,8 +13,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     // =====================================================
 
     window.CONFIG = window.CONFIG || {};
-    window.CONFIG.modo =
-        window.CONFIG.modo || 'realidad';
+
+    if (!window.CONFIG.modo) {
+
+        window.CONFIG.modo = 'realidad';
+    }
 
     // =====================================================
     // INICIALIZAR MÓDULOS
@@ -22,26 +25,40 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     try {
 
-        if (window.Idioma?.init)
+        if (window.Idioma?.init) {
+
             await Idioma.init();
+        }
 
-        if (window.MapaMundial?.init)
+        if (window.MapaMundial?.init) {
+
             MapaMundial.init();
+        }
 
-        if (window.UIPanelInfo?.init)
+        if (window.UIPanelInfo?.init) {
+
             UIPanelInfo.init();
+        }
 
-        if (window.UIVerificador?.init)
+        if (window.UIVerificador?.init) {
+
             UIVerificador.init();
+        }
 
-        if (window.UISimulador?.init)
+        if (window.UISimulador?.init) {
+
             UISimulador.init();
+        }
 
-        if (window.UIRelacionesGlobales?.init)
+        if (window.UIRelacionesGlobales?.init) {
+
             UIRelacionesGlobales.init();
+        }
 
-        if (window.UITimeline?.init)
+        if (window.UITimeline?.init) {
+
             UITimeline.init();
+        }
 
     } catch (error) {
 
@@ -53,19 +70,29 @@ document.addEventListener('DOMContentLoaded', async () => {
     // =====================================================
 
     const btnReal =
-        document.getElementById('btn-modo-real');
+        document.getElementById(
+            'btn-modo-real'
+        );
 
     const btnJuego =
-        document.getElementById('btn-modo-juego');
+        document.getElementById(
+            'btn-modo-juego'
+        );
 
     const badge =
-        document.getElementById('modo-badge');
+        document.getElementById(
+            'modo-badge'
+        );
 
     const simuladorPanel =
-        document.getElementById('simulador-panel');
+        document.getElementById(
+            'simulador-panel'
+        );
 
     const verificadorPanel =
-        document.getElementById('verificador-panel');
+        document.getElementById(
+            'verificador-panel'
+        );
 
     const relacionesPanel =
         document.getElementById(
@@ -73,10 +100,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         );
 
     const timelinePanel =
-        document.getElementById('timeline-panel');
+        document.getElementById(
+            'timeline-panel'
+        );
 
     // =====================================================
-    // FUNCIÓN CERRAR TODO
+    // CERRAR PANELES
     // =====================================================
 
     function cerrarPaneles() {
@@ -90,7 +119,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (panel) {
 
-                panel.classList.remove('active');
+                panel.classList.remove(
+                    'active'
+                );
+
+                panel.style.display =
+                    'none';
             }
         });
     }
@@ -101,22 +135,41 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (btnReal) {
 
-        btnReal.addEventListener('click', () => {
+        btnReal.addEventListener(
+            'click',
+            () => {
 
-            window.CONFIG.modo = 'realidad';
+                window.CONFIG.modo =
+                    'realidad';
 
-            btnReal.classList.add('active');
+                btnReal.classList.add(
+                    'active'
+                );
 
-            if (btnJuego)
-                btnJuego.classList.remove('active');
+                if (btnJuego) {
 
-            if (badge)
-                badge.textContent =
-                    '🌐 MODO REAL';
+                    btnJuego.classList.remove(
+                        'active'
+                    );
+                }
 
-            if (simuladorPanel)
-                simuladorPanel.classList.remove('active');
-        });
+                if (badge) {
+
+                    badge.textContent =
+                        '🌐 MODO REAL';
+                }
+
+                if (simuladorPanel) {
+
+                    simuladorPanel.classList.remove(
+                        'active'
+                    );
+
+                    simuladorPanel.style.display =
+                        'none';
+                }
+            }
+        );
     }
 
     // =====================================================
@@ -125,22 +178,43 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (btnJuego) {
 
-        btnJuego.addEventListener('click', () => {
+        btnJuego.addEventListener(
+            'click',
+            () => {
 
-            window.CONFIG.modo = 'juego';
+                window.CONFIG.modo =
+                    'juego';
 
-            btnJuego.classList.add('active');
+                btnJuego.classList.add(
+                    'active'
+                );
 
-            if (btnReal)
-                btnReal.classList.remove('active');
+                if (btnReal) {
 
-            if (badge)
-                badge.textContent =
-                    '🎮 MODO JUEGO';
+                    btnReal.classList.remove(
+                        'active'
+                    );
+                }
 
-            if (simuladorPanel)
-                simuladorPanel.classList.add('active');
-        });
+                if (badge) {
+
+                    badge.textContent =
+                        '🎮 MODO JUEGO';
+                }
+
+                cerrarPaneles();
+
+                if (simuladorPanel) {
+
+                    simuladorPanel.classList.add(
+                        'active'
+                    );
+
+                    simuladorPanel.style.display =
+                        'flex';
+                }
+            }
+        );
     }
 
     // =====================================================
@@ -157,24 +231,33 @@ document.addEventListener('DOMContentLoaded', async () => {
             'btn-cerrar-verificador'
         );
 
-    if (btnVerificador && verificadorPanel) {
+    if (
+        btnVerificador &&
+        verificadorPanel
+    ) {
 
-        btnVerificador.addEventListener('click', () => {
+        btnVerificador.addEventListener(
+            'click',
+            () => {
 
-            const abierto =
-                verificadorPanel.classList.contains(
-                    'active'
-                );
+                const abierto =
+                    verificadorPanel.classList.contains(
+                        'active'
+                    );
 
-            cerrarPaneles();
+                cerrarPaneles();
 
-            if (!abierto) {
+                if (!abierto) {
 
-                verificadorPanel.classList.add(
-                    'active'
-                );
+                    verificadorPanel.classList.add(
+                        'active'
+                    );
+
+                    verificadorPanel.style.display =
+                        'flex';
+                }
             }
-        });
+        );
     }
 
     if (
@@ -189,12 +272,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                 verificadorPanel.classList.remove(
                     'active'
                 );
+
+                verificadorPanel.style.display =
+                    'none';
             }
         );
     }
 
     // =====================================================
-    // RELACIONES GLOBALES
+    // RELACIONES
     // =====================================================
 
     const btnRelaciones =
@@ -207,7 +293,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             'btn-cerrar-relaciones-globales'
         );
 
-    if (btnRelaciones && relacionesPanel) {
+    if (
+        btnRelaciones &&
+        relacionesPanel
+    ) {
 
         btnRelaciones.addEventListener(
             'click',
@@ -225,6 +314,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                     relacionesPanel.classList.add(
                         'active'
                     );
+
+                    relacionesPanel.style.display =
+                        'flex';
                 }
             }
         );
@@ -242,6 +334,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 relacionesPanel.classList.remove(
                     'active'
                 );
+
+                relacionesPanel.style.display =
+                    'none';
             }
         );
     }
@@ -260,24 +355,33 @@ document.addEventListener('DOMContentLoaded', async () => {
             'btn-cerrar-timeline'
         );
 
-    if (btnTimeline && timelinePanel) {
+    if (
+        btnTimeline &&
+        timelinePanel
+    ) {
 
-        btnTimeline.addEventListener('click', () => {
+        btnTimeline.addEventListener(
+            'click',
+            () => {
 
-            const abierto =
-                timelinePanel.classList.contains(
-                    'active'
-                );
+                const abierto =
+                    timelinePanel.classList.contains(
+                        'active'
+                    );
 
-            cerrarPaneles();
+                cerrarPaneles();
 
-            if (!abierto) {
+                if (!abierto) {
 
-                timelinePanel.classList.add(
-                    'active'
-                );
+                    timelinePanel.classList.add(
+                        'active'
+                    );
+
+                    timelinePanel.style.display =
+                        'flex';
+                }
             }
-        });
+        );
     }
 
     if (
@@ -292,196 +396,180 @@ document.addEventListener('DOMContentLoaded', async () => {
                 timelinePanel.classList.remove(
                     'active'
                 );
+
+                timelinePanel.style.display =
+                    'none';
             }
         );
     }
 
-    // ============================================
-// README / NORMAS
-// ============================================
+    // =====================================================
+    // README / NORMAS
+    // =====================================================
 
-const btnReadme =
-    document.getElementById(
-        'btn-readme'
-    );
+    const btnReadme =
+        document.getElementById(
+            'btn-readme'
+        );
 
-const btnNormas =
-    document.getElementById(
-        'btn-normas'
-    );
+    const btnNormas =
+        document.getElementById(
+            'btn-normas'
+        );
 
-const modalReadme =
-    document.getElementById(
-        'modal-readme'
-    );
+    const modalReadme =
+        document.getElementById(
+            'modal-readme'
+        );
 
-const modalNormas =
-    document.getElementById(
-        'modal-normas'
-    );
+    const modalNormas =
+        document.getElementById(
+            'modal-normas'
+        );
 
-const btnCerrarReadme =
-    document.getElementById(
-        'btn-cerrar-readme'
-    );
+    const btnCerrarReadme =
+        document.getElementById(
+            'btn-cerrar-readme'
+        );
 
-const btnCerrarNormas =
-    document.getElementById(
-        'btn-cerrar-normas'
-    );
+    const btnCerrarNormas =
+        document.getElementById(
+            'btn-cerrar-normas'
+        );
 
-const readmeContenido =
-    document.getElementById(
-        'readme-contenido'
-    );
+    const readmeContenido =
+        document.getElementById(
+            'readme-contenido'
+        );
 
-const normasContenido =
-    document.getElementById(
-        'normas-contenido'
-    );
+    const normasContenido =
+        document.getElementById(
+            'normas-contenido'
+        );
 
-async function cargarMarkdown(
-    url,
-    destino
-) {
+    async function cargarMarkdown(
+        url,
+        destino
+    ) {
 
-    try {
+        try {
 
-        const response =
-            await fetch(url);
+            const response =
+                await fetch(url);
 
-        if (!response.ok) {
+            if (!response.ok) {
 
-            throw new Error(
-                `HTTP ${response.status}`
-            );
+                throw new Error(
+                    `HTTP ${response.status}`
+                );
+            }
+
+            const markdown =
+                await response.text();
+
+            destino.innerHTML =
+                markdown
+                    .replace(
+                        /^### (.*$)/gim,
+                        '<h3>$1</h3>'
+                    )
+                    .replace(
+                        /^## (.*$)/gim,
+                        '<h2>$1</h2>'
+                    )
+                    .replace(
+                        /^# (.*$)/gim,
+                        '<h1>$1</h1>'
+                    )
+                    .replace(
+                        /\*\*(.*?)\*\*/gim,
+                        '<strong>$1</strong>'
+                    )
+                    .replace(
+                        /\n/g,
+                        '<br>'
+                    );
+
+        } catch (error) {
+
+            console.error(error);
+
+            destino.innerHTML = `
+                <h3>❌ Error cargando archivo</h3>
+                <p>${error.message}</p>
+            `;
         }
-
-        const markdown =
-            await response.text();
-
-        let html = markdown
-
-            .replace(
-                /^### (.*$)/gim,
-                '<h3>$1</h3>'
-            )
-
-            .replace(
-                /^## (.*$)/gim,
-                '<h2>$1</h2>'
-            )
-
-            .replace(
-                /^# (.*$)/gim,
-                '<h1>$1</h1>'
-            )
-
-            .replace(
-                /\*\*(.*?)\*\*/gim,
-                '<strong>$1</strong>'
-            )
-
-            .replace(
-                /\n/g,
-                '<br>'
-            );
-
-        destino.innerHTML = html;
-
-    } catch (error) {
-
-        console.error(error);
-
-        destino.innerHTML = `
-            <h3>
-                ❌ Error cargando archivo
-            </h3>
-
-            <p>
-                ${error.message}
-            </p>
-        `;
     }
-}
 
-// README
+    if (
+        btnReadme &&
+        modalReadme
+    ) {
 
-if (
-    btnReadme &&
-    modalReadme
-) {
+        btnReadme.addEventListener(
+            'click',
+            async () => {
 
-    btnReadme.addEventListener(
-        'click',
-        async () => {
+                await cargarMarkdown(
+                    'Readme.md',
+                    readmeContenido
+                );
 
-            await cargarMarkdown(
-                'Readme.md',
-                readmeContenido
-            );
+                modalReadme.style.display =
+                    'flex';
+            }
+        );
+    }
 
-            modalReadme.style.display =
-                'flex';
-        }
-    );
-}
+    if (
+        btnNormas &&
+        modalNormas
+    ) {
 
-// NORMAS
+        btnNormas.addEventListener(
+            'click',
+            async () => {
 
-if (
-    btnNormas &&
-    modalNormas
-) {
+                await cargarMarkdown(
+                    'Normas.md',
+                    normasContenido
+                );
 
-    btnNormas.addEventListener(
-        'click',
-        async () => {
+                modalNormas.style.display =
+                    'flex';
+            }
+        );
+    }
 
-            await cargarMarkdown(
-                'Normas.md',
-                normasContenido
-            );
+    if (
+        btnCerrarReadme &&
+        modalReadme
+    ) {
 
-            modalNormas.style.display =
-                'flex';
-        }
-    );
-}
+        btnCerrarReadme.addEventListener(
+            'click',
+            () => {
 
-// CERRAR README
+                modalReadme.style.display =
+                    'none';
+            }
+        );
+    }
 
-if (
-    btnCerrarReadme &&
-    modalReadme
-) {
+    if (
+        btnCerrarNormas &&
+        modalNormas
+    ) {
 
-    btnCerrarReadme.addEventListener(
-        'click',
-        () => {
+        btnCerrarNormas.addEventListener(
+            'click',
+            () => {
 
-            modalReadme.style.display =
-                'none';
-        }
-    );
-}
-
-// CERRAR NORMAS
-
-if (
-    btnCerrarNormas &&
-    modalNormas
-) {
-
-    btnCerrarNormas.addEventListener(
-        'click',
-        () => {
-
-            modalNormas.style.display =
-                'none';
-        }
-    );
-}
+                modalNormas.style.display =
+                    'none';
+            }
+        );
+    }
 
     // =====================================================
     // BUSCADOR
@@ -498,18 +586,22 @@ if (
             'keydown',
             (e) => {
 
-                if (e.key !== 'Enter') return;
+                if (e.key !== 'Enter')
+                    return;
 
                 const valor =
                     buscador.value.trim();
 
-                if (!valor) return;
+                if (!valor)
+                    return;
 
                 if (
                     window.MapaMundial?.buscarLugar
                 ) {
 
-                    MapaMundial.buscarLugar(valor);
+                    MapaMundial.buscarLugar(
+                        valor
+                    );
                 }
             }
         );
@@ -524,11 +616,16 @@ if (
         (e) => {
 
             const btn =
-                e.target.closest('.capa-icon');
+                e.target.closest(
+                    '.capa-icon'
+                );
 
-            if (!btn) return;
+            if (!btn)
+                return;
 
-            btn.classList.toggle('activo');
+            btn.classList.toggle(
+                'activo'
+            );
 
             const capa =
                 btn.dataset.capa;
@@ -550,5 +647,7 @@ if (
         }
     );
 
-    console.log('✅ Tablero Mundial listo');
+    console.log(
+        '✅ Tablero Mundial listo'
+    );
 });
