@@ -117,35 +117,35 @@ const MapaMundial = {
     },
 
     buscarLugar: function(texto) {
-        if (!texto) return;
-        const input = document.getElementById('buscador-rapido');
-        const orig = input?.placeholder;
-        if (input) input.placeholder = '🔍 Buscando...';
-        fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(texto)}&limit=1`, {
-            headers: { 'User-Agent': 'TableroMundial/1.0' }
-        })
-        .then(r => r.json())
-        .then(data => {
-            if (input) input.placeholder = orig;
-            if (data && data[0]) {
-                const { lat, lon, display_name } = data[0];
-                const marker = L.marker([parseFloat(lat), parseFloat(lon)])
-                    .addTo(this.map)
-                    .bindTooltip(display_name)
-                    .openTooltip();
-                setTimeout(() => {
-                    this.map.removeLayer(marker);
-                }, 5000);
-                this.map.setView([parseFloat(lat), parseFloat(lon)], 10);
-            } else {
-                alert('No se encontró el lugar');
-            }
-        })
-        .catch(() => {
-            if (input) input.placeholder = orig;
-            alert('Error de búsqueda');
-        });
-    }
+    if (!texto) return;
+    const input = document.getElementById('buscador-rapido');
+    const orig = input?.placeholder;
+    if (input) input.placeholder = '🔍 Buscando...';
+    fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(texto)}&limit=1`, {
+        headers: { 'User-Agent': 'TableroMundial/1.0' }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (input) input.placeholder = orig;
+        if (data && data[0]) {
+            const { lat, lon, display_name } = data[0];
+            const marker = L.marker([parseFloat(lat), parseFloat(lon)])
+                .addTo(this.map)
+                .bindTooltip(display_name)
+                .openTooltip();
+            setTimeout(() => {
+                this.map.removeLayer(marker);
+            }, 5000);
+            this.map.setView([parseFloat(lat), parseFloat(lon)], 10);
+        } else {
+            alert('No se encontró el lugar');
+        }
+    })
+    .catch(() => {
+        if (input) input.placeholder = orig;
+        alert('Error de búsqueda');
+    });
+}
 };
 
 window.MapaMundial = MapaMundial;
