@@ -1,3 +1,3 @@
 window.InterpreteGeopolitico = {
-  traducir: (datos) => datos
+    traducir: function(datos) { return datos; }
 };
