@@ -42,5 +42,4 @@ const UIPanelInfo = {
         container.innerHTML = contenido;
     }
 };
-
 window.UIPanelInfo = UIPanelInfo;
