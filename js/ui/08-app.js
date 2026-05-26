@@ -11,16 +11,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (window.UITimeline && UITimeline.init) UITimeline.init();
 
     // =============================================
-    // PANELES: ABRIR/CERRAR CON CLASE .active
+    // PANELES: SOLO classList.toggle('active')
     // =============================================
-    const panels = {
+    const paneles = {
         'btn-verificador-panel': 'verificador-panel',
         'btn-simulador-panel': 'simulador-panel',
         'btn-relaciones-globales': 'relaciones-globales-panel',
         'btn-timeline-panel': 'timeline-panel'
     };
-
-    for (const [btnId, panelId] of Object.entries(panels)) {
+    for (const [btnId, panelId] of Object.entries(paneles)) {
         const btn = document.getElementById(btnId);
         const panel = document.getElementById(panelId);
         if (btn && panel) {
@@ -30,14 +29,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // Botones de cerrar dentro de paneles (si existen)
-    const closeButtons = [
+    // Botones de cerrar dentro de paneles
+    const cerrarBtns = [
         'btn-cerrar-verificador',
         'btn-cerrar-simulador',
         'btn-cerrar-relaciones-globales',
         'btn-cerrar-timeline'
     ];
-    closeButtons.forEach(id => {
+    cerrarBtns.forEach(id => {
         const btn = document.getElementById(id);
         if (btn) {
             btn.addEventListener('click', () => {
@@ -47,9 +46,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // =============================================
-    // MODO REAL / JUEGO
-    // =============================================
+    // Modo REAL / JUEGO
     const btnReal = document.getElementById('btn-modo-real');
     const btnJuego = document.getElementById('btn-modo-juego');
     const badge = document.getElementById('modo-badge');
@@ -71,9 +68,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // =============================================
-    // BUSCADOR RÁPIDO
-    // =============================================
+    // Buscador rápido
     const buscador = document.getElementById('buscador-rapido');
     if (buscador && MapaMundial.buscarLugar) {
         buscador.addEventListener('keypress', (e) => {
@@ -83,11 +78,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // =============================================
-    // DELEGACIÓN DE EVENTOS GLOBAL
-    // =============================================
+    // Capas y botones info (delegación global)
     document.addEventListener('click', (e) => {
-        // Capas
         const capaBtn = e.target.closest('.capa-icon');
         if (capaBtn) {
             capaBtn.classList.toggle('activo');
@@ -96,7 +88,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (MapaMundial.activarCapa) MapaMundial.activarCapa(capa, activa);
             return;
         }
-        // Botones de información (Economía, Leyes, etc.)
         const infoBtn = e.target.closest('.info-btn');
         if (infoBtn && UIPanelInfo) {
             e.preventDefault();
@@ -104,14 +95,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (seccion) UIPanelInfo.mostrarSeccion(seccion);
             return;
         }
-        // Botón Volver
         const volverBtn = e.target.closest('.btn-volver');
         if (volverBtn && UIPanelInfo) {
             UIPanelInfo.mostrarPais(UIPanelInfo.paisActual);
         }
     });
 
-    // Mostrar España por defecto (sin tilde)
+    // Mostrar España por defecto
     if (UIPanelInfo) UIPanelInfo.mostrarPais('espana');
 
     console.log('✅ Inicialización completa');
