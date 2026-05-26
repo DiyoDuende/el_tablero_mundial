@@ -1,4 +1,4 @@
-// Verificador ciudadano con base de conocimiento ampliada
+// js/core/05-verificador.js
 const Verificador = {
     baseConocimiento: {
         gasolina: {
@@ -22,6 +22,17 @@ const Verificador = {
                 { nombre: 'Vivienda', porcentaje: 10, descripcion: 'Alquileres +2%' }
             ],
             fuentes: ['INE', 'Eurostat']
+        },
+        paro: {
+            estado: 'verdadero',
+            respuesta: 'El desempleo se sitúa en el 11.2%, con mejores datos en servicios.',
+            factores: [
+                { nombre: 'Servicios', porcentaje: 35, descripcion: 'Creación de empleo +2.1%' },
+                { nombre: 'Industria', porcentaje: 28, descripcion: 'Pérdida de empleo -1.8%' },
+                { nombre: 'Construcción', porcentaje: 20, descripcion: 'Estable' },
+                { nombre: 'Agricultura', porcentaje: 17, descripcion: 'Estacional -0.5%' }
+            ],
+            fuentes: ['SEPE', 'INE']
         }
     },
     normalizar: function(texto) {
@@ -30,17 +41,22 @@ const Verificador = {
     verificar: function(duda) {
         const normal = this.normalizar(duda);
         for (let [clave, valor] of Object.entries(this.baseConocimiento)) {
-            if (normal.includes(clave)) return { encontrado: true, ...valor, duda };
+            if (normal.includes(clave)) {
+                return { encontrado: true, ...valor, duda };
+            }
         }
         return { encontrado: false, respuesta: 'No hay información suficiente.', factores: [], fuentes: [] };
     },
     generarHTML: function(resultado) {
         if (!resultado.encontrado) return `<div><p>${resultado.respuesta}</p></div>`;
         let factoresHtml = '';
-        resultado.factores.forEach(f => {
-            factoresHtml += `<div><strong>${f.nombre}</strong> ${f.porcentaje}%: ${f.descripcion}</div>`;
-        });
-        return `<div><p>${resultado.respuesta}</p>${factoresHtml}<p>Fuentes: ${resultado.fuentes.join(', ')}</p></div>`;
+        if (resultado.factores) {
+            resultado.factores.forEach(f => {
+                factoresHtml += `<div><strong>${f.nombre}</strong> ${f.porcentaje}%: ${f.descripcion}</div>`;
+            });
+        }
+        return `<div><p>${resultado.respuesta}</p>${factoresHtml}<p>📚 Fuentes: ${resultado.fuentes.join(', ')}</p></div>`;
     }
 };
+
 window.Verificador = Verificador;
