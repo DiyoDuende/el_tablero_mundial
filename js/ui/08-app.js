@@ -1,427 +1,117 @@
 // ============================================
 // 🌍 TABLERO MUNDIAL
 // 08-app.js
+// APP PRINCIPAL CORREGIDA - V4 ESTABLE
 // ============================================
 
 document.addEventListener('DOMContentLoaded', async () => {
 
     console.log('🚀 Iniciando Tablero Mundial...');
 
-    // =====================================================
-    // CONFIG
-    // =====================================================
-
     window.CONFIG = window.CONFIG || {};
-    window.CONFIG.modo =
-        window.CONFIG.modo || 'realidad';
+    if (!window.CONFIG.modo) window.CONFIG.modo = 'realidad';
 
-    // =====================================================
-    // INICIALIZAR MÓDULOS
-    // =====================================================
+    // =========================================
+    // 1. INICIALIZAR COMPONENTES
+    // =========================================
 
-    try {
+    if (window.MapaMundial) MapaMundial.init();
 
-        if (window.Idioma?.init)
-            await Idioma.init();
+    [   window.UIPanelInfo,
+        window.UIVerificador,
+        window.UISimulador,
+        window.UIRelacionesGlobales,
+        window.UITimeline
+    ].forEach(modulo => {
+        if (modulo && typeof modulo.init === 'function') modulo.init();
+    });
 
-        if (window.MapaMundial?.init)
-            MapaMundial.init();
+    // =========================================
+    // 2. BOTONES DE MODO REAL / JUEGO
+    // =========================================
 
-        if (window.UIPanelInfo?.init)
-            UIPanelInfo.init();
+    const btnReal = document.getElementById('btn-modo-real');
+    const btnJuego = document.getElementById('btn-modo-juego');
+    const badge = document.getElementById('modo-badge');
+    const simuladorPanel = document.getElementById('simulador-panel');
 
-        if (window.UIVerificador?.init)
-            UIVerificador.init();
-
-        if (window.UISimulador?.init)
-            UISimulador.init();
-
-        if (window.UIRelacionesGlobales?.init)
-            UIRelacionesGlobales.init();
-
-        if (window.UITimeline?.init)
-            UITimeline.init();
-
-    } catch (error) {
-
-        console.error(error);
-    }
-
-    // =====================================================
-    // ELEMENTOS
-    // =====================================================
-
-    const btnReal =
-        document.getElementById('btn-modo-real');
-
-    const btnJuego =
-        document.getElementById('btn-modo-juego');
-
-    const badge =
-        document.getElementById('modo-badge');
-
-    const simuladorPanel =
-        document.getElementById('simulador-panel');
-
-    const verificadorPanel =
-        document.getElementById('verificador-panel');
-
-    const relacionesPanel =
-        document.getElementById(
-            'relaciones-globales-panel'
-        );
-
-    const timelinePanel =
-        document.getElementById('timeline-panel');
-
-    // =====================================================
-    // CERRAR TODOS
-    // =====================================================
-
-    function cerrarPaneles() {
-
-        [
-            simuladorPanel,
-            verificadorPanel,
-            relacionesPanel,
-            timelinePanel
-        ].forEach(panel => {
-
-            if (panel) {
-
-                panel.classList.remove('active');
-            }
-        });
-    }
-
-    // =====================================================
-    // MODO REAL
-    // =====================================================
-
-    if (btnReal) {
-
+    if (btnReal && btnJuego && badge && simuladorPanel) {
         btnReal.addEventListener('click', () => {
-
             window.CONFIG.modo = 'realidad';
-
             btnReal.classList.add('active');
-
-            if (btnJuego)
-                btnJuego.classList.remove('active');
-
-            if (badge)
-                badge.textContent =
-                    '🌐 MODO REAL';
-
-            cerrarPaneles();
+            btnJuego.classList.remove('active');
+            badge.textContent = '🌐 MODO REAL';
+            simuladorPanel.classList.remove('active');
         });
-    }
-
-    // =====================================================
-    // MODO JUEGO
-    // =====================================================
-
-    if (btnJuego) {
-
         btnJuego.addEventListener('click', () => {
-
             window.CONFIG.modo = 'juego';
-
             btnJuego.classList.add('active');
+            btnReal.classList.remove('active');
+            badge.textContent = '🎮 MODO JUEGO';
+            simuladorPanel.classList.add('active');
+        });
+    }
 
-            if (btnReal)
-                btnReal.classList.remove('active');
+    // =========================================
+    // 3. APERTURA/CIERRE DE PANELES (solo con .active)
+    // =========================================
 
-            if (badge)
-                badge.textContent =
-                    '🎮 MODO JUEGO';
+    const paneles = [
+        { btnId: 'btn-verificador-panel', panelId: 'verificador-panel' },
+        { btnId: 'btn-relaciones-globales', panelId: 'relaciones-globales-panel' },
+        { btnId: 'btn-timeline-panel', panelId: 'timeline-panel' }
+    ];
 
-            cerrarPaneles();
+    paneles.forEach(({ btnId, panelId }) => {
+        const btn = document.getElementById(btnId);
+        const panel = document.getElementById(panelId);
+        if (btn && panel) {
+            btn.addEventListener('click', () => {
+                panel.classList.toggle('active');
+            });
+        }
+    });
 
-            if (simuladorPanel) {
+    // Botones de cierre dentro de cada panel (clase .btn-cerrar)
+    document.querySelectorAll('.btn-cerrar').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const panel = btn.closest('.verificador-container, .simulador-container, .relaciones-globales-container, .timeline-global-container');
+            if (panel) panel.classList.remove('active');
+        });
+    });
 
-                simuladorPanel.classList.add(
-                    'active'
-                );
+    // =========================================
+    // 4. BUSCADOR RÁPIDO (Nominatim)
+    // =========================================
+
+    const buscador = document.getElementById('buscador-rapido');
+    if (buscador && MapaMundial.buscarLugar) {
+        buscador.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                MapaMundial.buscarLugar(buscador.value.trim());
             }
         });
     }
 
-    // =====================================================
-    // VERIFICADOR
-    // =====================================================
+    // =========================================
+    // 5. CAPAS (iconos)
+    // =========================================
 
-    const btnVerificador =
-        document.getElementById(
-            'btn-verificador-panel'
-        );
-
-    if (
-        btnVerificador &&
-        verificadorPanel
-    ) {
-
-        btnVerificador.addEventListener(
-            'click',
-            () => {
-
-                const abierto =
-                    verificadorPanel.classList.contains(
-                        'active'
-                    );
-
-                cerrarPaneles();
-
-                if (!abierto) {
-
-                    verificadorPanel.classList.add(
-                        'active'
-                    );
-                }
-            }
-        );
-    }
-
-    // =====================================================
-    // RELACIONES
-    // =====================================================
-
-    const btnRelaciones =
-        document.getElementById(
-            'btn-relaciones-globales'
-        );
-
-    if (
-        btnRelaciones &&
-        relacionesPanel
-    ) {
-
-        btnRelaciones.addEventListener(
-            'click',
-            () => {
-
-                const abierto =
-                    relacionesPanel.classList.contains(
-                        'active'
-                    );
-
-                cerrarPaneles();
-
-                if (!abierto) {
-
-                    relacionesPanel.classList.add(
-                        'active'
-                    );
-                }
-            }
-        );
-    }
-
-    // =====================================================
-    // TIMELINE
-    // =====================================================
-
-    const btnTimeline =
-        document.getElementById(
-            'btn-timeline-panel'
-        );
-
-    if (
-        btnTimeline &&
-        timelinePanel
-    ) {
-
-        btnTimeline.addEventListener(
-            'click',
-            () => {
-
-                const abierto =
-                    timelinePanel.classList.contains(
-                        'active'
-                    );
-
-                cerrarPaneles();
-
-                if (!abierto) {
-
-                    timelinePanel.classList.add(
-                        'active'
-                    );
-                }
-            }
-        );
-    }
-
-    // =====================================================
-    // README / NORMAS
-    // =====================================================
-
-    async function cargarMarkdown(
-        url,
-        destino
-    ) {
-
-        try {
-
-            const response =
-                await fetch(url);
-
-            const markdown =
-                await response.text();
-
-            destino.innerHTML = `
-                <pre style="
-                    white-space: pre-wrap;
-                    font-family: inherit;
-                    line-height: 1.6;
-                ">${markdown}</pre>
-            `;
-
-        } catch (error) {
-
-            console.error(error);
-
-            destino.innerHTML =
-                '<p>Error cargando archivo</p>';
+    document.addEventListener('click', (e) => {
+        const capaBtn = e.target.closest('.capa-icon');
+        if (capaBtn) {
+            capaBtn.classList.toggle('activo');
+            const capa = capaBtn.dataset.capa;
+            const activa = capaBtn.classList.contains('activo');
+            if (MapaMundial.activarCapa) MapaMundial.activarCapa(capa, activa);
         }
-    }
+    });
 
-    const btnReadme =
-        document.getElementById(
-            'btn-readme'
-        );
+    // =========================================
+    // 6. MOSTRAR ESPAÑA POR DEFECTO
+    // =========================================
 
-    const btnNormas =
-        document.getElementById(
-            'btn-normas'
-        );
+    if (window.UIPanelInfo) UIPanelInfo.mostrarPais('espana');
 
-    const modalReadme =
-        document.getElementById(
-            'modal-readme'
-        );
-
-    const modalNormas =
-        document.getElementById(
-            'modal-normas'
-        );
-
-    const readmeContenido =
-        document.getElementById(
-            'readme-contenido'
-        );
-
-    const normasContenido =
-        document.getElementById(
-            'normas-contenido'
-        );
-
-    if (btnReadme && modalReadme) {
-
-        btnReadme.addEventListener(
-            'click',
-            async () => {
-
-                await cargarMarkdown(
-                    'README.md',
-                    readmeContenido
-                );
-
-                modalReadme.style.display =
-                    'flex';
-            }
-        );
-    }
-
-    if (btnNormas && modalNormas) {
-
-        btnNormas.addEventListener(
-            'click',
-            async () => {
-
-                await cargarMarkdown(
-                    'NORMAS.md',
-                    normasContenido
-                );
-
-                modalNormas.style.display =
-                    'flex';
-            }
-        );
-    }
-
-    // =====================================================
-    // BUSCADOR
-    // =====================================================
-
-    const buscador =
-        document.getElementById(
-            'buscador-rapido'
-        );
-
-    if (buscador) {
-
-        buscador.addEventListener(
-            'keydown',
-            (e) => {
-
-                if (e.key !== 'Enter')
-                    return;
-
-                const valor =
-                    buscador.value.trim();
-
-                if (!valor)
-                    return;
-
-                if (
-                    window.MapaMundial?.buscarLugar
-                ) {
-
-                    MapaMundial.buscarLugar(
-                        valor
-                    );
-                }
-            }
-        );
-    }
-
-    // =====================================================
-    // CAPAS
-    // =====================================================
-
-    document.addEventListener(
-        'click',
-        (e) => {
-
-            const btn =
-                e.target.closest('.capa-icon');
-
-            if (!btn) return;
-
-            btn.classList.toggle('activo');
-
-            const capa =
-                btn.dataset.capa;
-
-            const activa =
-                btn.classList.contains(
-                    'activo'
-                );
-
-            if (
-                window.MapaMundial?.activarCapa
-            ) {
-
-                MapaMundial.activarCapa(
-                    capa,
-                    activa
-                );
-            }
-        }
-    );
-
-    console.log(
-        '✅ Tablero Mundial listo'
-    );
+    console.log('✅ Tablero Mundial listo');
 });
