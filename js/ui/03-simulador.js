@@ -1,30 +1,109 @@
-// js/ui/03-simulador.js
+// ============================================
+// 03-simulador.js
+// ============================================
+
 const UISimulador = {
-    init: function() {
-        const btnSimular = document.getElementById('btn-simular');
-        const input = document.getElementById('simulador-pregunta');
-        if (btnSimular) btnSimular.addEventListener('click', () => this.simular());
-        if (input) input.addEventListener('keypress', (e) => { if (e.key === 'Enter') this.simular(); });
+
+    init: function () {
+
+        console.log(
+            '⚡ Inicializando simulador...'
+        );
+
+        const btn =
+            document.getElementById(
+                'btn-simular'
+            );
+
+        const input =
+            document.getElementById(
+                'simulador-pregunta'
+            );
+
+        if (btn) {
+
+            btn.addEventListener(
+                'click',
+                () => this.simular()
+            );
+        }
+
+        if (input) {
+
+            input.addEventListener(
+                'keydown',
+                (e) => {
+
+                    if (e.key === 'Enter') {
+
+                        this.simular();
+                    }
+                }
+            );
+        }
+
+        console.log(
+            '✅ Simulador listo'
+        );
     },
 
-    simular: function() {
-        if (window.CONFIG.modo !== 'juego') {
-            alert('Activa primero el modo JUEGO');
+    simular: function () {
+
+        if (
+            window.CONFIG.modo !==
+            'juego'
+        ) {
+
+            alert(
+                'Activa el modo JUEGO'
+            );
+
             return;
         }
-        const escenario = document.getElementById('simulador-pregunta').value.trim();
-        if (!escenario) return;
 
-        const resultado = MotorSimulacion.simular({ poder: 0.5, sector: 0.5, mecanismo: 0.5 });
-        const html = `
-            <h4>📊 RESULTADOS DE LA SIMULACIÓN</h4>
-            <p>Impacto económico: ${resultado.impacto.económico}%</p>
-            <p>Impacto geopolítico: ${resultado.impacto.geopolítico}%</p>
-            <p>Impacto social: ${resultado.impacto.social}%</p>
-            <p class="fuente">⚠️ SIMULACIÓN (motor básico)</p>
+        const texto =
+            document
+                .getElementById(
+                    'simulador-pregunta'
+                )
+                .value
+                .trim();
+
+        if (!texto) return;
+
+        const resultado =
+            MotorSimulacion.simular({
+
+                poder: 0.6,
+                sector: 0.5,
+                mecanismo: 0.7
+            });
+
+        document.getElementById(
+            'simulador-resultados'
+        ).innerHTML = `
+
+            <h4>
+                📊 RESULTADOS
+            </h4>
+
+            <p>
+                Impacto económico:
+                ${resultado.impacto.economico}%
+            </p>
+
+            <p>
+                Impacto geopolítico:
+                ${resultado.impacto.geopolitico}%
+            </p>
+
+            <p>
+                Impacto social:
+                ${resultado.impacto.social}%
+            </p>
         `;
-        document.getElementById('simulador-resultados').innerHTML = html;
     }
 };
 
-window.UISimulador = UISimulador;
+window.UISimulador =
+    UISimulador;
