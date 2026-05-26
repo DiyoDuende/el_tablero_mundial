@@ -1,27 +1,19 @@
+// js/ui/01-panel-info.js
 const UIPanelInfo = {
-    paisActual: 'españa',
+    paisActual: 'espana',
 
     init: function() {
-        console.log('Panel UI listo');
-        document.addEventListener('click', (e) => {
-            const btn = e.target.closest('.info-btn');
-            if (btn) {
-                e.preventDefault();
-                const seccion = btn.dataset.seccion;
-                if (seccion) this.mostrarSeccion(seccion);
-            }
-            const volver = e.target.closest('.btn-volver');
-            if (volver) this.mostrarPais(this.paisActual);
-        });
+        console.log('UIPanelInfo iniciado');
     },
 
     mostrarPais: function(paisId) {
         this.paisActual = paisId;
-        const container = document.getElementById('dashboard-container');
+        const container = document.getElementById('panel-info');
         if (!container) return;
+        const nombreMostrar = paisId === 'espana' ? 'España' : paisId.toUpperCase();
         container.innerHTML = `
             <div class="dashboard-pais">
-                <h3>${paisId.toUpperCase()}</h3>
+                <h3>${nombreMostrar}</h3>
                 <div class="info-botones">
                     <button class="info-btn" data-seccion="economia">📊 Economía</button>
                     <button class="info-btn" data-seccion="leyes">⚖️ Leyes</button>
@@ -34,7 +26,7 @@ const UIPanelInfo = {
     },
 
     mostrarSeccion: function(seccion) {
-        const container = document.getElementById('dashboard-container');
+        const container = document.getElementById('panel-info');
         if (!container) return;
         let contenido = '';
         switch(seccion) {
@@ -50,4 +42,5 @@ const UIPanelInfo = {
         container.innerHTML = contenido;
     }
 };
+
 window.UIPanelInfo = UIPanelInfo;
