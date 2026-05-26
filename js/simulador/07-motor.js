@@ -1,4 +1,3 @@
-// js/simulador/07-motor.js
 if (!window.MotorSimulacion) {
     window.MotorSimulacion = {
         simular: function(params) {
