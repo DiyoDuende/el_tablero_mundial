@@ -14,14 +14,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (window.UITimeline && UITimeline.init) UITimeline.init();
 
     // =============================================
-    // PANELES: ABRIR/CERRAR CON CLASE .active
+    // ABRIR/CERRAR PANELES (solo con clase .active)
     // =============================================
-    const botonesPaneles = {
+    const paneles = {
         'btn-verificador-panel': 'verificador-panel',
         'btn-relaciones-globales': 'relaciones-globales-panel',
-        'btn-timeline-panel': 'timeline-panel'
+        'btn-timeline-panel': 'timeline-panel',
+        'btn-modo-juego': 'simulador-panel'   // el botón "¿QUÉ PASARÍA SI?" abre el simulador
     };
-    for (const [btnId, panelId] of Object.entries(botonesPaneles)) {
+    for (const [btnId, panelId] of Object.entries(paneles)) {
         const btn = document.getElementById(btnId);
         const panel = document.getElementById(panelId);
         if (btn && panel) {
@@ -31,16 +32,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // Simulador (modo juego) - además del botón superior, se controla aquí
-    const btnSimulador = document.getElementById('btn-modo-juego');
-    const simuladorPanel = document.getElementById('simulador-panel');
-    if (btnSimulador && simuladorPanel) {
-        btnSimulador.addEventListener('click', () => {
-            simuladorPanel.classList.toggle('active');
-        });
-    }
-
-    // Botones de cerrar dentro de cada panel
+    // Botones de cerrar dentro de los paneles
     document.querySelectorAll('.btn-cerrar').forEach(btn => {
         btn.addEventListener('click', () => {
             const panel = btn.closest('.verificador-container, .simulador-container, .relaciones-globales-container, .timeline-global-container');
@@ -48,7 +40,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     });
 
-    // Modo REAL / JUEGO (cambia el badge y el estado global)
+    // Modo REAL / JUEGO (cambia el badge)
     const btnReal = document.getElementById('btn-modo-real');
     const btnJuego = document.getElementById('btn-modo-juego');
     const badge = document.getElementById('modo-badge');
@@ -58,14 +50,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             btnReal.classList.add('active');
             btnJuego.classList.remove('active');
             badge.textContent = '🌐 MODO REAL';
-            if (simuladorPanel) simuladorPanel.classList.remove('active');
         });
         btnJuego.addEventListener('click', () => {
             window.CONFIG.modo = 'juego';
             btnJuego.classList.add('active');
             btnReal.classList.remove('active');
             badge.textContent = '🎮 MODO JUEGO';
-            if (simuladorPanel) simuladorPanel.classList.add('active');
         });
     }
 
