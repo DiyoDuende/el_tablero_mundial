@@ -1,881 +1,577 @@
-/* =========================================================
-   🌍 TABLERO MUNDIAL · ESTILO GLOBAL
-   ========================================================= */
+// ============================================
+// 🌍 TABLERO MUNDIAL
+// 08-app.js
+// APP PRINCIPAL
+// ============================================
 
-/* ===== RESET ===== */
+document.addEventListener('DOMContentLoaded', async () => {
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+    console.log('🚀 Iniciando Tablero Mundial');
 
-/* ===== VARIABLES ===== */
+    // =========================================
+    // CONFIG
+    // =========================================
 
-:root {
+    window.CONFIG = window.CONFIG || {};
+    window.CONFIG.modo =
+        window.CONFIG.modo || 'realidad';
 
-    --bg-dark: #0a1219;
-    --bg-card: #16222b;
-    --bg-panel: #1c2c36;
+    // =========================================
+    // INICIALIZAR MÓDULOS
+    // =========================================
 
-    --text: #ecf0f3;
-    --text-muted: #9aaec2;
+    try {
 
-    --accent: #2a7faa;
-    --border: #2a4050;
+        if (window.Idioma?.init)
+            await Idioma.init();
 
-    --success: #2e7d32;
-    --warning: #f57c00;
-    --danger: #b71c1c;
+        if (window.MapaMundial?.init)
+            MapaMundial.init();
 
-    --info: #4fc3f7;
-    --legal: #9c27b0;
+        if (window.UIPanelInfo?.init)
+            UIPanelInfo.init();
 
-    --radius: 16px;
-}
+        if (window.UIVerificador?.init)
+            UIVerificador.init();
 
-/* ===== BASE ===== */
+        if (window.UISimulador?.init)
+            UISimulador.init();
 
-html,
-body {
-    width: 100%;
-    min-height: 100%;
-    overflow-x: hidden;
-    overflow-y: auto;
-}
+        if (window.UIRelacionesGlobales?.init)
+            UIRelacionesGlobales.init();
 
-body {
-    background: var(--bg-dark);
-    color: var(--text);
-    font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
-}
+        if (window.UITimeline?.init)
+            UITimeline.init();
 
-/* ===== APP ===== */
+    } catch (err) {
 
-.app {
-    width: 100%;
-    min-height: 100vh;
-
-    display: flex;
-    flex-direction: column;
-
-    padding: 15px;
-    gap: 15px;
-}
-
-/* =========================================================
-   PANELES INFERIORES
-   ========================================================= */
-
-.verificador-container,
-.simulador-container,
-.relaciones-globales-container,
-.timeline-global-container,
-.cadena-container {
-
-    position: relative;
-
-    z-index: 20;
-
-    width: 100%;
-
-    margin-top: 10px;
-}
-/* =========================================================
-   TOP BAR
-   ========================================================= */
-
-.top-bar {
-
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    background: var(--bg-card);
-
-    border: 1px solid var(--border);
-    border-radius: 50px;
-
-    padding: 14px 22px;
-
-    min-height: 75px;
-
-    flex-wrap: wrap;
-    gap: 15px;
-}
-
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.logo-icon {
-    font-size: 2rem;
-}
-
-.logo-text {
-    font-size: 1.3rem;
-    font-weight: bold;
-    color: var(--info);
-}
-
-/* ===== NAV ===== */
-
-.top-nav {
-
-    display: flex;
-    align-items: center;
-    gap: 10px;
-
-    flex-wrap: wrap;
-}
-
-.nav-link,
-.nav-btn {
-
-    border: 1px solid var(--border);
-    background: var(--bg-panel);
-
-    color: var(--text);
-
-    padding: 10px 16px;
-
-    border-radius: 30px;
-
-    cursor: pointer;
-
-    transition: 0.2s;
-
-    font-size: 0.9rem;
-}
-
-.nav-link:hover,
-.nav-btn:hover {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: white;
-}
-
-.nav-btn.active {
-    background: var(--accent);
-    color: white;
-}
-
-.nav-btn-real.active {
-    background: var(--success);
-}
-
-.nav-btn-sim.active {
-    background: var(--warning);
-}
-
-.nav-btn-verif {
-    background: rgba(76, 175, 80, 0.12);
-}
-
-.nav-btn-relaciones-globales {
-    background: rgba(156, 39, 176, 0.12);
-}
-
-.nav-btn-timeline {
-    background: rgba(79, 195, 247, 0.12);
-}
-
-.nav-sep {
-    color: var(--border);
-}
-
-/* =========================================================
-   MAIN LAYOUT
-   ========================================================= */
-
-.main-container {
-
-    flex: 1;
-
-    display: grid;
-
-    grid-template-columns: 70% 30%;
-
-    gap: 15px;
-
-    min-height: 0;
-}
-
-/* =========================================================
-   MAPA
-   ========================================================= */
-
-.mapa-container {
-
-    position: relative;
-   
-    z-index: 1;
-
-    overflow: hidden;
-
-    border-radius: var(--radius);
-
-    border: 1px solid var(--border);
-
-    background: #102330;
-
-    min-height: 500px;
-}
-
-.mapa {
-
-    width: 100%;
-    height: 100%;
-
-    min-height: 500px;
-
-    z-index: 1;
-}
-
-/* ===== LEAFLET ===== */
-
-.leaflet-container {
-    width: 100%;
-    height: 100%;
-    background: #102330;
-}
-
-.leaflet-control-container {
-    z-index: 500;
-}
-
-.leaflet-popup-content-wrapper {
-    background: var(--bg-card);
-    color: white;
-}
-
-.leaflet-popup-tip {
-    background: var(--bg-card);
-}
-
-/* =========================================================
-   PANEL LATERAL
-   ========================================================= */
-
-.panel-lateral {
-
-    background: var(--bg-panel);
-
-    border-radius: var(--radius);
-
-    border: 1px solid var(--border);
-
-    padding: 15px;
-
-    overflow-y: auto;
-
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-/* ===== BUSCADOR ===== */
-
-.panel-buscador input {
-
-    width: 100%;
-
-    background: var(--bg-card);
-
-    border: 1px solid var(--border);
-
-    border-radius: 30px;
-
-    padding: 12px 16px;
-
-    color: white;
-
-    outline: none;
-}
-
-.panel-buscador input:focus {
-    border-color: var(--info);
-}
-
-/* =========================================================
-   CAPAS
-   ========================================================= */
-
-.capas-grid {
-
-    display: grid;
-
-    grid-template-columns: repeat(4, 1fr);
-
-    gap: 10px;
-}
-
-.capa-icon {
-
-    background: var(--bg-card);
-
-    border: 1px solid var(--border);
-
-    border-radius: 12px;
-
-    padding: 12px;
-
-    cursor: pointer;
-
-    font-size: 1.4rem;
-
-    transition: 0.2s;
-}
-
-.capa-icon:hover {
-
-    background: var(--accent);
-
-    transform: translateY(-2px);
-}
-
-.capa-icon.activo {
-
-    background: var(--accent);
-
-    border-color: var(--info);
-}
-
-/* =========================================================
-   PANEL INFO
-   ========================================================= */
-
-.panel-info {
-
-    background: var(--bg-card);
-
-    border-radius: 12px;
-
-    padding: 15px;
-
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.info-header {
-
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    gap: 10px;
-}
-
-.info-header h3 {
-    color: var(--info);
-}
-
-.pais-estado {
-
-    background: var(--bg-panel);
-
-    border-radius: 20px;
-
-    padding: 5px 10px;
-
-    font-size: 0.8rem;
-}
-
-/* ===== BOTONES INFO ===== */
-
-.info-botones {
-
-    display: grid;
-
-    grid-template-columns: repeat(2, 1fr);
-
-    gap: 8px;
-}
-
-.info-btn {
-
-    background: var(--bg-panel);
-
-    border: 1px solid var(--border);
-
-    color: white;
-
-    border-radius: 10px;
-
-    padding: 10px;
-
-    cursor: pointer;
-
-    transition: 0.2s;
-}
-
-.info-btn:hover {
-    background: var(--accent);
-}
-
-/* ===== ALERTAS ===== */
-
-.info-alertas h4 {
-    margin-bottom: 10px;
-}
-
-.alerta-item {
-
-    padding: 10px;
-
-    border-radius: 8px;
-
-    margin-bottom: 8px;
-}
-
-.alerta-roja {
-    background: rgba(183, 28, 28, 0.2);
-    border-left: 4px solid var(--danger);
-}
-
-.alerta-amarilla {
-    background: rgba(245, 124, 0, 0.2);
-    border-left: 4px solid var(--warning);
-}
-
-.alerta-verde {
-    background: rgba(46, 125, 50, 0.2);
-    border-left: 4px solid var(--success);
-}
-
-/* =========================================================
-   MODALES
-   ========================================================= */
-
-.modal-overlay {
-
-    position: fixed;
-
-    inset: 0;
-
-    background: rgba(0,0,0,0.8);
-
-    display: none;
-
-    justify-content: center;
-    align-items: center;
-
-    z-index: 9999;
-}
-
-.modal-content {
-
-    width: min(900px, 92%);
-
-    max-height: 90vh;
-
-    overflow-y: auto;
-
-    background: var(--bg-card);
-
-    border-radius: 20px;
-
-    border: 1px solid var(--border);
-
-    padding: 25px;
-}
-
-.close-btn {
-
-    float: right;
-
-    font-size: 28px;
-
-    cursor: pointer;
-
-    color: var(--text-muted);
-}
-
-.close-btn:hover {
-    color: white;
-}
-
-/* =========================================================
-   VERIFICADOR
-   ========================================================= */
-
-.verificador-container,
-.simulador-container,
-.relaciones-globales-container,
-.timeline-global-container,
-.cadena-container {
-
-    position: relative;
-
-    z-index: 2000;
-
-    background: var(--bg-card);
-
-    border-radius: var(--radius);
-
-    border: 2px solid var(--border);
-
-    padding: 20px;
-
-    display: none;
-
-    overflow-y: auto;
-
-    width: 100%;
-
-    margin-top: 10px;
-}
-
-/* =========================================================
-   PANELES ACTIVOS
-   ========================================================= */
-
-.verificador-container.active,
-.simulador-container.active,
-.relaciones-globales-container.active,
-.timeline-global-container.active,
-.cadena-container.active {
-
-    display: flex;
-
-    flex-direction: column;
-}
-
-/* =========================================================
-   PANELES FLOTANTES
-   ========================================================= */
-
-.verificador-container,
-.simulador-container,
-.relaciones-globales-container,
-.timeline-global-container,
-.cadena-container {
-
-    position: fixed;
-
-    top: 110px;
-
-    left: 50%;
-
-    transform: translateX(-50%);
-
-    width: min(1200px, 95vw);
-
-    max-height: calc(100vh - 140px);
-
-    overflow-y: auto;
-
-    z-index: 99999;
-
-    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-}
-
-.verificador-header,
-.simulador-header,
-.relaciones-globales-header,
-.timeline-global-header {
-
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    margin-bottom: 20px;
-}
-
-/* ===== INPUTS ===== */
-
-.verificador-input,
-.simulador-input {
-
-    display: flex;
-
-    gap: 10px;
-
-    margin-bottom: 20px;
-}
-
-.verificador-input input,
-.simulador-input input {
-
-    flex: 1;
-
-    background: var(--bg-panel);
-
-    border: 1px solid var(--border);
-
-    border-radius: 30px;
-
-    padding: 14px 18px;
-
-    color: white;
-
-    outline: none;
-}
-
-.verificador-input input:focus,
-.simulador-input input:focus {
-    border-color: var(--info);
-}
-
-/* ===== BOTONES ===== */
-
-.btn-verde,
-.btn-naranja {
-
-    border: none;
-
-    border-radius: 30px;
-
-    padding: 0 25px;
-
-    color: white;
-
-    font-weight: bold;
-
-    cursor: pointer;
-
-    transition: 0.2s;
-}
-
-.btn-verde {
-    background: var(--success);
-}
-
-.btn-naranja {
-    background: var(--warning);
-}
-
-.btn-verde:hover,
-.btn-naranja:hover {
-    transform: scale(1.03);
-}
-
-/* ===== RESULTADOS ===== */
-
-.verificador-resultado,
-.simulador-resultados {
-
-    background: var(--bg-panel);
-
-    border-radius: 12px;
-
-    padding: 20px;
-
-    min-height: 150px;
-}
-
-/* =========================================================
-   RELACIONES / TIMELINE
-   ========================================================= */
-
-.relaciones-visualizacion,
-.timeline-contenido {
-
-    background: var(--bg-panel);
-
-    border-radius: 12px;
-
-    padding: 20px;
-}
-
-/* =========================================================
-   FOOTER
-   ========================================================= */
-
-.footer {
-
-    text-align: center;
-
-    color: var(--text-muted);
-
-    font-size: 0.85rem;
-
-    border-top: 1px solid var(--border);
-
-    padding-top: 10px;
-}
-
-.footer p {
-    margin: 4px 0;
-}
-
-/* =========================================================
-   PLACEHOLDER
-   ========================================================= */
-
-.placeholder {
-
-    color: var(--text-muted);
-
-    text-align: center;
-
-    font-style: italic;
-}
-
-/* =========================================================
-   SCROLL
-   ========================================================= */
-
-::-webkit-scrollbar {
-    width: 10px;
-}
-
-::-webkit-scrollbar-track {
-    background: var(--bg-dark);
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--border);
-    border-radius: 20px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: var(--accent);
-}
-
-/* =========================================================
-   RESPONSIVE
-   ========================================================= */
-
-@media (max-width: 1200px) {
-
-    .main-container {
-        grid-template-columns: 1fr;
+        console.error(
+            '❌ Error iniciando módulos:',
+            err
+        );
     }
 
-    .panel-lateral {
-        max-height: 450px;
-    }
-}
+    // =========================================
+    // ELEMENTOS
+    // =========================================
 
-@media (max-width: 900px) {
+    const simuladorPanel =
+        document.getElementById(
+            'simulador-panel'
+        );
 
-    html,
-    body {
-        overflow: auto;
-    }
+    const verificadorPanel =
+        document.getElementById(
+            'verificador-panel'
+        );
 
-    .app {
-        height: auto;
-        min-height: 100vh;
-    }
+    const relacionesPanel =
+        document.getElementById(
+            'relaciones-globales-panel'
+        );
 
-    .top-bar {
+    const timelinePanel =
+        document.getElementById(
+            'timeline-panel'
+        );
 
-        flex-direction: column;
+    // =========================================
+    // FUNCIÓN CERRAR TODO
+    // =========================================
 
-        border-radius: 20px;
-    }
+    function cerrarPaneles() {
 
-    .top-nav {
-        justify-content: center;
-    }
+        [
+            simuladorPanel,
+            verificadorPanel,
+            relacionesPanel,
+            timelinePanel
+        ].forEach(panel => {
 
-    .main-container {
-
-        grid-template-columns: 1fr;
-
-        height: auto;
-    }
-
-    .mapa-container {
-
-        height: 60vh;
-
-        min-height: 400px;
-    }
-
-    .mapa {
-
-        min-height: 400px;
+            if (panel)
+                panel.classList.remove(
+                    'active'
+                );
+        });
     }
 
-    .panel-lateral {
+    // =========================================
+    // MODO REAL / JUEGO
+    // =========================================
 
-        height: auto;
+    const btnReal =
+        document.getElementById(
+            'btn-modo-real'
+        );
 
-        max-height: none;
+    const btnJuego =
+        document.getElementById(
+            'btn-modo-juego'
+        );
+
+    const badge =
+        document.getElementById(
+            'modo-badge'
+        );
+
+    if (btnReal) {
+
+        btnReal.addEventListener(
+            'click',
+            () => {
+
+                window.CONFIG.modo =
+                    'realidad';
+
+                btnReal.classList.add(
+                    'active'
+                );
+
+                if (btnJuego)
+                    btnJuego.classList.remove(
+                        'active'
+                    );
+
+                if (badge)
+                    badge.textContent =
+                        '🌐 MODO REAL';
+
+                if (simuladorPanel)
+                    simuladorPanel.classList.remove(
+                        'active'
+                    );
+
+                console.log(
+                    '🌐 Modo REAL activado'
+                );
+            }
+        );
     }
 
-    .capas-grid {
-        grid-template-columns: repeat(3, 1fr);
+    if (btnJuego) {
+
+        btnJuego.addEventListener(
+            'click',
+            () => {
+
+                window.CONFIG.modo =
+                    'juego';
+
+                btnJuego.classList.add(
+                    'active'
+                );
+
+                if (btnReal)
+                    btnReal.classList.remove(
+                        'active'
+                    );
+
+                if (badge)
+                    badge.textContent =
+                        '🎮 MODO JUEGO';
+
+                if (simuladorPanel)
+                    simuladorPanel.classList.add(
+                        'active'
+                    );
+
+                console.log(
+                    '🎮 Modo JUEGO activado'
+                );
+            }
+        );
     }
 
-    .info-botones {
-        grid-template-columns: 1fr;
+    // =========================================
+    // VERIFICADOR
+    // =========================================
+
+    const btnVerificador =
+        document.getElementById(
+            'btn-verificador-panel'
+        );
+
+    const btnCerrarVerificador =
+        document.getElementById(
+            'btn-cerrar-verificador'
+        );
+
+    if (btnVerificador &&
+        verificadorPanel) {
+
+        btnVerificador.addEventListener(
+            'click',
+            () => {
+
+                const abierto =
+                    verificadorPanel
+                    .classList.contains(
+                        'active'
+                    );
+
+                cerrarPaneles();
+
+                if (!abierto) {
+
+                    verificadorPanel
+                    .classList.add(
+                        'active'
+                    );
+                }
+            }
+        );
     }
 
-    .verificador-input,
-    .simulador-input {
+    if (
+        btnCerrarVerificador &&
+        verificadorPanel
+    ) {
 
-        flex-direction: column;
+        btnCerrarVerificador
+        .addEventListener(
+            'click',
+            () => {
+
+                verificadorPanel
+                .classList.remove(
+                    'active'
+                );
+            }
+        );
     }
 
-    .btn-verde,
-    .btn-naranja {
+    // =========================================
+    // RELACIONES
+    // =========================================
 
-        height: 50px;
+    const btnRelaciones =
+        document.getElementById(
+            'btn-relaciones-globales'
+        );
+
+    const btnCerrarRelaciones =
+        document.getElementById(
+            'btn-cerrar-relaciones-globales'
+        );
+
+    if (
+        btnRelaciones &&
+        relacionesPanel
+    ) {
+
+        btnRelaciones.addEventListener(
+            'click',
+            () => {
+
+                const abierto =
+                    relacionesPanel
+                    .classList.contains(
+                        'active'
+                    );
+
+                cerrarPaneles();
+
+                if (!abierto) {
+
+                    relacionesPanel
+                    .classList.add(
+                        'active'
+                    );
+                }
+            }
+        );
     }
-}
 
-@media (max-width: 600px) {
+    if (
+        btnCerrarRelaciones &&
+        relacionesPanel
+    ) {
 
-    .logo-text {
-        font-size: 1rem;
+        btnCerrarRelaciones
+        .addEventListener(
+            'click',
+            () => {
+
+                relacionesPanel
+                .classList.remove(
+                    'active'
+                );
+            }
+        );
     }
 
-    .nav-btn,
-    .nav-link {
-        width: 100%;
-        text-align: center;
+    // =========================================
+    // TIMELINE
+    // =========================================
+
+    const btnTimeline =
+        document.getElementById(
+            'btn-timeline-panel'
+        );
+
+    const btnCerrarTimeline =
+        document.getElementById(
+            'btn-cerrar-timeline'
+        );
+
+    if (
+        btnTimeline &&
+        timelinePanel
+    ) {
+
+        btnTimeline.addEventListener(
+            'click',
+            () => {
+
+                const abierto =
+                    timelinePanel
+                    .classList.contains(
+                        'active'
+                    );
+
+                cerrarPaneles();
+
+                if (!abierto) {
+
+                    timelinePanel
+                    .classList.add(
+                        'active'
+                    );
+                }
+            }
+        );
     }
 
-    .capas-grid {
-        grid-template-columns: repeat(2, 1fr);
+    if (
+        btnCerrarTimeline &&
+        timelinePanel
+    ) {
+
+        btnCerrarTimeline
+        .addEventListener(
+            'click',
+            () => {
+
+                timelinePanel
+                .classList.remove(
+                    'active'
+                );
+            }
+        );
     }
-}
 
-/* =========================================================
-   HEADER SIMULADOR
-   ========================================================= */
+    // =========================================
+    // README / NORMAS
+    // =========================================
 
-.simulador-header-right {
+    const btnReadme =
+        document.getElementById(
+            'btn-readme'
+        );
 
-    display: flex;
+    const btnNormas =
+        document.getElementById(
+            'btn-normas'
+        );
 
-    align-items: center;
+    const modalReadme =
+        document.getElementById(
+            'modal-readme'
+        );
 
-    gap: 12px;
-}
+    const modalNormas =
+        document.getElementById(
+            'modal-normas'
+        );
 
-.btn-cerrar {
+    const btnCerrarReadme =
+        document.getElementById(
+            'btn-cerrar-readme'
+        );
 
-    background: transparent;
+    const btnCerrarNormas =
+        document.getElementById(
+            'btn-cerrar-normas'
+        );
 
-    border: 1px solid var(--border);
+    async function cargarMarkdown(
+        url,
+        destino
+    ) {
 
-    color: var(--text);
+        try {
 
-    width: 36px;
-    height: 36px;
+            const response =
+                await fetch(url);
 
-    border-radius: 50%;
+            const md =
+                await response.text();
 
-    cursor: pointer;
+            destino.innerHTML = `
+                <pre style="
+                    white-space: pre-wrap;
+                    font-family: inherit;
+                ">${md}</pre>
+            `;
 
-    font-size: 1rem;
+        } catch (err) {
 
-    transition: 0.2s;
-}
+            destino.innerHTML =
+                '<p>❌ Error cargando archivo</p>';
+        }
+    }
 
-.btn-cerrar:hover {
+    if (btnReadme && modalReadme) {
 
-    background: var(--danger);
+        btnReadme.addEventListener(
+            'click',
+            async () => {
 
-    border-color: var(--danger);
+                const contenido =
+                    document.getElementById(
+                        'readme-contenido'
+                    );
 
-    color: white;
-}
+                if (contenido)
+                    await cargarMarkdown(
+                        'README.md',
+                        contenido
+                    );
+
+                modalReadme.style.display =
+                    'flex';
+            }
+        );
+    }
+
+    if (btnNormas && modalNormas) {
+
+        btnNormas.addEventListener(
+            'click',
+            async () => {
+
+                const contenido =
+                    document.getElementById(
+                        'normas-contenido'
+                    );
+
+                if (contenido)
+                    await cargarMarkdown(
+                        'Normas.md',
+                        contenido
+                    );
+
+                modalNormas.style.display =
+                    'flex';
+            }
+        );
+    }
+
+    if (
+        btnCerrarReadme &&
+        modalReadme
+    ) {
+
+        btnCerrarReadme
+        .addEventListener(
+            'click',
+            () => {
+
+                modalReadme.style.display =
+                    'none';
+            }
+        );
+    }
+
+    if (
+        btnCerrarNormas &&
+        modalNormas
+    ) {
+
+        btnCerrarNormas
+        .addEventListener(
+            'click',
+            () => {
+
+                modalNormas.style.display =
+                    'none';
+            }
+        );
+    }
+
+    // =========================================
+    // BUSCADOR
+    // =========================================
+
+    const buscador =
+        document.getElementById(
+            'buscador-rapido'
+        );
+
+    if (
+        buscador &&
+        window.MapaMundial?.buscarLugar
+    ) {
+
+        buscador.addEventListener(
+            'keydown',
+            (e) => {
+
+                if (e.key === 'Enter') {
+
+                    const valor =
+                        buscador.value.trim();
+
+                    if (valor)
+                        MapaMundial.buscarLugar(
+                            valor
+                        );
+                }
+            }
+        );
+    }
+
+    // =========================================
+    // CAPAS
+    // =========================================
+
+    document.addEventListener(
+        'click',
+        (e) => {
+
+            const btn =
+                e.target.closest(
+                    '.capa-icon'
+                );
+
+            if (!btn) return;
+
+            btn.classList.toggle(
+                'activo'
+            );
+
+            const capa =
+                btn.dataset.capa;
+
+            const activa =
+                btn.classList.contains(
+                    'activo'
+                );
+
+            if (
+                window.MapaMundial
+                ?.activarCapa
+            ) {
+
+                MapaMundial.activarCapa(
+                    capa,
+                    activa
+                );
+            }
+        }
+    );
+
+    console.log(
+        '✅ Tablero Mundial listo'
+    );
+});
