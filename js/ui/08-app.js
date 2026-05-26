@@ -2,15 +2,12 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 Iniciando Tablero Mundial');
 
-    // Inicializar componentes (sin idioma por ahora para simplificar)
     if (window.MapaMundial) MapaMundial.init();
     if (window.UIPanelInfo) UIPanelInfo.init();
     if (window.UIVerificador) UIVerificador.init();
     if (window.UISimulador) UISimulador.init();
 
-    // =========================================
-    // PANELES: ASIGNACIÓN DIRECTA DE EVENTOS
-    // =========================================
+    // Verificador
     const btnVerificador = document.getElementById('btn-verificador-panel');
     const panelVerificador = document.getElementById('verificador-panel');
     if (btnVerificador && panelVerificador) {
@@ -20,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Relaciones Globales
     const btnRelaciones = document.getElementById('btn-relaciones-globales');
     const panelRelaciones = document.getElementById('relaciones-globales-panel');
     if (btnRelaciones && panelRelaciones) {
@@ -29,6 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Timeline
     const btnTimeline = document.getElementById('btn-timeline-panel');
     const panelTimeline = document.getElementById('timeline-panel');
     if (btnTimeline && panelTimeline) {
@@ -38,6 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Simulador (modo juego)
     const btnSimulador = document.getElementById('btn-modo-juego');
     const panelSimulador = document.getElementById('simulador-panel');
     if (btnSimulador && panelSimulador) {
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Modo REAL / JUEGO (solo cambio de badge)
+    // Modo REAL / JUEGO
     const btnReal = document.getElementById('btn-modo-real');
     const btnJuego = document.getElementById('btn-modo-juego');
     const badge = document.getElementById('modo-badge');
@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Buscador rápido
+    // Buscador
     const buscador = document.getElementById('buscador-rapido');
     if (buscador && MapaMundial.buscarLugar) {
         buscador.addEventListener('keypress', function(e) {
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Capas (iconos)
+    // Capas
     document.addEventListener('click', function(e) {
         const capaBtn = e.target.closest('.capa-icon');
         if (capaBtn) {
@@ -87,7 +87,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Mostrar España por defecto
     if (window.UIPanelInfo) UIPanelInfo.mostrarPais('espana');
 
     console.log('✅ Tablero Mundial listo');
