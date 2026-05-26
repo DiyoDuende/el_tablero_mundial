@@ -296,79 +296,192 @@ document.addEventListener('DOMContentLoaded', async () => {
         );
     }
 
-    // =====================================================
-    // README
-    // =====================================================
+    // ============================================
+// README / NORMAS
+// ============================================
 
-    const btnReadme =
-        document.getElementById('btn-readme');
+const btnReadme =
+    document.getElementById(
+        'btn-readme'
+    );
 
-    const modalReadme =
-        document.getElementById('modal-readme');
+const btnNormas =
+    document.getElementById(
+        'btn-normas'
+    );
 
-    const btnCerrarReadme =
-        document.getElementById(
-            'btn-cerrar-readme'
-        );
+const modalReadme =
+    document.getElementById(
+        'modal-readme'
+    );
 
-    if (btnReadme && modalReadme) {
+const modalNormas =
+    document.getElementById(
+        'modal-normas'
+    );
 
-        btnReadme.addEventListener('click', () => {
+const btnCerrarReadme =
+    document.getElementById(
+        'btn-cerrar-readme'
+    );
 
-            modalReadme.style.display = 'flex';
-        });
+const btnCerrarNormas =
+    document.getElementById(
+        'btn-cerrar-normas'
+    );
+
+const readmeContenido =
+    document.getElementById(
+        'readme-contenido'
+    );
+
+const normasContenido =
+    document.getElementById(
+        'normas-contenido'
+    );
+
+async function cargarMarkdown(
+    url,
+    destino
+) {
+
+    try {
+
+        const response =
+            await fetch(url);
+
+        if (!response.ok) {
+
+            throw new Error(
+                `HTTP ${response.status}`
+            );
+        }
+
+        const markdown =
+            await response.text();
+
+        let html = markdown
+
+            .replace(
+                /^### (.*$)/gim,
+                '<h3>$1</h3>'
+            )
+
+            .replace(
+                /^## (.*$)/gim,
+                '<h2>$1</h2>'
+            )
+
+            .replace(
+                /^# (.*$)/gim,
+                '<h1>$1</h1>'
+            )
+
+            .replace(
+                /\*\*(.*?)\*\*/gim,
+                '<strong>$1</strong>'
+            )
+
+            .replace(
+                /\n/g,
+                '<br>'
+            );
+
+        destino.innerHTML = html;
+
+    } catch (error) {
+
+        console.error(error);
+
+        destino.innerHTML = `
+            <h3>
+                ❌ Error cargando archivo
+            </h3>
+
+            <p>
+                ${error.message}
+            </p>
+        `;
     }
+}
 
-    if (
-        btnCerrarReadme &&
-        modalReadme
-    ) {
+// README
 
-        btnCerrarReadme.addEventListener(
-            'click',
-            () => {
+if (
+    btnReadme &&
+    modalReadme
+) {
 
-                modalReadme.style.display = 'none';
-            }
-        );
-    }
+    btnReadme.addEventListener(
+        'click',
+        async () => {
 
-    // =====================================================
-    // NORMAS
-    // =====================================================
+            await cargarMarkdown(
+                'Readme.md',
+                readmeContenido
+            );
 
-    const btnNormas =
-        document.getElementById('btn-normas');
+            modalReadme.style.display =
+                'flex';
+        }
+    );
+}
 
-    const modalNormas =
-        document.getElementById('modal-normas');
+// NORMAS
 
-    const btnCerrarNormas =
-        document.getElementById(
-            'btn-cerrar-normas'
-        );
+if (
+    btnNormas &&
+    modalNormas
+) {
 
-    if (btnNormas && modalNormas) {
+    btnNormas.addEventListener(
+        'click',
+        async () => {
 
-        btnNormas.addEventListener('click', () => {
+            await cargarMarkdown(
+                'Normas.md',
+                normasContenido
+            );
 
-            modalNormas.style.display = 'flex';
-        });
-    }
+            modalNormas.style.display =
+                'flex';
+        }
+    );
+}
 
-    if (
-        btnCerrarNormas &&
-        modalNormas
-    ) {
+// CERRAR README
 
-        btnCerrarNormas.addEventListener(
-            'click',
-            () => {
+if (
+    btnCerrarReadme &&
+    modalReadme
+) {
 
-                modalNormas.style.display = 'none';
-            }
-        );
-    }
+    btnCerrarReadme.addEventListener(
+        'click',
+        () => {
+
+            modalReadme.style.display =
+                'none';
+        }
+    );
+}
+
+// CERRAR NORMAS
+
+if (
+    btnCerrarNormas &&
+    modalNormas
+) {
+
+    btnCerrarNormas.addEventListener(
+        'click',
+        () => {
+
+            modalNormas.style.display =
+                'none';
+        }
+    );
+}
 
     // =====================================================
     // BUSCADOR
