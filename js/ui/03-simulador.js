@@ -1,4 +1,5 @@
 // ============================================
+// 🌍 TABLERO MUNDIAL
 // 03-simulador.js
 // ============================================
 
@@ -10,7 +11,7 @@ const UISimulador = {
             '⚡ Inicializando simulador...'
         );
 
-        const btn =
+        const btnSimular =
             document.getElementById(
                 'btn-simular'
             );
@@ -20,9 +21,9 @@ const UISimulador = {
                 'simulador-pregunta'
             );
 
-        if (btn) {
+        if (btnSimular) {
 
-            btn.addEventListener(
+            btnSimular.addEventListener(
                 'click',
                 () => this.simular()
             );
@@ -50,60 +51,107 @@ const UISimulador = {
     simular: function () {
 
         if (
-            window.CONFIG.modo !==
-            'juego'
+            !window.CONFIG ||
+            window.CONFIG.modo !== 'juego'
         ) {
 
             alert(
-                'Activa el modo JUEGO'
+                '⚠️ Activa primero el modo JUEGO'
             );
 
             return;
         }
 
-        const texto =
-            document
-                .getElementById(
-                    'simulador-pregunta'
-                )
-                .value
-                .trim();
+        const input =
+            document.getElementById(
+                'simulador-pregunta'
+            );
 
-        if (!texto) return;
+        const resultados =
+            document.getElementById(
+                'simulador-resultados'
+            );
+
+        if (!input || !resultados)
+            return;
+
+        const texto =
+            input.value.trim();
+
+        if (!texto) {
+
+            resultados.innerHTML = `
+                <p>
+                    ⚠️ Escribe un escenario
+                </p>
+            `;
+
+            return;
+        }
+
+        // SIMULACIÓN BÁSICA
 
         const resultado =
-            MotorSimulacion.simular({
+            window.MotorSimulacion
+            ?.simular({
 
-                poder: 0.6,
-                sector: 0.5,
-                mecanismo: 0.7
+                poder: 0.7,
+                sector: 0.6,
+                mecanismo: 0.5
+
             });
 
-        document.getElementById(
-            'simulador-resultados'
-        ).innerHTML = `
+        if (!resultado) {
 
-            <h4>
-                📊 RESULTADOS
-            </h4>
+            resultados.innerHTML = `
+                <p>
+                    ❌ Error simulando
+                </p>
+            `;
 
-            <p>
-                Impacto económico:
-                ${resultado.impacto.economico}%
-            </p>
+            return;
+        }
 
-            <p>
-                Impacto geopolítico:
-                ${resultado.impacto.geopolitico}%
-            </p>
+        resultados.innerHTML = `
+            <div class="sim-result">
 
-            <p>
-                Impacto social:
-                ${resultado.impacto.social}%
-            </p>
+                <h3>
+                    📊 Resultado
+                </h3>
+
+                <p>
+                    <strong>
+                        Escenario:
+                    </strong>
+                    ${texto}
+                </p>
+
+                <hr>
+
+                <p>
+                    💰 Impacto económico:
+                    <strong>
+                        ${resultado.impacto.económico}%
+                    </strong>
+                </p>
+
+                <p>
+                    🌍 Impacto geopolítico:
+                    <strong>
+                        ${resultado.impacto.geopolítico}%
+                    </strong>
+                </p>
+
+                <p>
+                    👥 Impacto social:
+                    <strong>
+                        ${resultado.impacto.social}%
+                    </strong>
+                </p>
+
+            </div>
         `;
     }
 };
 
-window.UISimulador =
-    UISimulador;
+window.UISimulador = UISimulador;
