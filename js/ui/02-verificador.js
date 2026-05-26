@@ -6,7 +6,6 @@ const UIVerificador = {
         if (btnVerificar) btnVerificar.addEventListener('click', () => this.verificar());
         if (preguntaInput) preguntaInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') this.verificar(); });
     },
-
     verificar: function() {
         const pregunta = document.getElementById('verificador-pregunta').value.trim();
         if (!pregunta) return;
@@ -15,5 +14,4 @@ const UIVerificador = {
         document.getElementById('verificador-respuesta').innerHTML = html;
     }
 };
-
 window.UIVerificador = UIVerificador;
