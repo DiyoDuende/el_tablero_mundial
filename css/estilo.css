@@ -161,7 +161,9 @@ body {
 }
 .alerta-roja { background: rgba(183,28,28,0.2); border-left: 4px solid var(--danger); }
 .alerta-amarilla { background: rgba(245,124,0,0.2); border-left: 4px solid var(--warning); }
-/* PANELES MODALES */
+/* ============================================
+   PANELES MODALES (Verificador, Simulador, etc.)
+   ============================================ */
 .verificador-container,
 .simulador-container,
 .relaciones-globales-container,
@@ -178,44 +180,73 @@ body {
     padding: 20px;
     z-index: 1000;
     border: 2px solid var(--info);
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
 }
+
 .verificador-container.active,
 .simulador-container.active,
 .relaciones-globales-container.active,
 .timeline-global-container.active {
-    display: block;
+    display: block !important;
+    z-index: 10000 !important;
 }
-.verificador-header, .simulador-header {
+
+.verificador-header,
+.simulador-header {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     margin-bottom: 15px;
 }
-.verificador-input, .simulador-input {
+
+.verificador-header h3,
+.simulador-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.verificador-input,
+.simulador-input {
     display: flex;
     gap: 10px;
     margin-bottom: 15px;
 }
-.verificador-input input, .simulador-input input {
+
+.verificador-input input,
+.simulador-input input {
     flex: 1;
     padding: 12px;
     background: var(--bg-panel);
     border: 1px solid var(--border);
     border-radius: 30px;
     color: white;
+    outline: none;
 }
-.btn-verde, .btn-naranja {
+
+.btn-verde,
+.btn-naranja {
     padding: 0 20px;
     border: none;
     border-radius: 30px;
     color: white;
     cursor: pointer;
+    transition: 0.2s;
 }
+
 .btn-verde { background: var(--success); }
 .btn-naranja { background: var(--warning); }
-.footer {
-    text-align: center;
-    color: var(--text-muted);
-    font-size: 0.8rem;
-    border-top: 1px solid var(--border);
-    padding-top: 10px;
+
+.btn-verde:hover,
+.btn-naranja:hover {
+    transform: scale(1.02);
+}
+
+.verificador-resultado,
+.simulador-resultados {
+    background: var(--bg-panel);
+    border-radius: 12px;
+    padding: 15px;
+    margin-top: 10px;
+    max-height: 400px;
+    overflow-y: auto;
 }
