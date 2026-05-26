@@ -1,3 +1,3 @@
 window.InterpreteLegislativo = {
-  traducir: (datos) => datos
+    traducir: function(datos) { return datos; }
 };
