@@ -1,108 +1,269 @@
-// js/ui/08-app.js
-document.addEventListener('DOMContentLoaded', async () => {
-    console.log('🚀 Iniciando Tablero Mundial');
+// ============================================
+// 🌍 TABLERO MUNDIAL
+// 08-app.js
+// APP PRINCIPAL ESTABLE V4
+// ============================================
 
-    if (window.Idioma) await Idioma.init();
-    if (window.MapaMundial) MapaMundial.init();
-    if (window.UIPanelInfo) UIPanelInfo.init();
-    if (window.UIVerificador) UIVerificador.init();
-    if (window.UISimulador) UISimulador.init();
-    if (window.UIRelacionesGlobales && UIRelacionesGlobales.init) UIRelacionesGlobales.init();
-    if (window.UITimeline && UITimeline.init) UITimeline.init();
+document.addEventListener(
+    'DOMContentLoaded',
+    async () => {
 
-    // =============================================
-    // PANELES: SOLO classList.toggle('active')
-    // =============================================
-    const paneles = {
-        'btn-verificador-panel': 'verificador-panel',
-        'btn-simulador-panel': 'simulador-panel',
-        'btn-relaciones-globales': 'relaciones-globales-panel',
-        'btn-timeline-panel': 'timeline-panel'
-    };
-    for (const [btnId, panelId] of Object.entries(paneles)) {
-        const btn = document.getElementById(btnId);
-        const panel = document.getElementById(panelId);
-        if (btn && panel) {
-            btn.addEventListener('click', () => {
-                panel.classList.toggle('active');
-            });
+        console.log(
+            '🚀 Iniciando Tablero Mundial...'
+        );
+
+        window.CONFIG =
+            window.CONFIG || {};
+
+        if (!window.CONFIG.modo) {
+
+            window.CONFIG.modo =
+                'realidad';
         }
-    }
 
-    // Botones de cerrar dentro de paneles
-    const cerrarBtns = [
-        'btn-cerrar-verificador',
-        'btn-cerrar-simulador',
-        'btn-cerrar-relaciones-globales',
-        'btn-cerrar-timeline'
-    ];
-    cerrarBtns.forEach(id => {
-        const btn = document.getElementById(id);
-        if (btn) {
-            btn.addEventListener('click', () => {
-                const panel = btn.closest('.verificador-container, .simulador-container, .relaciones-globales-container, .timeline-global-container');
-                if (panel) panel.classList.remove('active');
-            });
+        // MAPA
+
+        if (
+            window.MapaMundial
+        ) {
+
+            MapaMundial.init();
         }
-    });
 
-    // Modo REAL / JUEGO
-    const btnReal = document.getElementById('btn-modo-real');
-    const btnJuego = document.getElementById('btn-modo-juego');
-    const badge = document.getElementById('modo-badge');
-    const simuladorPanel = document.getElementById('simulador-panel');
-    if (btnReal && btnJuego && badge && simuladorPanel) {
-        btnReal.addEventListener('click', () => {
-            window.CONFIG.modo = 'realidad';
-            btnReal.classList.add('active');
-            btnJuego.classList.remove('active');
-            badge.textContent = '🌐 MODO REAL';
-            simuladorPanel.classList.remove('active');
-        });
-        btnJuego.addEventListener('click', () => {
-            window.CONFIG.modo = 'juego';
-            btnJuego.classList.add('active');
-            btnReal.classList.remove('active');
-            badge.textContent = '🎮 MODO JUEGO';
-            simuladorPanel.classList.add('active');
-        });
-    }
+        // UI
 
-    // Buscador rápido
-    const buscador = document.getElementById('buscador-rapido');
-    if (buscador && MapaMundial.buscarLugar) {
-        buscador.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                MapaMundial.buscarLugar(buscador.value.trim());
+        [
+            window.UIPanelInfo,
+            window.UIVerificador,
+            window.UISimulador,
+            window.UIRelacionesGlobales,
+            window.UITimeline
+        ].forEach(modulo => {
+
+            if (
+                modulo &&
+                typeof modulo.init ===
+                    'function'
+            ) {
+
+                modulo.init();
             }
         });
+
+        // MODOS
+
+        const btnReal =
+            document.getElementById(
+                'btn-modo-real'
+            );
+
+        const btnJuego =
+            document.getElementById(
+                'btn-modo-juego'
+            );
+
+        const badge =
+            document.getElementById(
+                'modo-badge'
+            );
+
+        const simuladorPanel =
+            document.getElementById(
+                'simulador-panel'
+            );
+
+        if (btnReal) {
+
+            btnReal.addEventListener(
+                'click',
+                () => {
+
+                    window.CONFIG.modo =
+                        'realidad';
+
+                    badge.textContent =
+                        '🌐 MODO REAL';
+
+                    btnReal.classList.add(
+                        'active'
+                    );
+
+                    btnJuego.classList.remove(
+                        'active'
+                    );
+
+                    simuladorPanel.classList.remove(
+                        'active'
+                    );
+                }
+            );
+        }
+
+        if (btnJuego) {
+
+            btnJuego.addEventListener(
+                'click',
+                () => {
+
+                    window.CONFIG.modo =
+                        'juego';
+
+                    badge.textContent =
+                        '🎮 MODO JUEGO';
+
+                    btnJuego.classList.add(
+                        'active'
+                    );
+
+                    btnReal.classList.remove(
+                        'active'
+                    );
+
+                    simuladorPanel.classList.add(
+                        'active'
+                    );
+                }
+            );
+        }
+
+        // BOTONES PANELES
+
+        const paneles = [
+
+            {
+                btn:
+                    'btn-verificador-panel',
+                panel:
+                    'verificador-panel'
+            },
+
+            {
+                btn:
+                    'btn-relaciones-globales',
+                panel:
+                    'relaciones-globales-panel'
+            },
+
+            {
+                btn:
+                    'btn-timeline-panel',
+                panel:
+                    'timeline-panel'
+            }
+        ];
+
+        paneles.forEach(item => {
+
+            const btn =
+                document.getElementById(
+                    item.btn
+                );
+
+            const panel =
+                document.getElementById(
+                    item.panel
+                );
+
+            if (btn && panel) {
+
+                btn.addEventListener(
+                    'click',
+                    () => {
+
+                        panel.classList.toggle(
+                            'active'
+                        );
+                    }
+                );
+            }
+        });
+
+        // CERRAR
+
+        document.addEventListener(
+            'click',
+            (e) => {
+
+                const cerrar =
+                    e.target.closest(
+                        '.btn-cerrar'
+                    );
+
+                if (!cerrar) return;
+
+                const panel =
+                    cerrar.closest(
+                        '.panel'
+                    );
+
+                if (panel) {
+
+                    panel.classList.remove(
+                        'active'
+                    );
+                }
+            }
+        );
+
+        // BUSCADOR
+
+        const buscador =
+            document.getElementById(
+                'buscador-rapido'
+            );
+
+        if (buscador) {
+
+            buscador.addEventListener(
+                'keydown',
+                (e) => {
+
+                    if (
+                        e.key === 'Enter'
+                    ) {
+
+                        MapaMundial.buscarLugar(
+                            buscador.value
+                        );
+                    }
+                }
+            );
+        }
+
+        // CAPAS
+
+        document.addEventListener(
+            'click',
+            (e) => {
+
+                const btn =
+                    e.target.closest(
+                        '.capa-icon'
+                    );
+
+                if (!btn) return;
+
+                btn.classList.toggle(
+                    'activo'
+                );
+
+                const capa =
+                    btn.dataset.capa;
+
+                const activa =
+                    btn.classList.contains(
+                        'activo'
+                    );
+
+                MapaMundial.activarCapa(
+                    capa,
+                    activa
+                );
+            }
+        );
+
+        console.log(
+            '✅ Tablero Mundial listo'
+        );
     }
-
-    // Capas y botones info (delegación global)
-    document.addEventListener('click', (e) => {
-        const capaBtn = e.target.closest('.capa-icon');
-        if (capaBtn) {
-            capaBtn.classList.toggle('activo');
-            const capa = capaBtn.dataset.capa;
-            const activa = capaBtn.classList.contains('activo');
-            if (MapaMundial.activarCapa) MapaMundial.activarCapa(capa, activa);
-            return;
-        }
-        const infoBtn = e.target.closest('.info-btn');
-        if (infoBtn && UIPanelInfo) {
-            e.preventDefault();
-            const seccion = infoBtn.dataset.seccion;
-            if (seccion) UIPanelInfo.mostrarSeccion(seccion);
-            return;
-        }
-        const volverBtn = e.target.closest('.btn-volver');
-        if (volverBtn && UIPanelInfo) {
-            UIPanelInfo.mostrarPais(UIPanelInfo.paisActual);
-        }
-    });
-
-    // Mostrar España por defecto
-    if (UIPanelInfo) UIPanelInfo.mostrarPais('espana');
-
-    console.log('✅ Inicialización completa');
-});
+);
