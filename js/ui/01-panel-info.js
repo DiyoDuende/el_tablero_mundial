@@ -110,23 +110,50 @@ const UIPanelInfo = {
     },
     
     reInicializarEventos: function() {
-        const btnMasInfo = document.getElementById('btn-mas-info');
-        if (btnMasInfo) {
-            btnMasInfo.addEventListener('click', () => this.mostrarInformacionDetallada());
-        }
-        
-        document.querySelectorAll('.mas-info-tab').forEach(tab => {
-            const tabId = tab.dataset.tab;
-            tab.addEventListener('click', () => {
-                this.cambiarTab(tabId);
-            });
+
+    // ============================================
+    // BOTONES DE SECCIONES
+    // ============================================
+    document.querySelectorAll('.info-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const seccion = btn.dataset.seccion;
+            this.mostrarSeccion(seccion);
         });
-        
-        const btnCerrar = document.getElementById('btn-cerrar-mas-info');
-        if (btnCerrar) {
-            btnCerrar.addEventListener('click', () => this.cerrarInfoDetallada());
-        }
-    },
+    });
+
+    // ============================================
+    // BOTÓN "VER FICHA COMPLETA"
+    // ============================================
+    const btnMasInfo = document.getElementById('btn-mas-info');
+
+    if (btnMasInfo) {
+        btnMasInfo.addEventListener('click', () => {
+            this.mostrarInformacionDetallada();
+        });
+    }
+
+    // ============================================
+    // TABS INTERNAS
+    // ============================================
+    document.querySelectorAll('.mas-info-tab').forEach(tab => {
+        const tabId = tab.dataset.tab;
+
+        tab.addEventListener('click', () => {
+            this.cambiarTab(tabId);
+        });
+    });
+
+    // ============================================
+    // BOTÓN CERRAR FICHA
+    // ============================================
+    const btnCerrar = document.getElementById('btn-cerrar-mas-info');
+
+    if (btnCerrar) {
+        btnCerrar.addEventListener('click', () => {
+            this.cerrarInfoDetallada();
+        });
+    }
+},
     
     cerrarInfoDetallada: function() {
         const panel = document.getElementById('panel-mas-info');
