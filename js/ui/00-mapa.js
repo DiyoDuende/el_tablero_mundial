@@ -141,49 +141,36 @@ const MapaMundial = {
     },
     
     mostrarLeyenda: function(tipo, datos) {
-        const leyendaExistente = document.querySelector('.mapa-leyenda');
-        if (leyendaExistente) leyendaExistente.remove();
-        
-        if (tipo === 'cargando') {
-            const leyenda = document.createElement('div');
-            leyenda.className = 'mapa-leyenda';
-            leyenda.innerHTML = `<div class="leyenda-titulo">🔄 ${datos}</div>`;
-            document.querySelector('.mapa-container')?.appendChild(leyenda);
-        } else if (tipo === 'económico' && datos) {
-            const minUSD = Math.round(datos.min);
-            const maxUSD = Math.round(datos.max);
-            const medio1 = Math.round(minUSD + (maxUSD - minUSD) * 0.33);
-            const medio2 = Math.round(minUSD + (maxUSD - minUSD) * 0.66);
-            
-            const leyenda = document.createElement('div');
-            leyenda.className = 'mapa-leyenda';
-            leyenda.innerHTML = `
-                <div class="leyenda-titulo">💰 PIB per cápita (USD)</div>
-                <div class="leyenda-escala">
-                    <div class="leyenda-color" style="background: #e74c3c;"></div>
-                    <div class="leyenda-color" style="background: #f39c12;"></div>
-                    <div class="leyenda-color" style="background: #f1c40f;"></div>
-                    <div class="leyenda-color" style="background: #2ecc71;"></div>
-                </div>
-                <div class="leyenda-valores">
-                    <span>${minUSD.toLocaleString()}</span>
-                    <span>${medio1.toLocaleString()}</span>
-                    <span>${medio2.toLocaleString()}</span>
-                    <span>${maxUSD.toLocaleString()}</span>
-                </div>
-                <div class="leyenda-fuente">Fuente: Banco Mundial</div>
-            `;
-            document.querySelector('.mapa-container')?.appendChild(leyenda);
-        } else if (tipo === 'simulado') {
-            const leyenda = document.createElement('div');
-            leyenda.className = 'mapa-leyenda';
-            leyenda.innerHTML = `
-                <div class="leyenda-titulo">🎲 Datos simulados</div>
-                <div class="leyenda-fuente">Modo simulación · Sin datos reales</div>
-            `;
-            document.querySelector('.mapa-container')?.appendChild(leyenda);
-        }
-    },
+    const leyendaExistente = document.querySelector('.mapa-leyenda');
+    if (leyendaExistente) leyendaExistente.remove();
+    
+    if (tipo === 'cargando') {
+        const leyenda = document.createElement('div');
+        leyenda.className = 'mapa-leyenda';
+        leyenda.innerHTML = `<div class="leyenda-titulo">🔄 ${datos}</div>`;
+        document.querySelector('.mapa-container')?.appendChild(leyenda);
+    } else if (tipo === 'económico' && datos) {
+        // ... tu código existente para PIB
+    } else if (tipo === 'simulado') {
+        const leyenda = document.createElement('div');
+        leyenda.className = 'mapa-leyenda';
+        leyenda.innerHTML = `
+            <div class="leyenda-titulo">🎲 DATOS SIMULADOS</div>
+            <div class="leyenda-escala">
+                <div class="leyenda-color" style="background: #2ecc71;"></div>
+                <div class="leyenda-color" style="background: #f1c40f;"></div>
+                <div class="leyenda-color" style="background: #e74c3c;"></div>
+            </div>
+            <div class="leyenda-valores">
+                <span>Alto</span>
+                <span>Medio</span>
+                <span>Bajo</span>
+            </div>
+            <div class="leyenda-fuente">Modo simulación · Sin datos reales</div>
+        `;
+        document.querySelector('.mapa-container')?.appendChild(leyenda);
+    }
+},
     
     ocultarLeyenda: function() {
         const leyenda = document.querySelector('.mapa-leyenda');
