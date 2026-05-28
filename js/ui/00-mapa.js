@@ -64,7 +64,7 @@ const MapaMundial = {
         
         if (!activa) {
             this.resetearColores();
-            const leyenda = document.querySelector('.mapa-leyenda');
+            const leyenda = document.getElementById('mapa-leyenda-global');
             if (leyenda) leyenda.remove();
             return;
         }
@@ -91,11 +91,12 @@ const MapaMundial = {
     },
 
     mostrarLeyenda: function() {
-        const leyendaExistente = document.querySelector('.mapa-leyenda');
+        const leyendaExistente = document.getElementById('mapa-leyenda-global');
         if (leyendaExistente) leyendaExistente.remove();
         
         const leyenda = document.createElement('div');
-        leyenda.className = 'mapa-leyenda';
+        leyenda.id = 'mapa-leyenda-global';
+        leyenda.className = 'mapa-leyenda-externa';
         leyenda.innerHTML = `
             <div class="leyenda-titulo">🎨 CAPA ACTIVA</div>
             <div class="leyenda-escala">
@@ -110,7 +111,11 @@ const MapaMundial = {
             </div>
             <div class="leyenda-fuente">Datos simulados</div>
         `;
-        document.querySelector('.mapa-container')?.appendChild(leyenda);
+        
+        const mapaContainer = document.querySelector('.mapa-container');
+        if (mapaContainer && mapaContainer.parentNode) {
+            mapaContainer.parentNode.insertBefore(leyenda, mapaContainer.nextSibling);
+        }
     },
 
     buscarLugar: async function(texto) {
