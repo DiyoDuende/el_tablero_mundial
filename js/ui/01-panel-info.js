@@ -27,6 +27,20 @@ const UIPanelInfo = {
                 </div>
             </div>
         `;
+        
+        this.vincularEventosBotones();
+    },
+    
+    vincularEventosBotones: function() {
+        document.querySelectorAll('.info-btn').forEach(btn => {
+            btn.removeEventListener('click', this.manejadorClick);
+            btn.addEventListener('click', this.manejadorClick.bind(this));
+        });
+    },
+    
+    manejadorClick: function(e) {
+        const seccion = e.currentTarget.dataset.seccion;
+        if (seccion) this.mostrarSeccion(seccion);
     },
 
     mostrarSeccion: function(seccion) {
@@ -39,10 +53,10 @@ const UIPanelInfo = {
                 contenido = `
                     <div class="dashboard-seccion">
                         <h4>📊 Datos económicos de ${this.paisActual.toUpperCase()}</h4>
-                        <p>PIB: +2.3%</p>
-                        <p>Inflación: 2.1%</p>
-                        <p>Deuda/PIB: 98%</p>
-                        <p>Desempleo: 11.2%</p>
+                        <p><strong>PIB:</strong> 1.420.000 M€</p>
+                        <p><strong>Inflación:</strong> 2.8%</p>
+                        <p><strong>Deuda/PIB:</strong> 118%</p>
+                        <p><strong>Desempleo:</strong> 11.2%</p>
                         <button class="btn-volver">◀ Volver</button>
                     </div>
                 `;
@@ -51,20 +65,32 @@ const UIPanelInfo = {
                 contenido = `
                     <div class="dashboard-seccion">
                         <h4>⚖️ Leyes destacadas de ${this.paisActual.toUpperCase()}</h4>
-                        <ul><li>Ley de Transición Energética 2026</li><li>Reforma Sanitaria 2026</li></ul>
+                        <ul>
+                            <li>Ley de Transición Energética 2026</li>
+                            <li>Reforma Sanitaria 2026</li>
+                            <li>Ley de Soberanía Digital</li>
+                        </ul>
                         <button class="btn-volver">◀ Volver</button>
                     </div>
                 `;
                 break;
             default:
-                contenido = `<div class="dashboard-seccion"><h4>${seccion}</h4><p>Información de ejemplo</p><button class="btn-volver">◀ Volver</button></div>`;
+                contenido = `
+                    <div class="dashboard-seccion">
+                        <h4>${seccion.toUpperCase()}</h4>
+                        <p>Información de ejemplo para ${this.paisActual.toUpperCase()}</p>
+                        <button class="btn-volver">◀ Volver</button>
+                    </div>
+                `;
         }
         
         container.innerHTML = contenido;
         
         const btnVolver = container.querySelector('.btn-volver');
         if (btnVolver) {
-            btnVolver.addEventListener('click', () => this.mostrarPais(this.paisActual));
+            btnVolver.addEventListener('click', () => {
+                this.mostrarPais(this.paisActual);
+            });
         }
     }
 };
