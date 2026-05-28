@@ -28,7 +28,13 @@ const DatosReales = {
 
         const url = 'https://api.worldbank.org/v2/country/all/indicator/NY.GDP.PCAP.CD?format=json&per_page=300';
         try {
-            const response = await fetch(url);
+            const response = await fetch(url, {
+                cache: 'no-store',
+                headers: {
+                    'Cache-Control': 'no-cache',
+                    'Pragma': 'no-cache'
+                }
+            });
             const data = await response.json();
             const records = data[1];
             const result = {};
@@ -57,10 +63,14 @@ const DatosReales = {
         return null;
     },
 
-    async obtenerValores(capa) {
-        if (capa === 'economico') return await this.obtenerPIBPerCapita();
-        console.warn(`⚠️ Capa ${capa} aún no implementada en datos reales`);
-        return {};
+    async obtenerValorNormalizado(paisId) {
+        const pibData = await this.obtenerPIBPerCapita();
+        const pib = pibData[paisId] || 0;
+        return Math.min(1, pib / 100000);
+    },
+
+    async obtenerValoresParaCapa() {
+        return await this.obtenerPIBPerCapita();
     }
 };
 
