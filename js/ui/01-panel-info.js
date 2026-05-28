@@ -122,7 +122,6 @@ const UIPanelInfo = {
         const info = await this.obtenerInformacionCompleta();
         panel.innerHTML = this.generarHTMLInformacionDetallada(info);
         
-        // Cerrar con el botón X
         const btnCerrar = document.getElementById('btn-cerrar-mas-info');
         if (btnCerrar) {
             btnCerrar.addEventListener('click', () => {
