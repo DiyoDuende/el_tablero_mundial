@@ -318,3 +318,191 @@ body {
 #readme-contenido li, #normas-contenido li {
     margin: 8px 0;
 }
+
+/* ============================================
+   LEYENDA DEL MAPA
+   ============================================ */
+
+.mapa-leyenda {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+    padding: 12px 16px;
+    border-radius: 12px;
+    border-left: 4px solid var(--info);
+    z-index: 1000;
+    font-size: 12px;
+    min-width: 180px;
+    pointer-events: none;
+}
+
+.leyenda-titulo {
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: var(--info);
+    font-size: 13px;
+}
+
+.leyenda-escala {
+    display: flex;
+    height: 12px;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 6px;
+}
+
+.leyenda-color {
+    flex: 1;
+}
+
+.leyenda-valores {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    color: var(--text-muted);
+    font-size: 10px;
+}
+
+.leyenda-fuente {
+    font-size: 9px;
+    color: var(--text-muted);
+    text-align: right;
+    border-top: 1px solid var(--border);
+    padding-top: 4px;
+    margin-top: 4px;
+}
+
+/* ============================================
+   MÁS INFORMACIÓN (FICHA COMPLETA DEL PAÍS)
+   ============================================ */
+
+.btn-mas-info {
+    width: 100%;
+    background: var(--accent);
+    border: none;
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 15px;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.btn-mas-info:hover {
+    background: var(--info);
+    transform: translateY(-2px);
+}
+
+.panel-mas-info {
+    background: var(--bg-card);
+    border-radius: 12px;
+    margin-top: 15px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+}
+
+.mas-info-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background: var(--bg-panel);
+    border-bottom: 1px solid var(--border);
+}
+
+.mas-info-header h4 {
+    margin: 0;
+    color: var(--info);
+}
+
+.btn-cerrar-mas-info {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.btn-cerrar-mas-info:hover {
+    color: white;
+}
+
+.mas-info-tabs {
+    display: flex;
+    background: var(--bg-panel);
+    border-bottom: 1px solid var(--border);
+}
+
+.mas-info-tab {
+    flex: 1;
+    background: none;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: 0.2s;
+}
+
+.mas-info-tab.active {
+    color: var(--info);
+    border-bottom: 2px solid var(--info);
+}
+
+.mas-info-contenido {
+    padding: 15px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.mas-info-panel {
+    display: none;
+}
+
+.mas-info-panel.active {
+    display: block;
+}
+
+.info-detalle-tabla {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.info-detalle-tabla td {
+    padding: 8px 0;
+    border-bottom: 1px dotted var(--border);
+}
+
+.info-detalle-tabla td:first-child {
+    font-weight: bold;
+    color: var(--info);
+    width: 45%;
+}
+
+.fuentes-lista {
+    list-style: none;
+    padding-left: 0;
+}
+
+.fuentes-lista li {
+    padding: 8px 0;
+    border-bottom: 1px dotted var(--border);
+}
+
+.mas-info-footer {
+    padding: 10px 15px;
+    background: var(--bg-panel);
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--text-muted);
+    display: flex;
+    justify-content: space-between;
+}
+
+.mas-info-loading {
+    text-align: center;
+    padding: 30px;
+    color: var(--text-muted);
+}
