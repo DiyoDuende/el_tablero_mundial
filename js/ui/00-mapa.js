@@ -64,10 +64,13 @@ const MapaMundial = {
         
         if (!activa) {
             this.resetearColores();
+            const leyenda = document.querySelector('.mapa-leyenda');
+            if (leyenda) leyenda.remove();
             return;
         }
         
-        // Colores aleatorios para todas las capas (simulación)
+        this.mostrarLeyenda();
+        
         this.capaPaises.eachLayer(layer => {
             const valor = Math.random();
             let color = '#2ecc71';
@@ -85,6 +88,29 @@ const MapaMundial = {
             const nombre = layer.feature?.properties?.ADMIN || '';
             layer.bindTooltip(nombre);
         });
+    },
+
+    mostrarLeyenda: function() {
+        const leyendaExistente = document.querySelector('.mapa-leyenda');
+        if (leyendaExistente) leyendaExistente.remove();
+        
+        const leyenda = document.createElement('div');
+        leyenda.className = 'mapa-leyenda';
+        leyenda.innerHTML = `
+            <div class="leyenda-titulo">🎨 CAPA ACTIVA</div>
+            <div class="leyenda-escala">
+                <div class="leyenda-color" style="background: #2ecc71;"></div>
+                <div class="leyenda-color" style="background: #f1c40f;"></div>
+                <div class="leyenda-color" style="background: #e74c3c;"></div>
+            </div>
+            <div class="leyenda-valores">
+                <span>Alto</span>
+                <span>Medio</span>
+                <span>Bajo</span>
+            </div>
+            <div class="leyenda-fuente">Datos simulados</div>
+        `;
+        document.querySelector('.mapa-container')?.appendChild(leyenda);
     },
 
     buscarLugar: async function(texto) {
