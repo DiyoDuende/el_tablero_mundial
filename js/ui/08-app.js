@@ -95,5 +95,69 @@ document.addEventListener('DOMContentLoaded', () => {
     // Mostrar España por defecto
     if (window.UIPanelInfo) UIPanelInfo.mostrarPais('espana');
 
+    // ============================================
+// BOTONES README Y NORMAS (MODALES)
+// ============================================
+const btnReadme = document.getElementById('btn-readme');
+const btnNormas = document.getElementById('btn-normas');
+const modalReadme = document.getElementById('modal-readme');
+const modalNormas = document.getElementById('modal-normas');
+const btnCerrarReadme = document.getElementById('btn-cerrar-readme');
+const btnCerrarNormas = document.getElementById('btn-cerrar-normas');
+const readmeContenido = document.getElementById('readme-contenido');
+const normasContenido = document.getElementById('normas-contenido');
+
+async function cargarMarkdown(url, destino) {
+    try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const markdown = await response.text();
+        let html = markdown
+            .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+            .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+            .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+            .replace(/^\* (.*$)/gim, '<li>$1</li>')
+            .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
+            .replace(/\n/g, '<br>');
+        destino.innerHTML = html;
+    } catch (error) {
+        destino.innerHTML = `<p>❌ Error al cargar: ${error.message}</p>`;
+    }
+}
+
+if (btnReadme && modalReadme && readmeContenido) {
+    btnReadme.addEventListener('click', async () => {
+        await cargarMarkdown('Readme.md', readmeContenido);
+        modalReadme.style.display = 'flex';
+        console.log('📘 README abierto');
+    });
+}
+
+if (btnNormas && modalNormas && normasContenido) {
+    btnNormas.addEventListener('click', async () => {
+        await cargarMarkdown('Normas.md', normasContenido);
+        modalNormas.style.display = 'flex';
+        console.log('📋 NORMAS abierto');
+    });
+}
+
+if (btnCerrarReadme && modalReadme) {
+    btnCerrarReadme.addEventListener('click', () => {
+        modalReadme.style.display = 'none';
+    });
+}
+
+if (btnCerrarNormas && modalNormas) {
+    btnCerrarNormas.addEventListener('click', () => {
+        modalNormas.style.display = 'none';
+    });
+}
+
+// Cerrar modales haciendo clic fuera del contenido
+window.addEventListener('click', (e) => {
+    if (modalReadme && e.target === modalReadme) modalReadme.style.display = 'none';
+    if (modalNormas && e.target === modalNormas) modalNormas.style.display = 'none';
+});
+    
     console.log('✅ Tablero Mundial listo');
 });
