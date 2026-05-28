@@ -68,14 +68,17 @@ const MapaMundial = {
     this.mostrarLeyenda('cargando', 'Cargando datos económicos...');
     
     let pibData = {};
+    let usandoSimulados = false;
+    
     try {
         if (window.DatosReales && DatosReales.obtenerValoresParaCapa) {
             pibData = await DatosReales.obtenerValoresParaCapa();
         }
         if (Object.keys(pibData).length === 0) throw new Error('Sin datos');
     } catch (error) {
-        console.warn('No se pudieron cargar datos reales, usando simulación');
-        // Datos simulados para que la capa funcione
+        console.warn('Usando datos simulados (API bloqueada por CORS)');
+        usandoSimulados = true;
+        // Datos simulados (los mismos que en 08-datos-reales.js)
         pibData = {
             'Spain': 29800, 'France': 42000, 'Germany': 51000, 'Italy': 35000,
             'Portugal': 23000, 'United States': 70000, 'China': 12000, 'Russia': 11500,
@@ -109,7 +112,12 @@ const MapaMundial = {
         layer.bindTooltip(`${nombre}<br>💰 PIB per cápita: ${pibFormateado}`);
     });
     
-    this.mostrarLeyenda('económico', { min: minPIB, max: maxPIB });
+    // Mostrar leyenda (si son simulados, indicarlo)
+    if (usandoSimulados) {
+        this.mostrarLeyenda('simulado');
+    } else {
+        this.mostrarLeyenda('económico', { min: minPIB, max: maxPIB });
+    }
 },
     
     obtenerColorPIB: function(pib, min, max) {
