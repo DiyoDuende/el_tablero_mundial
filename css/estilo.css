@@ -506,3 +506,87 @@ body {
     padding: 30px;
     color: var(--text-muted);
 }
+
+/* Botón Más información */
+.btn-mas-info {
+    width: 100%;
+    background: var(--accent);
+    border: none;
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 15px;
+    font-weight: bold;
+    transition: 0.2s;
+}
+.btn-mas-info:hover {
+    background: var(--info);
+    transform: translateY(-2px);
+}
+
+/* Panel de más información */
+.panel-mas-info {
+    background: var(--bg-card);
+    border-radius: 12px;
+    margin-top: 15px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+}
+.mas-info-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background: var(--bg-panel);
+    border-bottom: 1px solid var(--border);
+}
+.mas-info-header h4 {
+    margin: 0;
+    color: var(--info);
+}
+.btn-cerrar-mas-info {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 20px;
+    cursor: pointer;
+}
+.btn-cerrar-mas-info:hover {
+    color: white;
+}
+.mas-info-contenido {
+    padding: 15px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+.mas-info-seccion {
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px dotted var(--border);
+}
+.mas-info-seccion h5 {
+    color: var(--info);
+    margin-bottom: 8px;
+}
+.mas-info-seccion p {
+    margin: 5px 0;
+}
+.mas-info-seccion ul {
+    margin: 5px 0;
+    padding-left: 20px;
+}
+.mas-info-footer {
+    padding: 10px 15px;
+    background: var(--bg-panel);
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--text-muted);
+    display: flex;
+    justify-content: space-between;
+}
+.mas-info-loading {
+    text-align: center;
+    padding: 30px;
+    color: var(--text-muted);
+}
