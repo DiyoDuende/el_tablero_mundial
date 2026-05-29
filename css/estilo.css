@@ -319,52 +319,26 @@ body {
     margin: 8px 0;
 }
 
-/* ===== LEYENDA FLOTANTE DEL MAPA ===== */
+/* ===== LEYENDA DE LA CAPA ECONÓMICA (DATOS REALES) ===== */
 .mapa-leyenda {
     position: absolute;
     bottom: 20px;
     right: 20px;
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.85);
     backdrop-filter: blur(5px);
     padding: 12px 16px;
     border-radius: 12px;
     border-left: 4px solid var(--info);
-    z-index: 1000;
+    z-index: 500;
     font-size: 12px;
-    min-width: 180px;
+    min-width: 220px;
     pointer-events: none;
 }
-.leyenda-titulo {
-    font-weight: bold;
-    margin-bottom: 8px;
-    color: var(--info);
-    font-size: 13px;
-}
-.leyenda-escala {
-    display: flex;
-    height: 12px;
-    border-radius: 6px;
-    overflow: hidden;
-    margin-bottom: 6px;
-}
-.leyenda-color {
-    flex: 1;
-}
-.leyenda-valores {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 6px;
-    color: var(--text-muted);
-    font-size: 10px;
-}
-.leyenda-fuente {
-    font-size: 9px;
-    color: var(--text-muted);
-    text-align: right;
-    border-top: 1px solid var(--border);
-    padding-top: 4px;
-    margin-top: 4px;
-}
+.leyenda-titulo { font-weight: bold; margin-bottom: 8px; color: var(--info); font-size: 13px; }
+.leyenda-escala { display: flex; height: 12px; border-radius: 6px; overflow: hidden; margin-bottom: 6px; }
+.leyenda-color { flex: 1; }
+.leyenda-valores { display: flex; justify-content: space-between; margin-bottom: 6px; color: var(--text-muted); font-size: 10px; }
+.leyenda-fuente { font-size: 9px; color: var(--text-muted); text-align: right; border-top: 1px solid var(--border); padding-top: 4px; margin-top: 4px; }
 
 /* ===== BOTÓN "MÁS INFORMACIÓN" Y SU PANEL ===== */
 .btn-mas-info {
