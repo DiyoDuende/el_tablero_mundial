@@ -60,66 +60,83 @@ const MapaMundial = {
     },
 
     // ============================================
-    // CAPA ECONÓMICA CON DATOS REALES
-    // ============================================
-    activarCapa: async function(capa, activa) {
-        if (!this.capaPaises) return;
+// CAPA ECONÓMICA CON DATOS REALES (CON FALLBACK SIMULADO)
+// ============================================
+activarCapa: async function(capa, activa) {
+    if (!this.capaPaises) return;
+    
+    if (!activa) {
+        this.resetearColores();
+        const leyenda = document.querySelector('.mapa-leyenda');
+        if (leyenda) leyenda.remove();
+        return;
+    }
+    
+    if (capa === 'economico') {
+        this.mostrarLeyenda('cargando', 'Cargando datos del Banco Mundial...');
         
-        if (!activa) {
-            this.resetearColores();
-            const leyenda = document.querySelector('.mapa-leyenda');
-            if (leyenda) leyenda.remove();
-            return;
+        let pibData = null;
+        let usandoSimulados = false;
+        
+        // 1. Intentar cargar datos reales
+        try {
+            if (window.DatosReales && typeof DatosReales.obtenerValoresParaCapa === 'function') {
+                pibData = await DatosReales.obtenerValoresParaCapa();
+            }
+            // Verificar si los datos reales son válidos (no vacíos)
+            if (!pibData || Object.keys(pibData).length === 0) {
+                throw new Error('Datos reales vacíos');
+            }
+            console.log('✅ Usando datos reales del Banco Mundial');
+        } catch (error) {
+            console.warn('⚠️ No se pudieron cargar datos reales, usando simulación');
+            usandoSimulados = true;
+            // Datos simulados de respaldo
+            pibData = {
+                'Spain': 29800, 'France': 42000, 'Germany': 51000, 'Italy': 35000,
+                'Portugal': 23000, 'United States': 70000, 'China': 12000, 'Russia': 11500,
+                'Brazil': 7500, 'India': 2100, 'Japan': 40000, 'Canada': 43000,
+                'Mexico': 9000, 'Australia': 52000, 'South Africa': 6000
+            };
         }
         
-        if (capa === 'economico') {
-            this.mostrarLeyenda('cargando', 'Cargando datos del Banco Mundial...');
+        // 2. Calcular min y max para la escala de colores
+        let minPIB = Infinity, maxPIB = -Infinity;
+        for (const valor of Object.values(pibData)) {
+            if (valor > maxPIB) maxPIB = valor;
+            if (valor < minPIB) minPIB = valor;
+        }
+        
+        // 3. Colorear cada país
+        this.capaPaises.eachLayer(layer => {
+            const nombre = layer.feature?.properties?.ADMIN;
+            if (!nombre || !pibData[nombre]) return;
             
-            let pibData = {};
-            try {
-                if (window.DatosReales) {
-                    pibData = await DatosReales.obtenerValoresParaCapa();
-                }
-                if (Object.keys(pibData).length === 0) throw new Error('Sin datos');
-            } catch (error) {
-                console.warn('Usando datos simulados (API no disponible)');
-                pibData = {
-                    'Spain': 29800, 'France': 42000, 'Germany': 51000, 'Italy': 35000,
-                    'Portugal': 23000, 'United States': 70000, 'China': 12000, 'Russia': 11500,
-                    'Brazil': 7500, 'India': 2100, 'Japan': 40000, 'Canada': 43000,
-                    'Mexico': 9000, 'Australia': 52000, 'South Africa': 6000
-                };
-            }
-            
-            let minPIB = Infinity, maxPIB = -Infinity;
-            for (const valor of Object.values(pibData)) {
-                if (valor > maxPIB) maxPIB = valor;
-                if (valor < minPIB) minPIB = valor;
-            }
-            
-            this.capaPaises.eachLayer(layer => {
-                const nombre = layer.feature?.properties?.ADMIN;
-                if (!nombre || !pibData[nombre]) return;
-                
-                const pib = pibData[nombre];
-                const color = this.obtenerColorPIB(pib, minPIB, maxPIB);
-                layer.setStyle({ fillColor: color, fillOpacity: 0.7, color: '#fff', weight: 1 });
-                layer.unbindTooltip();
-                layer.bindTooltip(`${nombre}<br>💰 PIB per cápita: ${pib.toLocaleString()} USD`);
-            });
-            this.mostrarLeyenda('economico', { min: minPIB, max: maxPIB });
+            const pib = pibData[nombre];
+            const color = this.obtenerColorPIB(pib, minPIB, maxPIB);
+            layer.setStyle({ fillColor: color, fillOpacity: 0.7, color: '#fff', weight: 1 });
+            layer.unbindTooltip();
+            layer.bindTooltip(`${nombre}<br>💰 PIB per cápita: ${pib.toLocaleString()} USD`);
+        });
+        
+        // 4. Mostrar leyenda (indicando si son datos reales o simulados)
+        if (usandoSimulados) {
+            this.mostrarLeyenda('simulado', { min: minPIB, max: maxPIB });
         } else {
-            // Resto de capas: comportamiento original con colores aleatorios
-            this.mostrarLeyenda('simulado');
-            this.capaPaises.eachLayer(layer => {
-                const valor = Math.random();
-                let color = '#2ecc71';
-                if (valor > 0.66) color = '#e74c3c';
-                else if (valor > 0.33) color = '#f1c40f';
-                layer.setStyle({ fillColor: color, fillOpacity: 0.7, color: '#fff', weight: 1 });
-            });
+            this.mostrarLeyenda('economico', { min: minPIB, max: maxPIB });
         }
-    },
+    } else {
+        // Resto de capas: comportamiento original con colores aleatorios
+        this.mostrarLeyenda('simulado');
+        this.capaPaises.eachLayer(layer => {
+            const valor = Math.random();
+            let color = '#2ecc71';
+            if (valor > 0.66) color = '#e74c3c';
+            else if (valor > 0.33) color = '#f1c40f';
+            layer.setStyle({ fillColor: color, fillOpacity: 0.7, color: '#fff', weight: 1 });
+        });
+    }
+},
 
     resetearColores: function() {
         if (!this.capaPaises) return;
