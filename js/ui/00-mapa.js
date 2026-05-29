@@ -59,7 +59,10 @@ const MapaMundial = {
         });
     },
 
-    activarCapa: function(capa, activa) {
+    // ============================================
+    // CAPA ECONÓMICA CON DATOS REALES
+    // ============================================
+    activarCapa: async function(capa, activa) {
         if (!this.capaPaises) return;
         
         if (!activa) {
@@ -69,15 +72,53 @@ const MapaMundial = {
             return;
         }
         
-        this.mostrarLeyenda();
-        
-        this.capaPaises.eachLayer(layer => {
-            const valor = Math.random();
-            let color = '#2ecc71';
-            if (valor > 0.66) color = '#e74c3c';
-            else if (valor > 0.33) color = '#f1c40f';
-            layer.setStyle({ fillColor: color, fillOpacity: 0.7, color: '#fff', weight: 1 });
-        });
+        if (capa === 'economico') {
+            this.mostrarLeyenda('cargando', 'Cargando datos del Banco Mundial...');
+            
+            let pibData = {};
+            try {
+                if (window.DatosReales) {
+                    pibData = await DatosReales.obtenerValoresParaCapa();
+                }
+                if (Object.keys(pibData).length === 0) throw new Error('Sin datos');
+            } catch (error) {
+                console.warn('Usando datos simulados (API no disponible)');
+                pibData = {
+                    'Spain': 29800, 'France': 42000, 'Germany': 51000, 'Italy': 35000,
+                    'Portugal': 23000, 'United States': 70000, 'China': 12000, 'Russia': 11500,
+                    'Brazil': 7500, 'India': 2100, 'Japan': 40000, 'Canada': 43000,
+                    'Mexico': 9000, 'Australia': 52000, 'South Africa': 6000
+                };
+            }
+            
+            let minPIB = Infinity, maxPIB = -Infinity;
+            for (const valor of Object.values(pibData)) {
+                if (valor > maxPIB) maxPIB = valor;
+                if (valor < minPIB) minPIB = valor;
+            }
+            
+            this.capaPaises.eachLayer(layer => {
+                const nombre = layer.feature?.properties?.ADMIN;
+                if (!nombre || !pibData[nombre]) return;
+                
+                const pib = pibData[nombre];
+                const color = this.obtenerColorPIB(pib, minPIB, maxPIB);
+                layer.setStyle({ fillColor: color, fillOpacity: 0.7, color: '#fff', weight: 1 });
+                layer.unbindTooltip();
+                layer.bindTooltip(`${nombre}<br>💰 PIB per cápita: ${pib.toLocaleString()} USD`);
+            });
+            this.mostrarLeyenda('economico', { min: minPIB, max: maxPIB });
+        } else {
+            // Resto de capas: comportamiento original con colores aleatorios
+            this.mostrarLeyenda('simulado');
+            this.capaPaises.eachLayer(layer => {
+                const valor = Math.random();
+                let color = '#2ecc71';
+                if (valor > 0.66) color = '#e74c3c';
+                else if (valor > 0.33) color = '#f1c40f';
+                layer.setStyle({ fillColor: color, fillOpacity: 0.7, color: '#fff', weight: 1 });
+            });
+        }
     },
 
     resetearColores: function() {
@@ -90,27 +131,96 @@ const MapaMundial = {
         });
     },
 
-    mostrarLeyenda: function() {
+    mostrarLeyenda: function(tipo, datos) {
         const leyendaExistente = document.querySelector('.mapa-leyenda');
         if (leyendaExistente) leyendaExistente.remove();
         
-        const leyenda = document.createElement('div');
-        leyenda.className = 'mapa-leyenda';
-        leyenda.innerHTML = `
-            <div class="leyenda-titulo">🎨 CAPA ACTIVA</div>
-            <div class="leyenda-escala">
-                <div class="leyenda-color" style="background: #2ecc71;"></div>
-                <div class="leyenda-color" style="background: #f1c40f;"></div>
-                <div class="leyenda-color" style="background: #e74c3c;"></div>
-            </div>
-            <div class="leyenda-valores">
-                <span>Alto</span>
-                <span>Medio</span>
-                <span>Bajo</span>
-            </div>
-            <div class="leyenda-fuente">Datos simulados</div>
-        `;
-        document.querySelector('.mapa-container')?.appendChild(leyenda);
+        if (tipo === 'cargando') {
+            const leyenda = document.createElement('div');
+            leyenda.className = 'mapa-leyenda';
+            leyenda.innerHTML = `<div class="leyenda-titulo">🔄 ${datos}</div>`;
+            document.querySelector('.mapa-container')?.appendChild(leyenda);
+        } else if (tipo === 'economico' && datos) {
+            const minUSD = Math.round(datos.min);
+            const maxUSD = Math.round(datos.max);
+            const medio1 = Math.round(minUSD + (maxUSD - minUSD) * 0.33);
+            const medio2 = Math.round(minUSD + (maxUSD - minUSD) * 0.66);
+            
+            const leyenda = document.createElement('div');
+            leyenda.className = 'mapa-leyenda';
+            leyenda.innerHTML = `
+                <div class="leyenda-titulo">💰 PIB per cápita (USD)</div>
+                <div class="leyenda-escala">
+                    <div class="leyenda-color" style="background: #e74c3c;"></div>
+                    <div class="leyenda-color" style="background: #f39c12;"></div>
+                    <div class="leyenda-color" style="background: #f1c40f;"></div>
+                    <div class="leyenda-color" style="background: #2ecc71;"></div>
+                </div>
+                <div class="leyenda-valores">
+                    <span>${minUSD.toLocaleString()}</span>
+                    <span>${medio1.toLocaleString()}</span>
+                    <span>${medio2.toLocaleString()}</span>
+                    <span>${maxUSD.toLocaleString()}</span>
+                </div>
+                <div class="leyenda-fuente">Fuente: Banco Mundial</div>
+            `;
+            document.querySelector('.mapa-container')?.appendChild(leyenda);
+        } else if (tipo === 'simulado') {
+            const leyenda = document.createElement('div');
+            leyenda.className = 'mapa-leyenda';
+            leyenda.innerHTML = `
+                <div class="leyenda-titulo">🎨 CAPA ACTIVA</div>
+                <div class="leyenda-escala">
+                    <div class="leyenda-color" style="background: #2ecc71;"></div>
+                    <div class="leyenda-color" style="background: #f1c40f;"></div>
+                    <div class="leyenda-color" style="background: #e74c3c;"></div>
+                </div>
+                <div class="leyenda-valores">
+                    <span>Alto</span>
+                    <span>Medio</span>
+                    <span>Bajo</span>
+                </div>
+                <div class="leyenda-fuente">Datos simulados</div>
+            `;
+            document.querySelector('.mapa-container')?.appendChild(leyenda);
+        }
+    },
+
+    obtenerColorPIB: function(pib, min, max) {
+        if (pib <= 0 || !pib) return '#e74c3c';
+        const minValor = min > 0 ? min : 1000;
+        const maxValor = max > 0 ? max : 100000;
+        const minLog = Math.log(minValor);
+        const maxLog = Math.log(maxValor);
+        const valorLog = Math.log(pib);
+        let proporcion = (valorLog - minLog) / (maxLog - minLog);
+        proporcion = Math.min(1, Math.max(0, proporcion));
+        
+        if (proporcion < 0.33) {
+            return this.interpolarColor('#e74c3c', '#f39c12', proporcion / 0.33);
+        } else if (proporcion < 0.66) {
+            return this.interpolarColor('#f39c12', '#f1c40f', (proporcion - 0.33) / 0.33);
+        } else {
+            return this.interpolarColor('#f1c40f', '#2ecc71', (proporcion - 0.66) / 0.34);
+        }
+    },
+    
+    interpolarColor: function(color1, color2, factor) {
+        const c1 = this.hexToRgb(color1);
+        const c2 = this.hexToRgb(color2);
+        const r = Math.round(c1.r + (c2.r - c1.r) * factor);
+        const g = Math.round(c1.g + (c2.g - c1.g) * factor);
+        const b = Math.round(c1.b + (c2.b - c1.b) * factor);
+        return `rgb(${r}, ${g}, ${b})`;
+    },
+    
+    hexToRgb: function(hex) {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+            r: parseInt(result[1], 16),
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16)
+        } : { r: 0, g: 0, b: 0 };
     },
 
     buscarLugar: async function(texto) {
