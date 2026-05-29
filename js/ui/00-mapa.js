@@ -16,6 +16,11 @@ const MapaMundial = {
         console.log('✅ Mapa listo');
     },
 
+    // Función auxiliar para obtener el nombre del país de forma robusta
+    obtenerNombrePais: function(properties) {
+        return properties?.ADMIN || properties?.name || properties?.NAME || '';
+    },
+
     cargarGeoJSON: function() {
         const url = 'https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson';
         fetch(url)
@@ -33,8 +38,9 @@ const MapaMundial = {
                         opacity: 1
                     },
                     onEachFeature: (feature, layer) => {
-                        const nombre = feature.properties.ADMIN;
+                        const nombre = this.obtenerNombrePais(feature.properties);
                         if (nombre) {
+                            console.log('🌍 País GeoJSON (tooltip):', nombre);
                             layer.bindTooltip(nombre);
                             layer.on('click', () => {
                                 const id = this.normalizarId(nombre);
@@ -59,7 +65,7 @@ const MapaMundial = {
     irAPais: function(paisId) {
         if (!this.capaPaises) return;
         this.capaPaises.eachLayer(layer => {
-            const nombre = this.normalizarId(layer.feature.properties.ADMIN);
+            const nombre = this.normalizarId(this.obtenerNombrePais(layer.feature?.properties));
             if (nombre === paisId) {
                 this.map.fitBounds(layer.getBounds());
                 if (window.UIPanelInfo) UIPanelInfo.mostrarPais(paisId);
@@ -128,8 +134,10 @@ const MapaMundial = {
             const self = this;
             
             this.capaPaises.eachLayer(function(layer) {
-                const nombreGeo = layer.feature?.properties?.ADMIN;
+                const nombreGeo = self.obtenerNombrePais(layer.feature?.properties);
                 if (!nombreGeo) return;
+                
+                console.log('🌍 País GeoJSON (económico):', nombreGeo);
                 
                 const nombreNormalizado = traduccionNombres[nombreGeo] || nombreGeo;
                 const pib = pibData[nombreNormalizado];
@@ -151,8 +159,6 @@ const MapaMundial = {
             });
             
             console.log(`🎨 Capa económica: ${paisesColoreados} países coloreados`);
-            
-            // Mostrar leyenda (usando el contenedor del mapa)
             this.mostrarLeyendaEconomica();
             
         } else {
@@ -178,7 +184,9 @@ const MapaMundial = {
 
     resetearColores: function() {
         if (!this.capaPaises) return;
+        const self = this;
         this.capaPaises.eachLayer(layer => {
+            const nombre = self.obtenerNombrePais(layer.feature?.properties);
             layer.setStyle({
                 fill: true,
                 fillColor: '#2c3e50',
@@ -188,7 +196,6 @@ const MapaMundial = {
                 opacity: 1
             });
             layer.unbindTooltip();
-            const nombre = layer.feature?.properties?.ADMIN || '';
             layer.bindTooltip(nombre);
         });
     },
