@@ -20,6 +20,10 @@ const MapaMundial = {
         fetch(url)
             .then(response => response.json())
             .then(data => {
+                // Mostrar en consola los primeros 5 países para depurar
+                const primeros = data.features.slice(0, 5).map(f => f.properties.ADMIN);
+                console.log('🌍 Ejemplo de nombres en GeoJSON:', primeros);
+                
                 this.capaPaises = L.geoJSON(data, {
                     style: {
                         color: '#4fc3f7',
@@ -60,71 +64,85 @@ const MapaMundial = {
     },
 
     // ============================================
-// CAPA ECONÓMICA CON DATOS REALES (CON FALLBACK SIMULADO)
-// ============================================
-activarCapa: async function(capa, activa) {
-    if (!this.capaPaises) return;
-    
-    if (!activa) {
-        this.resetearColores();
-        const leyenda = document.querySelector('.mapa-leyenda');
-        if (leyenda) leyenda.remove();
-        return;
-    }
-    
-    if (capa === 'economico') {
-        // DATOS SIMULADOS DE PIB (funcionan siempre, sin dependencias externas)
-        const pibData = {
-            'Spain': 29800, 'France': 42000, 'Germany': 51000, 'Italy': 35000,
-            'Portugal': 23000, 'United States': 70000, 'China': 12000, 'Russia': 11500,
-            'Brazil': 7500, 'India': 2100, 'Japan': 40000, 'Canada': 43000,
-            'Mexico': 9000, 'Australia': 52000, 'South Africa': 6000,
-            'United Kingdom': 46000, 'Netherlands': 53000, 'Sweden': 52000,
-            'Norway': 67000, 'Switzerland': 82000, 'Argentina': 11000,
-            'Chile': 15000, 'Colombia': 6600, 'Peru': 6700, 'Venezuela': 5000,
-            'Egypt': 3800, 'Nigeria': 2300, 'Kenya': 2000, 'Indonesia': 4300,
-            'Pakistan': 1500, 'Bangladesh': 2200, 'Vietnam': 3700, 'Thailand': 7200
-        };
+    // CAPA ECONÓMICA CON DATOS SIMULADOS (FUNCIONAL)
+    // ============================================
+    activarCapa: async function(capa, activa) {
+        if (!this.capaPaises) return;
         
-        // Calcular min y max para la escala de colores
-        let minPIB = Infinity, maxPIB = -Infinity;
-        for (const valor of Object.values(pibData)) {
-            if (valor > maxPIB) maxPIB = valor;
-            if (valor < minPIB) minPIB = valor;
+        if (!activa) {
+            this.resetearColores();
+            const leyenda = document.querySelector('.mapa-leyenda');
+            if (leyenda) leyenda.remove();
+            return;
         }
         
-        // Colorear cada país
-        let paisesColoreados = 0;
-        this.capaPaises.eachLayer(layer => {
-            const nombre = layer.feature?.properties?.ADMIN;
-            if (!nombre) return;
+        if (capa === 'economico') {
+            // DATOS SIMULADOS DE PIB (funcionan siempre)
+            const pibData = {
+                'Spain': 29800, 'France': 42000, 'Germany': 51000, 'Italy': 35000,
+                'Portugal': 23000, 'United States': 70000, 'China': 12000, 'Russia': 11500,
+                'Brazil': 7500, 'India': 2100, 'Japan': 40000, 'Canada': 43000,
+                'Mexico': 9000, 'Australia': 52000, 'South Africa': 6000,
+                'United Kingdom': 46000, 'Netherlands': 53000, 'Sweden': 52000,
+                'Norway': 67000, 'Switzerland': 82000, 'Argentina': 11000,
+                'Chile': 15000, 'Colombia': 6600, 'Peru': 6700, 'Venezuela': 5000,
+                'Egypt': 3800, 'Nigeria': 2300, 'Kenya': 2000, 'Indonesia': 4300,
+                'Pakistan': 1500, 'Bangladesh': 2200, 'Vietnam': 3700, 'Thailand': 7200
+            };
             
-            const pib = pibData[nombre];
-            if (pib && typeof pib === 'number') {
-                const color = this.obtenerColorPIB(pib, minPIB, maxPIB);
-                layer.setStyle({ fillColor: color, fillOpacity: 0.7, color: '#fff', weight: 1 });
-                layer.unbindTooltip();
-                layer.bindTooltip(`${nombre}<br>💰 PIB per cápita: ${pib.toLocaleString()} USD (simulado)`);
-                paisesColoreados++;
+            // Calcular min y max para la escala de colores
+            let minPIB = Infinity, maxPIB = -Infinity;
+            for (const valor of Object.values(pibData)) {
+                if (valor > maxPIB) maxPIB = valor;
+                if (valor < minPIB) minPIB = valor;
             }
-        });
-        
-        console.log(`🎨 Capa económica: ${paisesColoreados} países coloreados con datos simulados`);
-        this.mostrarLeyenda('economico', { min: minPIB, max: maxPIB });
-        
-    } else {
-        // Resto de capas: comportamiento original con colores aleatorios
-        this.mostrarLeyenda('simulado');
-        this.capaPaises.eachLayer(layer => {
-            const valor = Math.random();
-            let color = '#2ecc71';
-            if (valor > 0.66) color = '#e74c3c';
-            else if (valor > 0.33) color = '#f1c40f';
-            layer.setStyle({ fillColor: color, fillOpacity: 0.7, color: '#fff', weight: 1 });
-        });
-    }
-},
-    
+            
+            console.log('🎨 Aplicando capa económica, rango PIB:', minPIB, '-', maxPIB);
+            
+            // Colorear cada país
+            let paisesColoreados = 0;
+            let paisesConDato = 0;
+            
+            this.capaPaises.eachLayer(layer => {
+                const nombre = layer.feature?.properties?.ADMIN;
+                if (!nombre) return;
+                
+                // Depuración: mostrar los primeros 5 nombres
+                if (paisesConDato < 5) {
+                    console.log(`   País detectado: "${nombre}" - ¿Tiene dato? ${pibData[nombre] ? 'SÍ' : 'NO'}`);
+                }
+                paisesConDato++;
+                
+                const pib = pibData[nombre];
+                if (pib && typeof pib === 'number') {
+                    const color = this.obtenerColorPIB(pib, minPIB, maxPIB);
+                    layer.setStyle({ fillColor: color, fillOpacity: 0.7, color: '#fff', weight: 1 });
+                    layer.unbindTooltip();
+                    layer.bindTooltip(`${nombre}<br>💰 PIB per cápita: ${pib.toLocaleString()} USD`);
+                    paisesColoreados++;
+                } else {
+                    // Si no tiene dato, dejar color neutro pero actualizar tooltip
+                    layer.unbindTooltip();
+                    layer.bindTooltip(`${nombre}<br>💰 Sin dato de PIB`);
+                }
+            });
+            
+            console.log(`🎨 Capa económica: ${paisesColoreados} países coloreados de ${paisesConDato} procesados`);
+            this.mostrarLeyenda('economico', { min: minPIB, max: maxPIB });
+            
+        } else {
+            // Resto de capas: comportamiento original con colores aleatorios
+            this.mostrarLeyenda('simulado');
+            this.capaPaises.eachLayer(layer => {
+                const valor = Math.random();
+                let color = '#2ecc71';
+                if (valor > 0.66) color = '#e74c3c';
+                else if (valor > 0.33) color = '#f1c40f';
+                layer.setStyle({ fillColor: color, fillOpacity: 0.7, color: '#fff', weight: 1 });
+            });
+        }
+    },
+
     resetearColores: function() {
         if (!this.capaPaises) return;
         this.capaPaises.eachLayer(layer => {
@@ -166,7 +184,7 @@ activarCapa: async function(capa, activa) {
                     <span>${medio2.toLocaleString()}</span>
                     <span>${maxUSD.toLocaleString()}</span>
                 </div>
-                <div class="leyenda-fuente">Fuente: Banco Mundial</div>
+                <div class="leyenda-fuente">Datos simulados</div>
             `;
             document.querySelector('.mapa-container')?.appendChild(leyenda);
         } else if (tipo === 'simulado') {
