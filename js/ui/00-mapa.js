@@ -75,51 +75,75 @@ activarCapa: async function(capa, activa) {
     if (capa === 'economico') {
         this.mostrarLeyenda('cargando', 'Cargando datos del Banco Mundial...');
         
-        let pibData = null;
+        let pibData = {};
         let usandoSimulados = false;
         
         // 1. Intentar cargar datos reales
         try {
             if (window.DatosReales && typeof DatosReales.obtenerValoresParaCapa === 'function') {
+                console.log('🔄 Intentando cargar datos reales...');
                 pibData = await DatosReales.obtenerValoresParaCapa();
+                console.log('📊 Datos recibidos:', pibData);
+                console.log('📊 Número de países con datos:', Object.keys(pibData).length);
+            } else {
+                console.warn('⚠️ DatosReales no disponible');
+                throw new Error('DatosReales no disponible');
             }
-            // Verificar si los datos reales son válidos (no vacíos)
+            
+            // Verificar si los datos son válidos (al menos un país con dato)
             if (!pibData || Object.keys(pibData).length === 0) {
+                console.warn('⚠️ Datos reales vacíos');
                 throw new Error('Datos reales vacíos');
             }
+            
             console.log('✅ Usando datos reales del Banco Mundial');
+            
         } catch (error) {
-            console.warn('⚠️ No se pudieron cargar datos reales, usando simulación');
+            console.warn('⚠️ No se pudieron cargar datos reales, usando simulación', error);
             usandoSimulados = true;
-            // Datos simulados de respaldo
+            // Datos simulados de respaldo (con más países)
             pibData = {
                 'Spain': 29800, 'France': 42000, 'Germany': 51000, 'Italy': 35000,
                 'Portugal': 23000, 'United States': 70000, 'China': 12000, 'Russia': 11500,
                 'Brazil': 7500, 'India': 2100, 'Japan': 40000, 'Canada': 43000,
-                'Mexico': 9000, 'Australia': 52000, 'South Africa': 6000
+                'Mexico': 9000, 'Australia': 52000, 'South Africa': 6000,
+                'United Kingdom': 46000, 'Netherlands': 53000, 'Sweden': 52000,
+                'Norway': 67000, 'Switzerland': 82000, 'Argentina': 11000,
+                'Chile': 15000, 'Colombia': 6600, 'Peru': 6700, 'Venezuela': 5000,
+                'Egypt': 3800, 'Nigeria': 2300, 'Kenya': 2000
             };
         }
         
         // 2. Calcular min y max para la escala de colores
         let minPIB = Infinity, maxPIB = -Infinity;
         for (const valor of Object.values(pibData)) {
-            if (valor > maxPIB) maxPIB = valor;
-            if (valor < minPIB) minPIB = valor;
+            if (typeof valor === 'number' && !isNaN(valor)) {
+                if (valor > maxPIB) maxPIB = valor;
+                if (valor < minPIB) minPIB = valor;
+            }
         }
         
+        console.log(`📊 Rango PIB: ${minPIB} - ${maxPIB}`);
+        
         // 3. Colorear cada país
+        let paisesColoreados = 0;
         this.capaPaises.eachLayer(layer => {
             const nombre = layer.feature?.properties?.ADMIN;
-            if (!nombre || !pibData[nombre]) return;
+            if (!nombre) return;
             
             const pib = pibData[nombre];
-            const color = this.obtenerColorPIB(pib, minPIB, maxPIB);
-            layer.setStyle({ fillColor: color, fillOpacity: 0.7, color: '#fff', weight: 1 });
-            layer.unbindTooltip();
-            layer.bindTooltip(`${nombre}<br>💰 PIB per cápita: ${pib.toLocaleString()} USD`);
+            if (pib && typeof pib === 'number') {
+                const color = this.obtenerColorPIB(pib, minPIB, maxPIB);
+                layer.setStyle({ fillColor: color, fillOpacity: 0.7, color: '#fff', weight: 1 });
+                layer.unbindTooltip();
+                layer.bindTooltip(`${nombre}<br>💰 PIB per cápita: ${pib.toLocaleString()} USD`);
+                paisesColoreados++;
+            }
         });
         
-        // 4. Mostrar leyenda (indicando si son datos reales o simulados)
+        console.log(`🎨 Países coloreados: ${paisesColoreados}`);
+        
+        // 4. Mostrar leyenda
         if (usandoSimulados) {
             this.mostrarLeyenda('simulado', { min: minPIB, max: maxPIB });
         } else {
