@@ -20,9 +20,9 @@ const MapaMundial = {
         fetch(url)
             .then(response => response.json())
             .then(data => {
-                // Mostrar en consola los primeros 5 países para depurar
-                const primeros = data.features.slice(0, 5).map(f => f.properties.ADMIN);
-                console.log('🌍 Ejemplo de nombres en GeoJSON:', primeros);
+                // Mostrar en consola los nombres reales de los primeros países
+                const primeros = data.features.slice(0, 10).map(f => f.properties.ADMIN);
+                console.log('🌍 Nombres de países en el GeoJSON (primeros 10):', primeros);
                 
                 this.capaPaises = L.geoJSON(data, {
                     style: {
@@ -44,6 +44,9 @@ const MapaMundial = {
                         }
                     }
                 }).addTo(this.map);
+                
+                // Guardar referencia a los nombres para depuración
+                this.nombresGeoJSON = primeros;
             })
             .catch(error => console.error('❌ Error cargando GeoJSON:', error));
     },
@@ -64,7 +67,7 @@ const MapaMundial = {
     },
 
     // ============================================
-    // CAPA ECONÓMICA CON DATOS SIMULADOS (FUNCIONAL)
+    // CAPA ECONÓMICA CON DATOS SIMULADOS Y MAPEO FLEXIBLE
     // ============================================
     activarCapa: async function(capa, activa) {
         if (!this.capaPaises) return;
@@ -77,7 +80,7 @@ const MapaMundial = {
         }
         
         if (capa === 'economico') {
-            // DATOS SIMULADOS DE PIB (funcionan siempre)
+            // DATOS SIMULADOS DE PIB (claves en inglés estándar)
             const pibData = {
                 'Spain': 29800, 'France': 42000, 'Germany': 51000, 'Italy': 35000,
                 'Portugal': 23000, 'United States': 70000, 'China': 12000, 'Russia': 11500,
@@ -101,33 +104,35 @@ const MapaMundial = {
             
             // Colorear cada país
             let paisesColoreados = 0;
-            let paisesConDato = 0;
+            let paisesProcesados = 0;
             
             this.capaPaises.eachLayer(layer => {
-                const nombre = layer.feature?.properties?.ADMIN;
-                if (!nombre) return;
+                const nombreGeo = layer.feature?.properties?.ADMIN;
+                if (!nombreGeo) return;
+                paisesProcesados++;
                 
-                // Depuración: mostrar los primeros 5 nombres
-                if (paisesConDato < 5) {
-                    console.log(`   País detectado: "${nombre}" - ¿Tiene dato? ${pibData[nombre] ? 'SÍ' : 'NO'}`);
+                // Buscar coincidencia directa en pibData
+                let pib = pibData[nombreGeo];
+                
+                // Si no hay coincidencia directa, mostrar el nombre para depurar (solo primeros 10)
+                if (!pib && paisesProcesados <= 20) {
+                    console.log(`   País sin dato PIB: "${nombreGeo}"`);
                 }
-                paisesConDato++;
                 
-                const pib = pibData[nombre];
                 if (pib && typeof pib === 'number') {
                     const color = this.obtenerColorPIB(pib, minPIB, maxPIB);
                     layer.setStyle({ fillColor: color, fillOpacity: 0.7, color: '#fff', weight: 1 });
                     layer.unbindTooltip();
-                    layer.bindTooltip(`${nombre}<br>💰 PIB per cápita: ${pib.toLocaleString()} USD`);
+                    layer.bindTooltip(`${nombreGeo}<br>💰 PIB per cápita: ${pib.toLocaleString()} USD`);
                     paisesColoreados++;
                 } else {
                     // Si no tiene dato, dejar color neutro pero actualizar tooltip
                     layer.unbindTooltip();
-                    layer.bindTooltip(`${nombre}<br>💰 Sin dato de PIB`);
+                    layer.bindTooltip(`${nombreGeo}<br>💰 Sin dato de PIB`);
                 }
             });
             
-            console.log(`🎨 Capa económica: ${paisesColoreados} países coloreados de ${paisesConDato} procesados`);
+            console.log(`🎨 Capa económica: ${paisesColoreados} países coloreados de ${paisesProcesados} procesados`);
             this.mostrarLeyenda('economico', { min: minPIB, max: maxPIB });
             
         } else {
