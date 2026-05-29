@@ -4,6 +4,7 @@ const MapaMundial = {
     capaPaises: null,
     capaActiva: null,
     marcadorBusqueda: null,
+    geoJsonCargado: false,
 
     init: function() {
         console.log('🗺️ Inicializando mapa...');
@@ -20,9 +21,7 @@ const MapaMundial = {
         fetch(url)
             .then(response => response.json())
             .then(data => {
-                // Mostrar en consola los nombres reales de los primeros países
-                const primeros = data.features.slice(0, 10).map(f => f.properties.ADMIN);
-                console.log('🌍 Nombres de países en el GeoJSON (primeros 10):', primeros);
+                console.log('📦 GeoJSON cargado, procesando países...');
                 
                 this.capaPaises = L.geoJSON(data, {
                     style: {
@@ -45,8 +44,17 @@ const MapaMundial = {
                     }
                 }).addTo(this.map);
                 
-                // Guardar referencia a los nombres para depuración
-                this.nombresGeoJSON = primeros;
+                this.geoJsonCargado = true;
+                console.log('✅ GeoJSON añadido al mapa, capaPaises listo');
+                
+                // Mostrar algunos nombres para depuración
+                let nombresEjemplo = [];
+                this.capaPaises.eachLayer(layer => {
+                    if (nombresEjemplo.length < 10) {
+                        nombresEjemplo.push(layer.feature?.properties?.ADMIN);
+                    }
+                });
+                console.log('🌍 Ejemplo de nombres en capaPaises:', nombresEjemplo);
             })
             .catch(error => console.error('❌ Error cargando GeoJSON:', error));
     },
@@ -67,10 +75,15 @@ const MapaMundial = {
     },
 
     // ============================================
-    // CAPA ECONÓMICA CON DATOS SIMULADOS Y MAPEO FLEXIBLE
+    // CAPA ECONÓMICA CON DATOS SIMULADOS
     // ============================================
     activarCapa: async function(capa, activa) {
-        if (!this.capaPaises) return;
+        console.log(`🎨 activarCapa llamado: capa=${capa}, activa=${activa}, geoJsonCargado=${this.geoJsonCargado}`);
+        
+        if (!this.capaPaises) {
+            console.warn('⚠️ capaPaises no está listo todavía');
+            return;
+        }
         
         if (!activa) {
             this.resetearColores();
@@ -90,7 +103,12 @@ const MapaMundial = {
                 'Norway': 67000, 'Switzerland': 82000, 'Argentina': 11000,
                 'Chile': 15000, 'Colombia': 6600, 'Peru': 6700, 'Venezuela': 5000,
                 'Egypt': 3800, 'Nigeria': 2300, 'Kenya': 2000, 'Indonesia': 4300,
-                'Pakistan': 1500, 'Bangladesh': 2200, 'Vietnam': 3700, 'Thailand': 7200
+                'Pakistan': 1500, 'Bangladesh': 2200, 'Vietnam': 3700, 'Thailand': 7200,
+                'Poland': 18000, 'Ukraine': 4800, 'Romania': 15000, 'Greece': 20000,
+                'Austria': 51000, 'Belgium': 48000, 'Czech Republic': 26000,
+                'Denmark': 61000, 'Finland': 49000, 'Hungary': 17000, 'Ireland': 89000,
+                'Lithuania': 20000, 'Luxembourg': 115000, 'Netherlands': 53000,
+                'Slovakia': 19000, 'Slovenia': 26000, 'Bulgaria': 10000, 'Croatia': 15000
             };
             
             // Calcular min y max para la escala de colores
@@ -100,7 +118,7 @@ const MapaMundial = {
                 if (valor < minPIB) minPIB = valor;
             }
             
-            console.log('🎨 Aplicando capa económica, rango PIB:', minPIB, '-', maxPIB);
+            console.log('📊 Rango PIB:', minPIB, '-', maxPIB);
             
             // Colorear cada país
             let paisesColoreados = 0;
@@ -111,12 +129,12 @@ const MapaMundial = {
                 if (!nombreGeo) return;
                 paisesProcesados++;
                 
-                // Buscar coincidencia directa en pibData
+                // Buscar coincidencia exacta
                 let pib = pibData[nombreGeo];
                 
-                // Si no hay coincidencia directa, mostrar el nombre para depurar (solo primeros 10)
-                if (!pib && paisesProcesados <= 20) {
-                    console.log(`   País sin dato PIB: "${nombreGeo}"`);
+                // Mostrar algunos nombres para depuración
+                if (paisesProcesados <= 15) {
+                    console.log(`   ${paisesProcesados}. "${nombreGeo}" → PIB: ${pib || 'NO DATA'}`);
                 }
                 
                 if (pib && typeof pib === 'number') {
@@ -126,17 +144,16 @@ const MapaMundial = {
                     layer.bindTooltip(`${nombreGeo}<br>💰 PIB per cápita: ${pib.toLocaleString()} USD`);
                     paisesColoreados++;
                 } else {
-                    // Si no tiene dato, dejar color neutro pero actualizar tooltip
                     layer.unbindTooltip();
                     layer.bindTooltip(`${nombreGeo}<br>💰 Sin dato de PIB`);
                 }
             });
             
-            console.log(`🎨 Capa económica: ${paisesColoreados} países coloreados de ${paisesProcesados} procesados`);
+            console.log(`🎨 RESULTADO: ${paisesColoreados} países coloreados de ${paisesProcesados} procesados`);
             this.mostrarLeyenda('economico', { min: minPIB, max: maxPIB });
             
         } else {
-            // Resto de capas: comportamiento original con colores aleatorios
+            // Resto de capas: colores aleatorios
             this.mostrarLeyenda('simulado');
             this.capaPaises.eachLayer(layer => {
                 const valor = Math.random();
@@ -162,12 +179,7 @@ const MapaMundial = {
         const leyendaExistente = document.querySelector('.mapa-leyenda');
         if (leyendaExistente) leyendaExistente.remove();
         
-        if (tipo === 'cargando') {
-            const leyenda = document.createElement('div');
-            leyenda.className = 'mapa-leyenda';
-            leyenda.innerHTML = `<div class="leyenda-titulo">🔄 ${datos}</div>`;
-            document.querySelector('.mapa-container')?.appendChild(leyenda);
-        } else if (tipo === 'economico' && datos) {
+        if (tipo === 'economico' && datos) {
             const minUSD = Math.round(datos.min);
             const maxUSD = Math.round(datos.max);
             const medio1 = Math.round(minUSD + (maxUSD - minUSD) * 0.33);
