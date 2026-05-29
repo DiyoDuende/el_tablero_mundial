@@ -175,7 +175,10 @@ body {
 .alerta-amarilla { background: rgba(245,124,0,0.2); border-left: 4px solid var(--warning); }
 
 /* ===== PANELES MODALES ===== */
-.verificador-container, .simulador-container, .relaciones-globales-container, .timeline-global-container {
+.verificador-container,
+.simulador-container,
+.relaciones-globales-container,
+.timeline-global-container {
     display: none;
     position: fixed;
     top: 50%;
@@ -190,25 +193,37 @@ body {
     border: 2px solid var(--info);
     box-shadow: 0 0 20px rgba(0,0,0,0.3);
 }
-.verificador-container.active, .simulador-container.active, .relaciones-globales-container.active, .timeline-global-container.active {
-    display: block;
+
+.verificador-container.active,
+.simulador-container.active,
+.relaciones-globales-container.active,
+.timeline-global-container.active {
+    display: block !important;
 }
-.verificador-header, .simulador-header {
+
+.verificador-header,
+.simulador-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 15px;
 }
-.verificador-header h3, .simulador-header h3 {
+
+.verificador-header h3,
+.simulador-header h3 {
     margin: 0;
     font-size: 1.2rem;
 }
-.verificador-input, .simulador-input {
+
+.verificador-input,
+.simulador-input {
     display: flex;
     gap: 10px;
     margin-bottom: 15px;
 }
-.verificador-input input, .simulador-input input {
+
+.verificador-input input,
+.simulador-input input {
     flex: 1;
     padding: 12px;
     background: var(--bg-panel);
@@ -217,7 +232,9 @@ body {
     color: white;
     outline: none;
 }
-.btn-verde, .btn-naranja {
+
+.btn-verde,
+.btn-naranja {
     padding: 0 20px;
     border: none;
     border-radius: 30px;
@@ -225,12 +242,17 @@ body {
     cursor: pointer;
     transition: 0.2s;
 }
+
 .btn-verde { background: var(--success); }
 .btn-naranja { background: var(--warning); }
-.btn-verde:hover, .btn-naranja:hover {
+
+.btn-verde:hover,
+.btn-naranja:hover {
     transform: scale(1.02);
 }
-.verificador-resultado, .simulador-resultados {
+
+.verificador-resultado,
+.simulador-resultados {
     background: var(--bg-panel);
     border-radius: 12px;
     padding: 15px;
