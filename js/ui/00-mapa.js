@@ -59,18 +59,58 @@ const MapaMundial = {
         });
     },
 
-    activarCapa: function(capa, activa) {
-        if (!this.capaPaises) return;
+    // ============================================
+// CAPA ECONÓMICA CON DATOS REALES
+// ============================================
+activarCapa: async function(capa, activa) {
+    if (!this.capaPaises) return;
+    
+    if (!activa) {
+        this.resetearColores();
+        const leyenda = document.querySelector('.mapa-leyenda');
+        if (leyenda) leyenda.remove();
+        return;
+    }
+    
+    if (capa === 'economico') {
+        this.mostrarLeyenda('cargando', 'Cargando datos del Banco Mundial...');
         
-        if (!activa) {
-            this.resetearColores();
-            const leyenda = document.querySelector('.mapa-leyenda');
-            if (leyenda) leyenda.remove();
-            return;
+        let pibData = {};
+        try {
+            if (window.DatosReales) {
+                pibData = await DatosReales.obtenerValoresParaCapa();
+            }
+            if (Object.keys(pibData).length === 0) throw new Error('Sin datos');
+        } catch (error) {
+            console.warn('Usando datos simulados (API no disponible)');
+            pibData = {
+                'Spain': 29800, 'France': 42000, 'Germany': 51000, 'Italy': 35000,
+                'Portugal': 23000, 'United States': 70000, 'China': 12000, 'Russia': 11500,
+                'Brazil': 7500, 'India': 2100, 'Japan': 40000, 'Canada': 43000,
+                'Mexico': 9000, 'Australia': 52000, 'South Africa': 6000
+            };
         }
         
-        this.mostrarLeyenda();
+        let minPIB = Infinity, maxPIB = -Infinity;
+        for (const valor of Object.values(pibData)) {
+            if (valor > maxPIB) maxPIB = valor;
+            if (valor < minPIB) minPIB = valor;
+        }
         
+        this.capaPaises.eachLayer(layer => {
+            const nombre = layer.feature?.properties?.ADMIN;
+            if (!nombre || !pibData[nombre]) return;
+            
+            const pib = pibData[nombre];
+            const color = this.obtenerColorPIB(pib, minPIB, maxPIB);
+            layer.setStyle({ fillColor: color, fillOpacity: 0.7, color: '#fff', weight: 1 });
+            layer.unbindTooltip();
+            layer.bindTooltip(`${nombre}<br>💰 PIB per cápita: ${pib.toLocaleString()} USD`);
+        });
+        this.mostrarLeyenda('economico', { min: minPIB, max: maxPIB });
+    } else {
+        // Resto de capas: comportamiento original con colores aleatorios
+        this.mostrarLeyenda('simulado');
         this.capaPaises.eachLayer(layer => {
             const valor = Math.random();
             let color = '#2ecc71';
@@ -78,7 +118,8 @@ const MapaMundial = {
             else if (valor > 0.33) color = '#f1c40f';
             layer.setStyle({ fillColor: color, fillOpacity: 0.7, color: '#fff', weight: 1 });
         });
-    },
+    }
+},
 
     resetearColores: function() {
         if (!this.capaPaises) return;
