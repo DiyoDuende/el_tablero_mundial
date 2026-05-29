@@ -47,15 +47,18 @@ const MapaMundial = {
                 this.geoJsonCargado = true;
                 console.log('✅ GeoJSON añadido al mapa, capaPaises listo');
                 
+                // Verificar que eachLayer funciona
+                let contador = 0;
+                this.capaPaises.eachLayer(() => contador++);
+                console.log(`📊 La capa tiene ${contador} layers (países)`);
+                
                 // Mostrar algunos nombres para depuración
                 let nombresEjemplo = [];
-                if (this.capaPaises && this.capaPaises.eachLayer) {
-                    this.capaPaises.eachLayer(layer => {
-                        if (nombresEjemplo.length < 10) {
-                            nombresEjemplo.push(layer.feature?.properties?.ADMIN);
-                        }
-                    });
-                }
+                this.capaPaises.eachLayer(layer => {
+                    if (nombresEjemplo.length < 10) {
+                        nombresEjemplo.push(layer.feature?.properties?.ADMIN);
+                    }
+                });
                 console.log('🌍 Ejemplo de nombres en capaPaises:', nombresEjemplo);
             })
             .catch(error => console.error('❌ Error cargando GeoJSON:', error));
@@ -139,10 +142,12 @@ const MapaMundial = {
             
             console.log('📊 Rango PIB:', minPIB, '-', maxPIB);
             
-            // Colorear cada país usando el método eachLayer
-            const self = this; // Guardar referencia a this
+            // Colorear cada país usando eachLayer
             let paisesColoreados = 0;
             let paisesProcesados = 0;
+            
+            // Guardar referencia a this para usar dentro del eachLayer
+            const self = this;
             
             this.capaPaises.eachLayer(function(layer) {
                 const nombreGeo = layer.feature?.properties?.ADMIN;
@@ -153,7 +158,7 @@ const MapaMundial = {
                 const nombreNormalizado = traduccionNombres[nombreGeo] || nombreGeo;
                 
                 // Buscar el PIB con el nombre normalizado
-                let pib = pibData[nombreNormalizado];
+                const pib = pibData[nombreNormalizado];
                 
                 // Mostrar algunos nombres para depuración
                 if (paisesProcesados <= 20) {
