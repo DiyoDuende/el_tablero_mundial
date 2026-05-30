@@ -92,109 +92,109 @@ const MapaMundial = {
         }
         
         // Aceptar tanto 'economia' como 'economico'
-       if (capa === 'economia' || capa === 'economico') {
-    console.log('🎨 Aplicando capa ECONÓMICA');
-    
-    this.mostrarLeyendaCargando('Cargando datos del Banco Mundial...');
-    
-    // DATOS SIMULADOS DE PIB
-    const pibData = {
-        'Spain': 29800, 'France': 42000, 'Germany': 51000, 'Italy': 35000,
-        'Portugal': 23000, 'United States': 70000, 'China': 12000, 'Russia': 11500,
-        'Brazil': 7500, 'India': 2100, 'Japan': 40000, 'Canada': 43000,
-        'Mexico': 9000, 'Australia': 52000, 'South Africa': 6000,
-        'United Kingdom': 46000, 'Netherlands': 53000, 'Sweden': 52000,
-        'Norway': 67000, 'Switzerland': 82000, 'Argentina': 11000,
-        'Chile': 15000, 'Colombia': 6600, 'Peru': 6700, 'Venezuela': 5000,
-        'Egypt': 3800, 'Nigeria': 2300, 'Kenya': 2000, 'Indonesia': 4300,
-        'Pakistan': 1500, 'Bangladesh': 2200, 'Vietnam': 3700, 'Thailand': 7200,
-        'Poland': 18000, 'Ukraine': 4800, 'Romania': 15000, 'Greece': 20000,
-        'Austria': 51000, 'Belgium': 48000, 'Czech Republic': 26000,
-        'Denmark': 61000, 'Finland': 49000, 'Hungary': 17000, 'Ireland': 89000,
-        'Lithuania': 20000, 'Luxembourg': 115000, 'Slovakia': 19000,
-        'Slovenia': 26000, 'Bulgaria': 10000, 'Croatia': 15000,
-        'Turkey': 9500, 'South Korea': 33000, 'Israel': 52000,
-        'Saudi Arabia': 23500, 'United Arab Emirates': 45000
-    };
-    
-    // Traducción de nombres del GeoJSON a nombres cortos
-    const traduccionNombres = {
-        'United States of America': 'United States',
-        'Russian Federation': 'Russia',
-        'Czechia': 'Czech Republic',
-        'Korea, Republic of': 'South Korea',
-        'Republic of Korea': 'South Korea',
-        'Iran (Islamic Republic of)': 'Iran',
-        'Viet Nam': 'Vietnam',
-        'Syrian Arab Republic': 'Syria',
-        'Lao PDR': 'Laos',
-        'United Republic of Tanzania': 'Tanzania',
-        'Moldova, Republic of': 'Moldova',
-        'Bolivia (Plurinational State of)': 'Bolivia',
-        'Venezuela (Bolivarian Republic of)': 'Venezuela',
-        'Türkiye': 'Turkey',
-        'Côte d\'Ivoire': 'Ivory Coast',
-        "Democratic Republic of the Congo": "DR Congo",
-        "Republic of the Congo": "Congo",
-        "Bosnia and Herzegovina": "Bosnia and Herzegovina",
-        "North Macedonia": "North Macedonia",
-        "Equatorial Guinea": "Equatorial Guinea",
-        "Central African Republic": "Central African Republic",
-        "South Sudan": "South Sudan",
-        "Western Sahara": "Western Sahara"
-    };
-    
-    // Colorear cada país
-    let paisesColoreados = 0;
-    const self = this;
-    
-    this.capaPaises.eachLayer(function(layer) {
-        const nombreGeo = self.obtenerNombrePais(layer.feature?.properties);
-        if (!nombreGeo) return;
-        
-        console.log('🌍 País GeoJSON (económico):', nombreGeo);
-        
-        const nombreNormalizado = traduccionNombres[nombreGeo] || nombreGeo;
-        const pib = pibData[nombreNormalizado];
-        
-        if (typeof pib === 'number') {
-            const color = self.obtenerColorPIB(pib);
-            layer.setStyle({
-                fill: true,
-                fillColor: color,
-                fillOpacity: 0.85,
-                color: '#222',
-                weight: 0.5,
-                opacity: 1
+        if (capa === 'economia' || capa === 'economico') {
+            console.log('🎨 Aplicando capa ECONÓMICA');
+            
+            this.mostrarLeyendaCargando('Cargando datos del Banco Mundial...');
+            
+            // DATOS SIMULADOS DE PIB
+            const pibData = {
+                'Spain': 29800, 'France': 42000, 'Germany': 51000, 'Italy': 35000,
+                'Portugal': 23000, 'United States': 70000, 'China': 12000, 'Russia': 11500,
+                'Brazil': 7500, 'India': 2100, 'Japan': 40000, 'Canada': 43000,
+                'Mexico': 9000, 'Australia': 52000, 'South Africa': 6000,
+                'United Kingdom': 46000, 'Netherlands': 53000, 'Sweden': 52000,
+                'Norway': 67000, 'Switzerland': 82000, 'Argentina': 11000,
+                'Chile': 15000, 'Colombia': 6600, 'Peru': 6700, 'Venezuela': 5000,
+                'Egypt': 3800, 'Nigeria': 2300, 'Kenya': 2000, 'Indonesia': 4300,
+                'Pakistan': 1500, 'Bangladesh': 2200, 'Vietnam': 3700, 'Thailand': 7200,
+                'Poland': 18000, 'Ukraine': 4800, 'Romania': 15000, 'Greece': 20000,
+                'Austria': 51000, 'Belgium': 48000, 'Czech Republic': 26000,
+                'Denmark': 61000, 'Finland': 49000, 'Hungary': 17000, 'Ireland': 89000,
+                'Lithuania': 20000, 'Luxembourg': 115000, 'Slovakia': 19000,
+                'Slovenia': 26000, 'Bulgaria': 10000, 'Croatia': 15000,
+                'Turkey': 9500, 'South Korea': 33000, 'Israel': 52000,
+                'Saudi Arabia': 23500, 'United Arab Emirates': 45000
+            };
+            
+            // Traducción de nombres del GeoJSON a nombres cortos
+            const traduccionNombres = {
+                'United States of America': 'United States',
+                'Russian Federation': 'Russia',
+                'Czechia': 'Czech Republic',
+                'Korea, Republic of': 'South Korea',
+                'Republic of Korea': 'South Korea',
+                'Iran (Islamic Republic of)': 'Iran',
+                'Viet Nam': 'Vietnam',
+                'Syrian Arab Republic': 'Syria',
+                'Lao PDR': 'Laos',
+                'United Republic of Tanzania': 'Tanzania',
+                'Moldova, Republic of': 'Moldova',
+                'Bolivia (Plurinational State of)': 'Bolivia',
+                'Venezuela (Bolivarian Republic of)': 'Venezuela',
+                'Türkiye': 'Turkey',
+                'Côte d\'Ivoire': 'Ivory Coast',
+                "Democratic Republic of the Congo": "DR Congo",
+                "Republic of the Congo": "Congo",
+                "Bosnia and Herzegovina": "Bosnia and Herzegovina",
+                "North Macedonia": "North Macedonia",
+                "Equatorial Guinea": "Equatorial Guinea",
+                "Central African Republic": "Central African Republic",
+                "South Sudan": "South Sudan",
+                "Western Sahara": "Western Sahara"
+            };
+            
+            // Colorear cada país
+            let paisesColoreados = 0;
+            const self = this;
+            
+            this.capaPaises.eachLayer(function(layer) {
+                const nombreGeo = self.obtenerNombrePais(layer.feature?.properties);
+                if (!nombreGeo) return;
+                
+                console.log('🌍 País GeoJSON (económico):', nombreGeo);
+                
+                const nombreNormalizado = traduccionNombres[nombreGeo] || nombreGeo;
+                const pib = pibData[nombreNormalizado];
+                
+                if (typeof pib === 'number') {
+                    const color = self.obtenerColorPIB(pib);
+                    layer.setStyle({
+                        fill: true,
+                        fillColor: color,
+                        fillOpacity: 0.85,
+                        color: '#222',
+                        weight: 0.5,
+                        opacity: 1
+                    });
+                    layer.unbindTooltip();
+                    layer.bindTooltip(`${nombreGeo}<br>💰 PIB per cápita: ${pib.toLocaleString()} USD`);
+                    paisesColoreados++;
+                }
             });
-            layer.unbindTooltip();
-            layer.bindTooltip(`${nombreGeo}<br>💰 PIB per cápita: ${pib.toLocaleString()} USD`);
-            paisesColoreados++;
+            
+            console.log(`🎨 Capa económica: ${paisesColoreados} países coloreados`);
+            this.mostrarLeyendaEconomica();
+            
+        } else {
+            // Resto de capas: colores aleatorios
+            console.log(`🎨 Aplicando capa SIMULADA: ${capa}`);
+            this.mostrarLeyendaSimulada();
+            this.capaPaises.eachLayer(layer => {
+                const valor = Math.random();
+                let color = '#2ecc71';
+                if (valor > 0.66) color = '#e74c3c';
+                else if (valor > 0.33) color = '#f1c40f';
+                layer.setStyle({
+                    fill: true,
+                    fillColor: color,
+                    fillOpacity: 0.85,
+                    color: '#222',
+                    weight: 0.5,
+                    opacity: 1
+                });
+            });
         }
-    });
-    
-    console.log(`🎨 Capa económica: ${paisesColoreados} países coloreados`);
-    this.mostrarLeyendaEconomica();
-    
-} else {
-    // Resto de capas: colores aleatorios
-    console.log(`🎨 Aplicando capa SIMULADA: ${capa}`);
-    this.mostrarLeyendaSimulada();
-    this.capaPaises.eachLayer(layer => {
-        const valor = Math.random();
-        let color = '#2ecc71';
-        if (valor > 0.66) color = '#e74c3c';
-        else if (valor > 0.33) color = '#f1c40f';
-        layer.setStyle({
-            fill: true,
-            fillColor: color,
-            fillOpacity: 0.85,
-            color: '#222',
-            weight: 0.5,
-            opacity: 1
-        });
-    });
-}
     },
 
     resetearColores: function() {
@@ -275,14 +275,14 @@ const MapaMundial = {
     },
 
     mostrarLeyendaCargando: function(mensaje) {
-    const leyendaExistente = document.querySelector('.mapa-leyenda');
-    if (leyendaExistente) leyendaExistente.remove();
-    
-    const leyenda = document.createElement('div');
-    leyenda.className = 'mapa-leyenda';
-    leyenda.innerHTML = `<div class="leyenda-titulo">🔄 ${mensaje || 'Cargando datos...'}</div>`;
-    document.getElementById('mapa-mundial')?.parentNode?.appendChild(leyenda);
-},
+        const leyendaExistente = document.querySelector('.mapa-leyenda');
+        if (leyendaExistente) leyendaExistente.remove();
+        
+        const leyenda = document.createElement('div');
+        leyenda.className = 'mapa-leyenda';
+        leyenda.innerHTML = `<div class="leyenda-titulo">🔄 ${mensaje || 'Cargando datos...'}</div>`;
+        document.getElementById('mapa-mundial')?.parentNode?.appendChild(leyenda);
+    },
     
     buscarLugar: async function(texto) {
         if (!texto) return;
