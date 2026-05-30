@@ -74,7 +74,7 @@ const MapaMundial = {
     },
 
     // ============================================
-    // CAPA ECONÓMICA (acepta tanto 'economia' como 'economico')
+    // CAPA ECONÓMICA (con datos REALES + fallback simulado)
     // ============================================
     activarCapa: async function(capa, activa) {
         console.log(`🎨 CAPA recibida: "${capa}", activa: ${activa}`);
@@ -97,25 +97,67 @@ const MapaMundial = {
             
             this.mostrarLeyendaCargando('Cargando datos del Banco Mundial...');
             
-            // DATOS SIMULADOS DE PIB
-            const pibData = {
-                'Spain': 29800, 'France': 42000, 'Germany': 51000, 'Italy': 35000,
-                'Portugal': 23000, 'United States': 70000, 'China': 12000, 'Russia': 11500,
-                'Brazil': 7500, 'India': 2100, 'Japan': 40000, 'Canada': 43000,
-                'Mexico': 9000, 'Australia': 52000, 'South Africa': 6000,
-                'United Kingdom': 46000, 'Netherlands': 53000, 'Sweden': 52000,
-                'Norway': 67000, 'Switzerland': 82000, 'Argentina': 11000,
-                'Chile': 15000, 'Colombia': 6600, 'Peru': 6700, 'Venezuela': 5000,
-                'Egypt': 3800, 'Nigeria': 2300, 'Kenya': 2000, 'Indonesia': 4300,
-                'Pakistan': 1500, 'Bangladesh': 2200, 'Vietnam': 3700, 'Thailand': 7200,
-                'Poland': 18000, 'Ukraine': 4800, 'Romania': 15000, 'Greece': 20000,
-                'Austria': 51000, 'Belgium': 48000, 'Czech Republic': 26000,
-                'Denmark': 61000, 'Finland': 49000, 'Hungary': 17000, 'Ireland': 89000,
-                'Lithuania': 20000, 'Luxembourg': 115000, 'Slovakia': 19000,
-                'Slovenia': 26000, 'Bulgaria': 10000, 'Croatia': 15000,
-                'Turkey': 9500, 'South Korea': 33000, 'Israel': 52000,
-                'Saudi Arabia': 23500, 'United Arab Emirates': 45000
-            };
+            let pibData = null;
+            let usandoReales = false;
+            
+            // 1. Intentar cargar datos reales
+            try {
+                if (window.DatosReales && typeof DatosReales.obtenerValoresParaCapa === 'function') {
+                    const resultado = await DatosReales.obtenerValoresParaCapa();
+                    if (resultado.esReal && resultado.datos && Object.keys(resultado.datos).length > 0) {
+                        pibData = resultado.datos;
+                        usandoReales = true;
+                        console.log(`✅ Usando datos REALES: ${Object.keys(pibData).length} países`);
+                    } else {
+                        throw new Error('No se obtuvieron datos reales');
+                    }
+                } else {
+                    throw new Error('DatosReales no disponible');
+                }
+            } catch (error) {
+                console.warn('⚠️ Usando datos SIMULADOS (fallback):', error.message);
+                usandoReales = false;
+                // Datos simulados de respaldo
+                pibData = {
+                    'Spain': 29800, 'France': 42000, 'Germany': 51000, 'Italy': 35000,
+                    'Portugal': 23000, 'United States': 70000, 'China': 12000, 'Russia': 11500,
+                    'Brazil': 7500, 'India': 2100, 'Japan': 40000, 'Canada': 43000,
+                    'Mexico': 9000, 'Australia': 52000, 'South Africa': 6000,
+                    'United Kingdom': 46000, 'Netherlands': 53000, 'Sweden': 52000,
+                    'Norway': 67000, 'Switzerland': 82000, 'Argentina': 11000,
+                    'Chile': 15000, 'Colombia': 6600, 'Peru': 6700, 'Venezuela': 5000,
+                    'Egypt': 3800, 'Nigeria': 2300, 'Kenya': 2000, 'Indonesia': 4300,
+                    'Pakistan': 1500, 'Bangladesh': 2200, 'Vietnam': 3700, 'Thailand': 7200,
+                    'Poland': 18000, 'Ukraine': 4800, 'Romania': 15000, 'Greece': 20000,
+                    'Austria': 51000, 'Belgium': 48000, 'Czech Republic': 26000,
+                    'Denmark': 61000, 'Finland': 49000, 'Hungary': 17000, 'Ireland': 89000,
+                    'Lithuania': 20000, 'Luxembourg': 115000, 'Slovakia': 19000,
+                    'Slovenia': 26000, 'Bulgaria': 10000, 'Croatia': 15000,
+                    'Turkey': 9500, 'South Korea': 33000, 'Israel': 52000,
+                    'Saudi Arabia': 23500, 'United Arab Emirates': 45000,
+                    'New Zealand': 48000, 'Iceland': 67000, 'Morocco': 3800,
+                    'Algeria': 4300, 'Tunisia': 3800, 'Serbia': 9200, 'Belarus': 7300,
+                    'Estonia': 27000, 'Latvia': 21000, 'Uruguay': 17000, 'Paraguay': 5500,
+                    'Bolivia': 3500, 'Ecuador': 6300, 'Costa Rica': 13000, 'Panama': 16000,
+                    'Cuba': 8800, 'Dominican Republic': 8700, 'Jordan': 4400, 'Lebanon': 4600,
+                    'Oman': 16000, 'Qatar': 61000, 'Kuwait': 32000, 'Bahrain': 24000,
+                    'Cyprus': 31000, 'Malta': 30000, 'Albania': 5400, 'North Macedonia': 6700,
+                    'Montenegro': 9200, 'Georgia': 5000, 'Armenia': 4900, 'Azerbaijan': 4800,
+                    'Kazakhstan': 10000, 'Mongolia': 4500, 'Nepal': 1300, 'Sri Lanka': 3700,
+                    'Myanmar': 1300, 'Cambodia': 1700, 'Laos': 2500, 'Fiji': 5800,
+                    'Jamaica': 5200, 'Trinidad and Tobago': 16000, 'Bahamas': 34000,
+                    'Barbados': 18000, 'Mauritius': 11000, 'Maldives': 11000
+                };
+            }
+            
+            // Calcular min y max para la escala de colores
+            let minPIB = Infinity, maxPIB = -Infinity;
+            for (const valor of Object.values(pibData)) {
+                if (valor > maxPIB) maxPIB = valor;
+                if (valor < minPIB) minPIB = valor;
+            }
+            
+            console.log(`📊 Rango PIB: ${minPIB} - ${maxPIB}`);
             
             // Traducción de nombres del GeoJSON a nombres cortos
             const traduccionNombres = {
@@ -152,8 +194,6 @@ const MapaMundial = {
                 const nombreGeo = self.obtenerNombrePais(layer.feature?.properties);
                 if (!nombreGeo) return;
                 
-                console.log('🌍 País GeoJSON (económico):', nombreGeo);
-                
                 const nombreNormalizado = traduccionNombres[nombreGeo] || nombreGeo;
                 const pib = pibData[nombreNormalizado];
                 
@@ -168,13 +208,20 @@ const MapaMundial = {
                         opacity: 1
                     });
                     layer.unbindTooltip();
-                    layer.bindTooltip(`${nombreGeo}<br>💰 PIB per cápita: ${pib.toLocaleString()} USD`);
+                    const fuente = usandoReales ? '' : ' (simulado)';
+                    layer.bindTooltip(`${nombreGeo}<br>💰 PIB per cápita: ${pib.toLocaleString()} USD${fuente}`);
                     paisesColoreados++;
                 }
             });
             
-            console.log(`🎨 Capa económica: ${paisesColoreados} países coloreados`);
-            this.mostrarLeyendaEconomica();
+            console.log(`🎨 Capa económica: ${paisesColoreados} países coloreados (${usandoReales ? 'REALES' : 'SIMULADOS'})`);
+            
+            // Mostrar leyenda con fuente correcta
+            if (usandoReales) {
+                this.mostrarLeyendaEconomicaReal();
+            } else {
+                this.mostrarLeyendaEconomicaSimulada();
+            }
             
         } else {
             // Resto de capas: colores aleatorios
@@ -224,7 +271,7 @@ const MapaMundial = {
         return '#ff0000';                        // Rojo
     },
 
-    mostrarLeyendaEconomica: function() {
+    mostrarLeyendaEconomicaReal: function() {
         const leyendaExistente = document.querySelector('.mapa-leyenda');
         if (leyendaExistente) leyendaExistente.remove();
         
@@ -246,7 +293,34 @@ const MapaMundial = {
                 <span>30-60k</span>
                 <span>> 60k</span>
             </div>
-            <div class="leyenda-fuente">Datos simulados</div>
+            <div class="leyenda-fuente">Fuente: Banco Mundial</div>
+        `;
+        document.getElementById('mapa-mundial')?.parentNode?.appendChild(leyenda);
+    },
+
+    mostrarLeyendaEconomicaSimulada: function() {
+        const leyendaExistente = document.querySelector('.mapa-leyenda');
+        if (leyendaExistente) leyendaExistente.remove();
+        
+        const leyenda = document.createElement('div');
+        leyenda.className = 'mapa-leyenda';
+        leyenda.innerHTML = `
+            <div class="leyenda-titulo">💰 PIB per cápita (USD)</div>
+            <div class="leyenda-escala">
+                <div class="leyenda-color" style="background: #ff0000;"></div>
+                <div class="leyenda-color" style="background: #ff9900;"></div>
+                <div class="leyenda-color" style="background: #ffff00;"></div>
+                <div class="leyenda-color" style="background: #88ff00;"></div>
+                <div class="leyenda-color" style="background: #00ff00;"></div>
+            </div>
+            <div class="leyenda-valores">
+                <span>< 7k</span>
+                <span>7-15k</span>
+                <span>15-30k</span>
+                <span>30-60k</span>
+                <span>> 60k</span>
+            </div>
+            <div class="leyenda-fuente">Datos simulados (fallback)</div>
         `;
         document.getElementById('mapa-mundial')?.parentNode?.appendChild(leyenda);
     },
