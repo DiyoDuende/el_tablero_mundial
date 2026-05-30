@@ -14,35 +14,37 @@ const DatosReales = {
     },
 
     async obtenerPIBPerCapita() {
-        const clave = 'gdp_per_capita';
-        if (this.cache[clave] && (Date.now() - this.cache[clave].timestamp) < this.CACHE_DURACION) {
-            console.log('📊 Usando caché de GDP');
-            return this.cache[clave].data;
-        }
+    const clave = 'gdp_per_capita';
+    if (this.cache[clave] && (Date.now() - this.cache[clave].timestamp) < this.CACHE_DURACION) {
+        console.log('📊 Usando caché de GDP');
+        return this.cache[clave].data;
+    }
 
-        const url = 'https://api.worldbank.org/v2/country/all/indicator/NY.GDP.PCAP.CD?format=json&per_page=300';
-        try {
-            const response = await fetch(url);
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const data = await response.json();
-            const records = data[1];
-            const result = {};
-            for (const record of records) {
-                const iso3 = record.country.id;
-                const value = record.value;
-                if (iso3 && value !== null && !isNaN(value) && value > 0) {
-                    const nombrePais = this.iso3ANombre(iso3);
-                    if (nombrePais) result[nombrePais] = value;
-                }
+    const url = 'https://api.worldbank.org/v2/country/all/indicator/NY.GDP.PCAP.CD?format=json&per_page=300';
+    try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        const records = data[1];
+        const result = {};
+        
+        for (const record of records) {
+            const iso3 = record.country.id;
+            const value = record.value;
+            // Solo guardar si no existe ya un valor para ese país (primer registro = más reciente)
+            if (iso3 && value !== null && !isNaN(value) && value > 0 && !result[iso3]) {
+                const nombrePais = this.iso3ANombre(iso3);
+                if (nombrePais) result[nombrePais] = value;
             }
-            this.cache[clave] = { data: result, timestamp: Date.now() };
-            console.log('🌍 GDP real cargado desde API del Banco Mundial');
-            return result;
-        } catch (error) {
-            console.error('❌ Error obteniendo GDP:', error);
-            return {};
         }
-    },
+        this.cache[clave] = { data: result, timestamp: Date.now() };
+        console.log('🌍 GDP real cargado desde API del Banco Mundial');
+        return result;
+    } catch (error) {
+        console.error('❌ Error obteniendo GDP:', error);
+        return null;
+    }
+},
 
     iso3ANombre(iso3) {
         for (const [nombre, codigo] of Object.entries(this.iso3Map)) {
