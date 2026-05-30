@@ -379,4 +379,52 @@ const MapaMundial = {
     }
 };
 
+// ============================================
+// BUSCADOR GLOBAL - Conectar con el dashboard
+// ============================================
+
+const BuscadorGlobal = {
+    init: function() {
+        const input = document.getElementById('buscador-global');
+        const btn = document.getElementById('btn-buscar');
+        
+        if (!input || !btn) return;
+        
+        btn.addEventListener('click', () => this.buscar());
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') this.buscar();
+        });
+    },
+    
+    buscar: function() {
+        const input = document.getElementById('buscador-global');
+        const texto = input?.value.trim();
+        if (!texto) return;
+        
+        const lugar = Territorios.buscar(texto);
+        if (lugar) {
+            // Centrar mapa
+            if (mapa && lugar.lat && lugar.lon) {
+                mapa.setView([lugar.lat, lugar.lon], 8);
+            }
+            // Mostrar en dashboard
+            if (window.DashboardLugar) {
+                DashboardLugar.mostrar(lugar.id);
+            } else {
+                console.log('Lugar encontrado:', lugar.nombre);
+                alert(`📍 ${lugar.nombre}\nNivel: ${lugar.nivel}\nPoblación: ${lugar.poblacion?.toLocaleString() || 'N/D'}`);
+            }
+        } else {
+            alert(`❌ No se encontró "${texto}".\nPrueba con: España, Madrid, Almonaster, Barcelona...`);
+        }
+    }
+};
+
+// Inicializar buscador cuando el DOM esté listo
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => BuscadorGlobal.init());
+} else {
+    BuscadorGlobal.init();
+}
+
 window.MapaMundial = MapaMundial;
