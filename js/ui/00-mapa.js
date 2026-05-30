@@ -427,4 +427,37 @@ if (document.readyState === 'loading') {
     BuscadorGlobal.init();
 }
 
+// ============================================
+// CONEXIÓN MAPA - DASHBOARD REAL
+// ============================================
+
+// Cuando se hace clic en un país del mapa, mostrar datos reales
+function onMapClick(e) {
+    // Esta función debería ser llamada desde el mapa
+    // Por ahora, usamos el buscador como entrada principal
+    console.log('Mapa clickeado:', e.latlng);
+}
+
+// Escuchar clicks en los países del GeoJSON
+if (mapa && capaPaises) {
+    capaPaises.eachLayer(function(layer) {
+        layer.on('click', function(e) {
+            const paisId = layer.feature?.properties?.ADMIN?.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            
+            // Buscar el código ISO3
+            let iso3 = null;
+            for (let [codigo, nombre] of Object.entries(APIBancoMundial.paisesSoportados)) {
+                if (nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") === paisId) {
+                    iso3 = codigo;
+                    break;
+                }
+            }
+            
+            if (iso3 && DashboardReal) {
+                DashboardReal.mostrar(iso3);
+            }
+        });
+    });
+}
+
 window.MapaMundial = MapaMundial;
