@@ -117,17 +117,30 @@ const MapaMundial = {
             
             // Traducción de nombres del GeoJSON a nombres cortos
             const traduccionNombres = {
-                'United States of America': 'United States',
-                'Russian Federation': 'Russia',
-                'Czechia': 'Czech Republic',
-                'Republic of the Congo': 'Congo',
-                'Democratic Republic of the Congo': 'DR Congo',
-                'Bosnia and Herz.': 'Bosnia and Herzegovina',
-                'Dominican Rep.': 'Dominican Republic',
-                'Central African Rep.': 'Central African Republic',
-                'Eq. Guinea': 'Equatorial Guinea',
-                'eSwatini': 'Eswatini'
-            };
+    'United States of America': 'United States',
+    'Russian Federation': 'Russia',
+    'Czechia': 'Czech Republic',
+    'Korea, Republic of': 'South Korea',
+    'Republic of Korea': 'South Korea',
+    'Iran (Islamic Republic of)': 'Iran',
+    'Viet Nam': 'Vietnam',
+    'Syrian Arab Republic': 'Syria',
+    'Lao PDR': 'Laos',
+    'United Republic of Tanzania': 'Tanzania',
+    'Moldova, Republic of': 'Moldova',
+    'Bolivia (Plurinational State of)': 'Bolivia',
+    'Venezuela (Bolivarian Republic of)': 'Venezuela',
+    'Türkiye': 'Turkey',
+    'Côte d\'Ivoire': 'Ivory Coast',
+    "Democratic Republic of the Congo": "DR Congo",
+    "Republic of the Congo": "Congo",
+    "Bosnia and Herzegovina": "Bosnia and Herzegovina",
+    "North Macedonia": "North Macedonia",
+    "Equatorial Guinea": "Equatorial Guinea",
+    "Central African Republic": "Central African Republic",
+    "South Sudan": "South Sudan",
+    "Western Sahara": "Western Sahara"
+};
             
             // Colorear cada país
             let paisesColoreados = 0;
