@@ -1,6 +1,6 @@
 // js/core/11-coloreado.js
 // ============================================
-// COLOREADO DINÁMICO - Versión corregida
+// COLOREADO DINÁMICO - Basado en datos reales del Banco Mundial
 // ============================================
 
 const Coloreado = {
@@ -12,7 +12,6 @@ const Coloreado = {
         { max: Infinity, color: '#2e7d32', label: '> 50.000 $' }
     ],
     
-    // Obtener color según PIB
     getColorPorPIB: function(pib) {
         if (!pib || pib === 0) return '#1a3a4a';
         for (let u of this.umbralesPIB) {
@@ -21,7 +20,6 @@ const Coloreado = {
         return '#1a3a4a';
     },
     
-    // Buscar ISO3 por nombre del país
     buscarISO3: function(nombrePais) {
         if (!nombrePais || typeof APIBancoMundial === 'undefined') return null;
         
@@ -34,47 +32,51 @@ const Coloreado = {
         return null;
     },
     
-    // Aplicar colores por PIB
     async aplicarColoresPIB() {
-        // Usar la variable global capaPaises
-        if (!window.capaPaises) {
-            console.warn('⚠️ capaPaises no disponible, reintentando en 1 segundo...');
+        if (!window.capaPaisesGlobal) {
+            console.warn('⚠️ capaPaisesGlobal no disponible, reintentando...');
             setTimeout(() => this.aplicarColoresPIB(), 1000);
             return;
         }
         
         console.log('🎨 Coloreando mapa por PIB...');
-        let coloreados = 0;
-        let total = 0;
         
-        for (let layer of window.capaPaises.getLayers()) {
-            total++;
+        // Recopilar todas las promesas para ejecutarlas en paralelo
+        const promesas = [];
+        const capa = window.capaPaisesGlobal;
+        
+        for (let layer of capa.getLayers()) {
             const nombrePais = layer.feature?.properties?.ADMIN;
             if (!nombrePais) continue;
             
             const iso3 = this.buscarISO3(nombrePais);
             if (!iso3) continue;
             
-            const datos = await window.CacheDatos?.obtenerDatos(iso3);
-            const pib = datos?.pib?.valor;
+            const promesa = (async () => {
+                const datos = await window.CacheDatos?.obtenerDatos(iso3);
+                const pib = datos?.pib?.valor;
+                if (pib) {
+                    layer.setStyle({
+                        fillColor: this.getColorPorPIB(pib),
+                        fillOpacity: 0.75,
+                        color: '#ffffff',
+                        weight: 0.5
+                    });
+                    return true;
+                }
+                return false;
+            })();
             
-            if (pib) {
-                const color = this.getColorPorPIB(pib);
-                layer.setStyle({
-                    fillColor: color,
-                    fillOpacity: 0.75,
-                    color: '#ffffff',
-                    weight: 0.5
-                });
-                coloreados++;
-            }
+            promesas.push(promesa);
         }
         
-        console.log(`✅ ${coloreados} de ${total} países coloreados por PIB`);
+        const resultados = await Promise.all(promesas);
+        const coloreados = resultados.filter(r => r === true).length;
+        
+        console.log(`✅ ${coloreados} países coloreados por PIB`);
         this.actualizarLeyenda('💰 PIB per cápita', this.umbralesPIB);
     },
     
-    // Actualizar leyenda
     actualizarLeyenda: function(titulo, umbrales) {
         let leyenda = document.querySelector('.mapa-leyenda');
         if (!leyenda) {
@@ -100,11 +102,10 @@ const Coloreado = {
         leyenda.innerHTML = html;
     },
     
-    // Restablecer colores
     resetearColores: function() {
-        if (!window.capaPaises) return;
+        if (!window.capaPaisesGlobal) return;
         
-        for (let layer of window.capaPaises.getLayers()) {
+        for (let layer of window.capaPaisesGlobal.getLayers()) {
             layer.setStyle({
                 fillColor: '#1a3a4a',
                 fillOpacity: 0.6,
