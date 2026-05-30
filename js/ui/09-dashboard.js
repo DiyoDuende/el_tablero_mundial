@@ -1,30 +1,35 @@
 // js/ui/09-dashboard.js
 // ============================================
-// DASHBOARD LUGAR - Muestra info de cualquier lugar
+// DASHBOARD REAL - Datos del Banco Mundial
 // ============================================
 
-const DashboardLugar = {
+const DashboardReal = {
     lugarActual: null,
+    datosActuales: null,
     
-    // Mostrar información de un lugar
-    mostrar: async function(lugarId) {
-        const lugar = Territorios.indice[lugarId];
-        if (!lugar) {
-            console.error('Lugar no encontrado:', lugarId);
+    // Mostrar información de un país
+    async mostrar(iso3) {
+        if (!iso3) return;
+        
+        // Verificar si el país está soportado
+        if (!APIBancoMundial.isSoportado(iso3)) {
+            this.mostrarNoSoportado(iso3);
             return;
         }
         
-        this.lugarActual = lugar;
         this.mostrarLoading();
         
-        // Obtener jerarquía
-        const jerarquia = Territorios.getJerarquia(lugarId);
+        // Obtener datos reales (con caché)
+        const datos = await CacheDatos.obtenerDatos(iso3);
+        this.datosActuales = datos;
         
-        // Obtener datos económicos (simulados por ahora)
-        const datosEconomicos = await this.obtenerDatosEconomicos(lugar);
+        if (!datos || !datos.pib) {
+            this.mostrarError(iso3);
+            return;
+        }
         
-        // Generar HTML
-        const html = this.generarHTML(lugar, jerarquia, datosEconomicos);
+        // Generar HTML con datos reales
+        const html = this.generarHTML(datos);
         
         const container = document.getElementById('dashboard-container');
         if (container) {
@@ -34,175 +39,144 @@ const DashboardLugar = {
         this.ocultarLoading();
     },
     
-    // Obtener datos económicos (simulados - luego conectar API)
-    obtenerDatosEconomicos: async function(lugar) {
-        // Datos base por país (simulados)
-        const datosPorPais = {
-            espana: { pib_percapita: 30500, inflacion: 2.8, desempleo: 11.2, deuda: 110 },
-            francia: { pib_percapita: 43500, inflacion: 2.5, desempleo: 7.4, deuda: 115 },
-            alemania: { pib_percapita: 52700, inflacion: 2.3, desempleo: 3.1, deuda: 66 },
-            italia: { pib_percapita: 35500, inflacion: 2.4, desempleo: 7.8, deuda: 144 },
-            portugal: { pib_percapita: 24500, inflacion: 2.2, desempleo: 6.5, deuda: 113 },
-            reino_unido: { pib_percapita: 46000, inflacion: 2.6, desempleo: 4.2, deuda: 100 },
-            estados_unidos: { pib_percapita: 76300, inflacion: 3.2, desempleo: 3.8, deuda: 122 },
-            china: { pib_percapita: 12800, inflacion: 0.5, desempleo: 5.2, deuda: 77 },
-            japon: { pib_percapita: 39300, inflacion: 2.1, desempleo: 2.6, deuda: 260 },
-            canada: { pib_percapita: 52000, inflacion: 2.4, desempleo: 5.0, deuda: 106 },
-            mexico: { pib_percapita: 10500, inflacion: 4.5, desempleo: 3.0, deuda: 54 },
-            brasil: { pib_percapita: 8900, inflacion: 4.2, desempleo: 9.3, deuda: 86 },
-            argentina: { pib_percapita: 10800, inflacion: 89.0, desempleo: 6.5, deuda: 86 },
-            chile: { pib_percapita: 15800, inflacion: 4.8, desempleo: 8.5, deuda: 38 },
-            colombia: { pib_percapita: 6800, inflacion: 7.2, desempleo: 10.5, deuda: 59 },
-            peru: { pib_percapita: 6900, inflacion: 3.8, desempleo: 7.2, deuda: 36 },
-            india: { pib_percapita: 2500, inflacion: 4.9, desempleo: 7.1, deuda: 83 },
-            indonesia: { pib_percapita: 4700, inflacion: 2.9, desempleo: 5.4, deuda: 40 },
-            turquia: { pib_percapita: 10600, inflacion: 53.0, desempleo: 9.4, deuda: 31 },
-            rusia: { pib_percapita: 13600, inflacion: 5.2, desempleo: 3.2, deuda: 17 },
-        };
-        
-        // Si es país, devolver datos directos
-        if (lugar.nivel === 'pais') {
-            const datos = datosPorPais[lugar.id] || datosPorPais.espana;
-            return {
-                ...datos,
-                es_estimacion: false,
-                fuente: 'Banco Mundial (datos simulados)'
-            };
-        }
-        
-        // Si es región o municipio, escalar desde el país
-        const paisId = lugar.pais;
-        const datosPais = datosPorPais[paisId] || datosPorPais.espana;
-        
-        // Factor de escala por población (simple)
-        const poblacionPais = Territorios.paises[paisId]?.poblacion || 48000000;
-        const factorEscala = Math.sqrt(lugar.poblacion / poblacionPais);
-        
-        return {
-            pib_percapita: Math.round(datosPais.pib_percapita * (0.7 + factorEscala * 0.6)),
-            inflacion: datosPais.inflacion,
-            desempleo: Math.min(30, Math.max(3, datosPais.desempleo * (0.8 + factorEscala * 0.5))),
-            deuda: datosPais.deuda,
-            es_estimacion: true,
-            fuente: 'Estimado basado en datos del país'
-        };
-    },
-    
-    // Generar HTML del dashboard
-    generarHTML: function(lugar, jerarquia, datos) {
-        const nivelTexto = this.getNivelTexto(lugar.nivel);
-        const nivelColor = this.getNivelColor(lugar.nivel);
+    // Generar HTML con datos reales
+    generarHTML: function(datos) {
+        const nombrePais = APIBancoMundial.paisesSoportados[datos.iso3] || datos.iso3;
         
         // Formatear números
-        const pibFormateado = datos.pib_percapita?.toLocaleString() || 'N/D';
-        const poblacionFormateada = lugar.poblacion?.toLocaleString() || 'N/D';
+        const pibFormateado = datos.pib?.valor ? Math.round(datos.pib.valor).toLocaleString() : 'N/D';
+        const inflacionFormateada = datos.inflacion?.valor ? datos.inflacion.valor.toFixed(1) : 'N/D';
+        const desempleoFormateado = datos.desempleo?.valor ? datos.desempleo.valor.toFixed(1) : 'N/D';
+        const poblacionFormateada = datos.poblacion?.valor ? Math.round(datos.poblacion.valor / 1000000).toLocaleString() + ' M' : 'N/D';
+        const deudaFormateada = datos.deuda?.valor ? datos.deuda.valor.toFixed(1) : 'N/D';
         
-        // Determinar colores para indicadores
-        const pibColor = this.getPIBColor(datos.pib_percapita);
-        const inflacionColor = this.getInflacionColor(datos.inflacion);
-        const desempleoColor = this.getDesempleoColor(datos.desempleo);
+        // Colores según valores
+        const pibColor = this.getPIBColor(datos.pib?.valor);
+        const inflacionColor = this.getInflacionColor(datos.inflacion?.valor);
+        const desempleoColor = this.getDesempleoColor(datos.desempleo?.valor);
+        const deudaColor = this.getDeudaColor(datos.deuda?.valor);
+        
+        // Fecha de actualización
+        const fechaActualizacion = datos.ultimaActualizacion ? new Date(datos.ultimaActualizacion).toLocaleString() : 'desconocida';
         
         return `
-            <div class="dashboard-lugar" style="animation: fadeIn 0.3s ease;">
-                <div class="lugar-header" style="border-bottom: 3px solid ${nivelColor};">
-                    <div class="lugar-titulo">
-                        <span class="lugar-icono">${this.getIcono(lugar.nivel)}</span>
-                        <h2>${lugar.nombre}</h2>
+            <div class="dashboard-real" style="animation: fadeIn 0.3s ease;">
+                <div class="dashboard-header">
+                    <div class="pais-titulo">
+                        <span class="pais-bandera">${this.getBandera(datos.iso3)}</span>
+                        <h2>${nombrePais}</h2>
                     </div>
-                    <span class="lugar-nivel" style="background: ${nivelColor};">${nivelTexto}</span>
+                    <span class="pais-codigo">${datos.iso3}</span>
                 </div>
                 
-                <div class="lugar-jerarquia">
-                    ${jerarquia.map(l => `<span class="jerarquia-item">${l.nombre}</span>`).join(' <span class="jerarquia-flecha">→</span> ')}
+                <div class="dashboard-fuente">
+                    📊 Datos reales del Banco Mundial
+                    <span class="fecha-update">🔄 ${fechaActualizacion}</span>
                 </div>
                 
-                <div class="lugar-stats">
-                    <div class="stat-card">
-                        <div class="stat-icono">🌍</div>
-                        <div class="stat-valor">${poblacionFormateada}</div>
-                        <div class="stat-label">Población</div>
+                <div class="indicadores-grid">
+                    <div class="indicador-card">
+                        <div class="indicador-icono">💰</div>
+                        <div class="indicador-valor" style="color: ${pibColor};">${pibFormateado} $</div>
+                        <div class="indicador-label">PIB per cápita</div>
+                        <div class="indicador-año">${datos.pib?.año || ''}</div>
+                        <div class="indicador-barra"><div class="barra" style="width: ${Math.min(100, (datos.pib?.valor || 0) / 1000)}%; background: ${pibColor};"></div></div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-icono">📍</div>
-                        <div class="stat-valor">${lugar.lat?.toFixed(4) || '?'}°, ${lugar.lon?.toFixed(4) || '?'}°</div>
-                        <div class="stat-label">Coordenadas</div>
+                    
+                    <div class="indicador-card">
+                        <div class="indicador-icono">📈</div>
+                        <div class="indicador-valor" style="color: ${inflacionColor};">${inflacionFormateada}%</div>
+                        <div class="indicador-label">Inflación</div>
+                        <div class="indicador-año">${datos.inflacion?.año || ''}</div>
+                        <div class="indicador-barra"><div class="barra" style="width: ${Math.min(100, (datos.inflacion?.valor || 0) * 5)}%; background: ${inflacionColor};"></div></div>
+                    </div>
+                    
+                    <div class="indicador-card">
+                        <div class="indicador-icono">👥</div>
+                        <div class="indicador-valor" style="color: ${desempleoColor};">${desempleoFormateado}%</div>
+                        <div class="indicador-label">Desempleo</div>
+                        <div class="indicador-año">${datos.desempleo?.año || ''}</div>
+                        <div class="indicador-barra"><div class="barra" style="width: ${Math.min(100, (datos.desempleo?.valor || 0) * 3)}%; background: ${desempleoColor};"></div></div>
+                    </div>
+                    
+                    <div class="indicador-card">
+                        <div class="indicador-icono">🏛️</div>
+                        <div class="indicador-valor" style="color: ${deudaColor};">${deudaFormateada}%</div>
+                        <div class="indicador-label">Deuda pública</div>
+                        <div class="indicador-año">${datos.deuda?.año || ''}</div>
+                        <div class="indicador-barra"><div class="barra" style="width: ${Math.min(100, datos.deuda?.valor || 0)}%; background: ${deudaColor};"></div></div>
+                    </div>
+                    
+                    <div class="indicador-card">
+                        <div class="indicador-icono">🌍</div>
+                        <div class="indicador-valor">${poblacionFormateada}</div>
+                        <div class="indicador-label">Población</div>
+                        <div class="indicador-año">${datos.poblacion?.año || ''}</div>
+                        <div class="indicador-barra"><div class="barra" style="width: ${Math.min(100, (datos.poblacion?.valor || 0) / 10000000)}%; background: #4fc3f7;"></div></div>
                     </div>
                 </div>
                 
-                <div class="lugar-economia">
-                    <h3>💰 Indicadores Económicos</h3>
-                    <div class="economia-grid">
-                        <div class="economia-item">
-                            <div class="economia-label">PIB per cápita</div>
-                            <div class="economia-valor" style="color: ${pibColor};">${pibFormateado} €</div>
-                            <div class="economia-barra"><div class="barra-llena" style="width: ${Math.min(100, datos.pib_percapita / 1000)}%; background: ${pibColor};"></div></div>
-                        </div>
-                        <div class="economia-item">
-                            <div class="economia-label">Inflación</div>
-                            <div class="economia-valor" style="color: ${inflacionColor};">${datos.inflacion}%</div>
-                            <div class="economia-barra"><div class="barra-llena" style="width: ${Math.min(100, datos.inflacion * 5)}%; background: ${inflacionColor};"></div></div>
-                        </div>
-                        <div class="economia-item">
-                            <div class="economia-label">Desempleo</div>
-                            <div class="economia-valor" style="color: ${desempleoColor};">${datos.desempleo}%</div>
-                            <div class="economia-barra"><div class="barra-llena" style="width: ${Math.min(100, datos.desempleo * 3)}%; background: ${desempleoColor};"></div></div>
-                        </div>
-                        <div class="economia-item">
-                            <div class="economia-label">Deuda pública</div>
-                            <div class="economia-valor">${datos.deuda}% PIB</div>
-                            <div class="economia-barra"><div class="barra-llena" style="width: ${Math.min(100, datos.deuda)}%; background: #f9a825;"></div></div>
-                        </div>
-                    </div>
-                    ${datos.es_estimacion ? '<div class="aviso-estimacion">⚠️ Datos estimados basados en el país</div>' : ''}
-                    <div class="fuente-datos">📚 Fuente: ${datos.fuente}</div>
+                <div class="dashboard-fuentes">
+                    📚 Fuentes: Banco Mundial · FMI · Datos oficiales
                 </div>
                 
-                <div class="lugar-capas">
-                    <h3>🗺️ Capas disponibles</h3>
-                    <div class="capas-botones">
-                        <button class="capa-mini" data-capa="economia" onclick="console.log('Capa economía')">💰 Economía</button>
-                        <button class="capa-mini" data-capa="poblacion" onclick="console.log('Capa población')">👥 Población</button>
-                        <button class="capa-mini" data-capa="energia" onclick="console.log('Capa energía')">⚡ Energía</button>
-                        <button class="capa-mini" data-capa="clima" onclick="console.log('Capa clima')">🌍 Clima</button>
-                        <button class="capa-mini" data-capa="geopolitica" onclick="console.log('Capa geopolítica')">🏛️ Geopolítica</button>
-                    </div>
+                <div class="dashboard-nota">
+                    💡 Los datos se actualizan automáticamente cada 24 horas
                 </div>
             </div>
         `;
     },
     
-    // Utilidades
-    getNivelTexto: function(nivel) {
-        const niveles = {
-            'pais': '🇺🇳 País',
-            'region': '🏛️ Región',
-            'municipio': '🏙️ Ciudad',
-            'aldea': '🌾 Aldea'
-        };
-        return niveles[nivel] || '📍 Lugar';
+    // Mostrar mensaje de país no soportado
+    mostrarNoSoportado: function(iso3) {
+        const container = document.getElementById('dashboard-container');
+        if (container) {
+            container.innerHTML = `
+                <div class="dashboard-error">
+                    <div class="error-icono">🌍</div>
+                    <h3>País no disponible</h3>
+                    <p>${iso3} no está en la base de datos del Banco Mundial o no tenemos datos.</p>
+                    <p>Prueba con: España (ESP), Francia (FRA), Alemania (DEU)...</p>
+                </div>
+            `;
+        }
     },
     
-    getIcono: function(nivel) {
-        const iconos = {
-            'pais': '🇺🇳',
-            'region': '🏛️',
-            'municipio': '🏙️',
-            'aldea': '🌾'
-        };
-        return iconos[nivel] || '📍';
+    // Mostrar error de carga
+    mostrarError: function(iso3) {
+        const container = document.getElementById('dashboard-container');
+        if (container) {
+            container.innerHTML = `
+                <div class="dashboard-error">
+                    <div class="error-icono">⚠️</div>
+                    <h3>Error al cargar datos</h3>
+                    <p>No se pudieron obtener datos económicos de ${iso3}.</p>
+                    <p>Verifica tu conexión o intenta más tarde.</p>
+                    <button onclick="CacheDatos.limpiar(); location.reload();" class="btn-reintentar">🔄 Reintentar</button>
+                </div>
+            `;
+        }
     },
     
-    getNivelColor: function(nivel) {
-        const colores = {
-            'pais': '#4fc3f7',
-            'region': '#81c784',
-            'municipio': '#ffb74d',
-            'aldea': '#a1887f'
-        };
-        return colores[nivel] || '#888';
+    mostrarLoading: function() {
+        const container = document.getElementById('dashboard-container');
+        if (container) {
+            container.innerHTML = `
+                <div class="dashboard-loading">
+                    <div class="loading-spinner">🌐</div>
+                    <p>Cargando datos del Banco Mundial...</p>
+                </div>
+            `;
+        }
     },
     
+    ocultarLoading: function() {
+        // El loading se reemplaza por el contenido
+    },
+    
+    // Utilidades de colores
     getPIBColor: function(pib) {
+        if (!pib) return '#888';
         if (pib > 50000) return '#2e7d32';
         if (pib > 30000) return '#43a047';
         if (pib > 15000) return '#f9a825';
@@ -211,6 +185,7 @@ const DashboardLugar = {
     },
     
     getInflacionColor: function(inflacion) {
+        if (!inflacion) return '#888';
         if (inflacion < 2) return '#2e7d32';
         if (inflacion < 4) return '#f9a825';
         if (inflacion < 10) return '#ef6c00';
@@ -218,6 +193,7 @@ const DashboardLugar = {
     },
     
     getDesempleoColor: function(desempleo) {
+        if (!desempleo) return '#888';
         if (desempleo < 5) return '#2e7d32';
         if (desempleo < 8) return '#43a047';
         if (desempleo < 12) return '#f9a825';
@@ -225,16 +201,27 @@ const DashboardLugar = {
         return '#d32f2f';
     },
     
-    mostrarLoading: function() {
-        const container = document.getElementById('dashboard-container');
-        if (container) {
-            container.innerHTML = '<div class="loading-spinner">🔄 Cargando información...</div>';
-        }
+    getDeudaColor: function(deuda) {
+        if (!deuda) return '#888';
+        if (deuda < 60) return '#2e7d32';
+        if (deuda < 90) return '#f9a825';
+        if (deuda < 120) return '#ef6c00';
+        return '#d32f2f';
     },
     
-    ocultarLoading: function() {
-        // El loading se reemplaza por el contenido
+    getBandera: function(iso3) {
+        const banderas = {
+            'ESP': '🇪🇸', 'FRA': '🇫🇷', 'DEU': '🇩🇪', 'ITA': '🇮🇹',
+            'PRT': '🇵🇹', 'GBR': '🇬🇧', 'IRL': '🇮🇪', 'NLD': '🇳🇱',
+            'BEL': '🇧🇪', 'AUT': '🇦🇹', 'CHE': '🇨🇭', 'SWE': '🇸🇪',
+            'NOR': '🇳🇴', 'DNK': '🇩🇰', 'FIN': '🇫🇮', 'POL': '🇵🇱',
+            'USA': '🇺🇸', 'CAN': '🇨🇦', 'MEX': '🇲🇽', 'BRA': '🇧🇷',
+            'ARG': '🇦🇷', 'CHL': '🇨🇱', 'COL': '🇨🇴', 'PER': '🇵🇪',
+            'CHN': '🇨🇳', 'JPN': '🇯🇵', 'KOR': '🇰🇷', 'IND': '🇮🇳',
+            'RUS': '🇷🇺', 'AUS': '🇦🇺', 'ZAF': '🇿🇦'
+        };
+        return banderas[iso3] || '🌍';
     }
 };
 
-window.DashboardLugar = DashboardLugar;
+window.DashboardReal = DashboardReal;
