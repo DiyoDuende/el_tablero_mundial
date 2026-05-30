@@ -7,19 +7,16 @@ const DashboardReal = {
     lugarActual: null,
     datosActuales: null,
     
-    // Mostrar información de un país
     async mostrar(iso3) {
         if (!iso3) return;
         
-        // Verificar si el país está soportado
-        if (!APIBancoMundial.isSoportado(iso3)) {
+        if (!APIBancoMundial || !APIBancoMundial.isSoportado(iso3)) {
             this.mostrarNoSoportado(iso3);
             return;
         }
         
         this.mostrarLoading();
         
-        // Obtener datos reales (con caché)
         const datos = await CacheDatos.obtenerDatos(iso3);
         this.datosActuales = datos;
         
@@ -28,35 +25,27 @@ const DashboardReal = {
             return;
         }
         
-        // Generar HTML con datos reales
         const html = this.generarHTML(datos);
-        
         const container = document.getElementById('dashboard-container');
-        if (container) {
-            container.innerHTML = html;
-        }
+        if (container) container.innerHTML = html;
         
         this.ocultarLoading();
     },
     
-    // Generar HTML con datos reales
     generarHTML: function(datos) {
         const nombrePais = APIBancoMundial.paisesSoportados[datos.iso3] || datos.iso3;
         
-        // Formatear números
         const pibFormateado = datos.pib?.valor ? Math.round(datos.pib.valor).toLocaleString() : 'N/D';
         const inflacionFormateada = datos.inflacion?.valor ? datos.inflacion.valor.toFixed(1) : 'N/D';
         const desempleoFormateado = datos.desempleo?.valor ? datos.desempleo.valor.toFixed(1) : 'N/D';
         const poblacionFormateada = datos.poblacion?.valor ? Math.round(datos.poblacion.valor / 1000000).toLocaleString() + ' M' : 'N/D';
         const deudaFormateada = datos.deuda?.valor ? datos.deuda.valor.toFixed(1) : 'N/D';
         
-        // Colores según valores
         const pibColor = this.getPIBColor(datos.pib?.valor);
         const inflacionColor = this.getInflacionColor(datos.inflacion?.valor);
         const desempleoColor = this.getDesempleoColor(datos.desempleo?.valor);
         const deudaColor = this.getDeudaColor(datos.deuda?.valor);
         
-        // Fecha de actualización
         const fechaActualizacion = datos.ultimaActualizacion ? new Date(datos.ultimaActualizacion).toLocaleString() : 'desconocida';
         
         return `
@@ -127,7 +116,6 @@ const DashboardReal = {
         `;
     },
     
-    // Mostrar mensaje de país no soportado
     mostrarNoSoportado: function(iso3) {
         const container = document.getElementById('dashboard-container');
         if (container) {
@@ -135,14 +123,13 @@ const DashboardReal = {
                 <div class="dashboard-error">
                     <div class="error-icono">🌍</div>
                     <h3>País no disponible</h3>
-                    <p>${iso3} no está en la base de datos del Banco Mundial o no tenemos datos.</p>
+                    <p>${iso3} no está en la base de datos del Banco Mundial.</p>
                     <p>Prueba con: España (ESP), Francia (FRA), Alemania (DEU)...</p>
                 </div>
             `;
         }
     },
     
-    // Mostrar error de carga
     mostrarError: function(iso3) {
         const container = document.getElementById('dashboard-container');
         if (container) {
@@ -151,8 +138,7 @@ const DashboardReal = {
                     <div class="error-icono">⚠️</div>
                     <h3>Error al cargar datos</h3>
                     <p>No se pudieron obtener datos económicos de ${iso3}.</p>
-                    <p>Verifica tu conexión o intenta más tarde.</p>
-                    <button onclick="CacheDatos.limpiar(); location.reload();" class="btn-reintentar">🔄 Reintentar</button>
+                    <button onclick="CacheDatos?.limpiar(); location.reload();" class="btn-reintentar">🔄 Reintentar</button>
                 </div>
             `;
         }
@@ -170,11 +156,8 @@ const DashboardReal = {
         }
     },
     
-    ocultarLoading: function() {
-        // El loading se reemplaza por el contenido
-    },
+    ocultarLoading: function() {},
     
-    // Utilidades de colores
     getPIBColor: function(pib) {
         if (!pib) return '#888';
         if (pib > 50000) return '#2e7d32';
