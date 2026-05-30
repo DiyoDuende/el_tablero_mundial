@@ -1,163 +1,68 @@
 // js/ui/08-app.js
+// ============================================
+// APP PRINCIPAL - Inicialización de todo el sistema
+// ============================================
+
+console.log('🚀 Iniciando Tablero Mundial');
+
+// Inicializar componentes cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('🚀 Iniciando Tablero Mundial');
-
-    if (window.MapaMundial) MapaMundial.init();
-    if (window.UIPanelInfo) UIPanelInfo.init();
-    if (window.UIVerificador) UIVerificador.init();
-    if (window.UISimulador) UISimulador.init();
-    if (window.UIRelacionesGlobales && UIRelacionesGlobales.init) UIRelacionesGlobales.init();
-    if (window.UITimeline && UITimeline.init) UITimeline.init();
-
-    // ============================================
-    // PANELES (excluyendo el simulador, que se controla aparte)
-    // ============================================
-    const paneles = {
-        'btn-verificador-panel': 'verificador-panel',
-        'btn-relaciones-globales': 'relaciones-globales-panel',
-        'btn-timeline-panel': 'timeline-panel'
-    };
-    for (const [btnId, panelId] of Object.entries(paneles)) {
-        const btn = document.getElementById(btnId);
-        const panel = document.getElementById(panelId);
-        if (btn && panel) {
-            btn.addEventListener('click', () => {
-                panel.classList.toggle('active');
-                console.log(`Toggle panel: ${panelId} -> active: ${panel.classList.contains('active')}`);
-            });
-        }
-    }
-
-    // Botones de cierre dentro de los paneles
-    document.querySelectorAll('.btn-cerrar').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const panel = e.target.closest('.verificador-container, .simulador-container, .relaciones-globales-container, .timeline-global-container');
-            if (panel) panel.classList.remove('active');
-        });
+    
+    // Inicializar UI existente
+    if (typeof UIPanelInfo !== 'undefined') UIPanelInfo.init();
+    if (typeof UIVerificador !== 'undefined') UIVerificador.init();
+    if (typeof UISimulador !== 'undefined') UISimulador.init();
+    if (typeof Idioma !== 'undefined') Idioma.init();
+    
+    // Mostrar España por defecto cuando el mapa esté listo
+    window.addEventListener('mapa-listos', () => {
+        setTimeout(() => {
+            if (typeof DashboardReal !== 'undefined') {
+                DashboardReal.mostrar('ESP');
+            } else if (typeof DashboardLugar !== 'undefined') {
+                DashboardLugar.mostrar('espana');
+            }
+        }, 500);
     });
-
-    // ============================================
-    // MODO REAL / JUEGO (control separado)
-    // ============================================
-    const btnReal = document.getElementById('btn-modo-real');
-    const btnJuego = document.getElementById('btn-modo-juego');
-    const badge = document.getElementById('modo-badge');
-    const simuladorPanel = document.getElementById('simulador-panel');
-
-    if (btnReal && btnJuego && badge && simuladorPanel) {
-        btnReal.addEventListener('click', () => {
-            window.CONFIG.modo = 'realidad';
-            btnReal.classList.add('active');
-            btnJuego.classList.remove('active');
-            badge.textContent = '🌐 MODO REAL';
-            simuladorPanel.classList.remove('active');
-            console.log('Modo REAL activado, simulador cerrado');
+    
+    // Configurar botones de modo
+    const btnModoReal = document.getElementById('btn-modo-real');
+    const btnModoJuego = document.getElementById('btn-modo-juego');
+    const badgeModo = document.getElementById('modo-badge');
+    
+    if (btnModoReal && btnModoJuego && badgeModo) {
+        btnModoReal.addEventListener('click', () => {
+            if (typeof CONFIG !== 'undefined') CONFIG.modo = 'realidad';
+            btnModoReal.classList.add('active');
+            btnModoJuego.classList.remove('active');
+            badgeModo.innerHTML = '🌐 MODO REAL';
+            badgeModo.style.background = '#2e7d32';
         });
         
-        btnJuego.addEventListener('click', () => {
-            window.CONFIG.modo = 'juego';
-            btnJuego.classList.add('active');
-            btnReal.classList.remove('active');
-            badge.textContent = '🎮 MODO JUEGO';
-            simuladorPanel.classList.add('active');
-            console.log('Modo JUEGO activado, simulador abierto');
+        btnModoJuego.addEventListener('click', () => {
+            if (typeof CONFIG !== 'undefined') CONFIG.modo = 'juego';
+            btnModoJuego.classList.add('active');
+            btnModoReal.classList.remove('active');
+            badgeModo.innerHTML = '🎮 MODO JUEGO';
+            badgeModo.style.background = '#b27c2c';
         });
     }
-
-    // ============================================
-    // BUSCADOR RÁPIDO
-    // ============================================
-    const buscador = document.getElementById('buscador-rapido');
-    if (buscador && MapaMundial.buscarLugar) {
-        buscador.addEventListener('keypress', (e) => {
+    
+    // Buscador rápido del panel lateral
+    const buscadorRapido = document.getElementById('buscador-rapido');
+    if (buscadorRapido) {
+        buscadorRapido.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
-                MapaMundial.buscarLugar(buscador.value.trim());
+                const texto = e.target.value.trim();
+                if (texto && typeof BuscadorGlobal !== 'undefined') {
+                    BuscadorGlobal.buscarTexto(texto);
+                }
             }
         });
     }
-
-    // ============================================
-    // CAPAS (iconos)
-    // ============================================
-    document.addEventListener('click', (e) => {
-        const capaBtn = e.target.closest('.capa-icon');
-        if (capaBtn) {
-            capaBtn.classList.toggle('activo');
-            const capa = capaBtn.dataset.capa;
-            const activa = capaBtn.classList.contains('activo');
-            if (MapaMundial.activarCapa) {
-                MapaMundial.activarCapa(capa, activa);
-                console.log(`Capa ${capa} activada: ${activa}`);
-            }
-        }
-    });
-
-    // Mostrar España por defecto
-    if (window.UIPanelInfo) UIPanelInfo.mostrarPais('espana');
-
-    // ============================================
-// BOTONES README Y NORMAS (MODALES)
-// ============================================
-const btnReadme = document.getElementById('btn-readme');
-const btnNormas = document.getElementById('btn-normas');
-const modalReadme = document.getElementById('modal-readme');
-const modalNormas = document.getElementById('modal-normas');
-const btnCerrarReadme = document.getElementById('btn-cerrar-readme');
-const btnCerrarNormas = document.getElementById('btn-cerrar-normas');
-const readmeContenido = document.getElementById('readme-contenido');
-const normasContenido = document.getElementById('normas-contenido');
-
-async function cargarMarkdown(url, destino) {
-    try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const markdown = await response.text();
-        let html = markdown
-            .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-            .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-            .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-            .replace(/^\* (.*$)/gim, '<li>$1</li>')
-            .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
-            .replace(/\n/g, '<br>');
-        destino.innerHTML = html;
-    } catch (error) {
-        destino.innerHTML = `<p>❌ Error al cargar: ${error.message}</p>`;
-    }
-}
-
-if (btnReadme && modalReadme && readmeContenido) {
-    btnReadme.addEventListener('click', async () => {
-        await cargarMarkdown('Readme.md', readmeContenido);
-        modalReadme.style.display = 'flex';
-        console.log('📘 README abierto');
-    });
-}
-
-if (btnNormas && modalNormas && normasContenido) {
-    btnNormas.addEventListener('click', async () => {
-        await cargarMarkdown('Normas.md', normasContenido);
-        modalNormas.style.display = 'flex';
-        console.log('📋 NORMAS abierto');
-    });
-}
-
-if (btnCerrarReadme && modalReadme) {
-    btnCerrarReadme.addEventListener('click', () => {
-        modalReadme.style.display = 'none';
-    });
-}
-
-if (btnCerrarNormas && modalNormas) {
-    btnCerrarNormas.addEventListener('click', () => {
-        modalNormas.style.display = 'none';
-    });
-}
-
-// Cerrar modales haciendo clic fuera del contenido
-window.addEventListener('click', (e) => {
-    if (modalReadme && e.target === modalReadme) modalReadme.style.display = 'none';
-    if (modalNormas && e.target === modalNormas) modalNormas.style.display = 'none';
-});
     
     console.log('✅ Tablero Mundial listo');
 });
+
+// Exportar para uso global
+window.appIniciada = true;
