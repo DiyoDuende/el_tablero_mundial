@@ -172,7 +172,7 @@ const MapaMundial = {
             });
             
             console.log(`🎨 Capa económica: ${paisesColoreados} países coloreados`);
-            this.mostrarLeyendaEconomica();
+            this.mostrarLeyendaCargando('Cargando datos del Banco Mundial...');
             
         } else {
             // Resto de capas: colores aleatorios
@@ -272,6 +272,16 @@ const MapaMundial = {
         document.getElementById('mapa-mundial')?.parentNode?.appendChild(leyenda);
     },
 
+    mostrarLeyendaCargando: function(mensaje) {
+    const leyendaExistente = document.querySelector('.mapa-leyenda');
+    if (leyendaExistente) leyendaExistente.remove();
+    
+    const leyenda = document.createElement('div');
+    leyenda.className = 'mapa-leyenda';
+    leyenda.innerHTML = `<div class="leyenda-titulo">🔄 ${mensaje || 'Cargando datos...'}</div>`;
+    document.getElementById('mapa-mundial')?.parentNode?.appendChild(leyenda);
+},
+    
     buscarLugar: async function(texto) {
         if (!texto) return;
         try {
