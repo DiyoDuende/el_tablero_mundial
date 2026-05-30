@@ -54,6 +54,16 @@ const MapaGlobal = {
                 }).addTo(mapaGlobal);
                 
                 console.log('✅ GeoJSON de países cargado');
+                
+                // Aplicar colores PIB después de cargar el mapa
+                setTimeout(() => {
+                    if (typeof Coloreado !== 'undefined') {
+                        Coloreado.aplicarColoresPIB();
+                    } else {
+                        console.log('⚠️ Coloreado no disponible aún');
+                    }
+                }, 2000);
+                
                 window.dispatchEvent(new CustomEvent('mapa-listos'));
             })
             .catch(error => {
@@ -64,8 +74,11 @@ const MapaGlobal = {
     // Manejar cada feature del GeoJSON
     onEachFeature: function(feature, layer) {
         const nombre = feature.properties?.ADMIN || feature.properties?.name || 'Desconocido';
+        
+        // Tooltip
         layer.bindTooltip(nombre, { sticky: true });
         
+        // Click en el país
         layer.on('click', () => {
             this.onPaisClick(nombre);
         });
@@ -94,6 +107,8 @@ const MapaGlobal = {
             const lugar = Territorios?.buscar(nombrePais);
             if (lugar && typeof DashboardLugar !== 'undefined') {
                 DashboardLugar.mostrar(lugar.id);
+            } else {
+                console.log(`ℹ️ No hay datos para: ${nombrePais}`);
             }
         }
     },
@@ -108,6 +123,35 @@ const MapaGlobal = {
     // Obtener instancia del mapa
     getMapa: function() {
         return mapaGlobal;
+    },
+    
+    // Aplicar colores al mapa (wrapper para compatibilidad)
+    aplicarColores: async function(tipo) {
+        if (typeof Coloreado === 'undefined') {
+            console.log('⚠️ Coloreado no disponible');
+            return;
+        }
+        
+        switch(tipo) {
+            case 'pib':
+                await Coloreado.aplicarColoresPIB();
+                break;
+            case 'inflacion':
+                await Coloreado.aplicarColoresInflacion();
+                break;
+            case 'desempleo':
+                await Coloreado.aplicarColoresDesempleo();
+                break;
+            default:
+                await Coloreado.aplicarColoresPIB();
+        }
+    },
+    
+    // Restablecer colores
+    resetearColores: function() {
+        if (typeof Coloreado !== 'undefined') {
+            Coloreado.resetearColores();
+        }
     }
 };
 
@@ -140,7 +184,7 @@ const BuscadorGlobal = {
         
         console.log('🔍 Buscando:', texto);
         
-        // Buscar por ISO3
+        // Buscar por ISO3 directo
         if (texto.length === 3 && /^[A-Za-z]{3}$/.test(texto)) {
             const iso3 = texto.toUpperCase();
             if (typeof APIBancoMundial !== 'undefined' && APIBancoMundial.isSoportado(iso3)) {
@@ -174,15 +218,28 @@ const BuscadorGlobal = {
         }
         
         alert(`❌ No se encontró "${texto}".\nPrueba con: España, Francia, Alemania, ESP, FRA...`);
+    },
+    
+    // Método adicional para buscar desde otros componentes
+    buscarTexto: function(texto) {
+        if (!texto) return;
+        const input = document.getElementById('buscador-global');
+        if (input) {
+            input.value = texto;
+            this.buscar();
+        }
     }
 };
 
-// Inicializar cuando el DOM esté listo
+// ============================================
+// INICIALIZACIÓN
+// ============================================
+
 document.addEventListener('DOMContentLoaded', () => {
     MapaGlobal.init();
     BuscadorGlobal.init();
 });
 
-// Exportar
+// Exportar para uso global
 window.MapaGlobal = MapaGlobal;
 window.BuscadorGlobal = BuscadorGlobal;
