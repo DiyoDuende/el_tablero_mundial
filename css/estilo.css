@@ -430,3 +430,196 @@ body {
     border-top: 1px solid var(--border);
     padding-top: 10px;
 }
+
+/* ============================================ */
+/* DASHBOARD LUGAR - Estilos para cualquier lugar */
+/* ============================================ */
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.dashboard-lugar {
+    animation: fadeIn 0.3s ease;
+}
+
+.lugar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.lugar-titulo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.lugar-icono {
+    font-size: 2rem;
+}
+
+.lugar-titulo h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--info, #4fc3f7);
+}
+
+.lugar-nivel {
+    padding: 5px 12px;
+    border-radius: 30px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: white;
+}
+
+.lugar-jerarquia {
+    background: var(--bg-card, #1a2a30);
+    padding: 12px 15px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    font-size: 0.85rem;
+    color: var(--text-muted, #9aaec2);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.jerarquia-item {
+    color: var(--text, #ecf0f3);
+}
+
+.jerarquia-flecha {
+    color: var(--info, #4fc3f7);
+}
+
+.lugar-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.stat-card {
+    background: var(--bg-card, #1a2a30);
+    border-radius: 16px;
+    padding: 15px;
+    text-align: center;
+    border: 1px solid var(--border, #2a4050);
+}
+
+.stat-icono {
+    font-size: 2rem;
+    margin-bottom: 8px;
+}
+
+.stat-valor {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--info, #4fc3f7);
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: var(--text-muted, #9aaec2);
+    margin-top: 5px;
+}
+
+.lugar-economia h3,
+.lugar-capas h3 {
+    font-size: 1rem;
+    margin: 20px 0 15px 0;
+    color: var(--info, #4fc3f7);
+    border-left: 3px solid var(--info, #4fc3f7);
+    padding-left: 10px;
+}
+
+.economia-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.economia-item {
+    background: var(--bg-card, #1a2a30);
+    border-radius: 12px;
+    padding: 12px;
+}
+
+.economia-label {
+    font-size: 0.8rem;
+    color: var(--text-muted, #9aaec2);
+    margin-bottom: 5px;
+}
+
+.economia-valor {
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.economia-barra {
+    height: 8px;
+    background: var(--bg-panel, #0e1a22);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.barra-llena {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.5s ease;
+}
+
+.aviso-estimacion {
+    background: rgba(245, 124, 0, 0.15);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    color: #ffb74d;
+    margin: 15px 0 10px 0;
+}
+
+.fuente-datos {
+    font-size: 0.7rem;
+    color: var(--text-muted, #9aaec2);
+    text-align: right;
+    margin-top: 10px;
+    font-style: italic;
+}
+
+.capas-botones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.capa-mini {
+    background: var(--bg-card, #1a2a30);
+    border: 1px solid var(--border, #2a4050);
+    border-radius: 30px;
+    padding: 6px 14px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text, #ecf0f3);
+}
+
+.capa-mini:hover {
+    background: var(--info, #4fc3f7);
+    color: #0a1219;
+    border-color: var(--info, #4fc3f7);
+}
+
+.loading-spinner {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-muted, #9aaec2);
+    font-size: 0.9rem;
+}
