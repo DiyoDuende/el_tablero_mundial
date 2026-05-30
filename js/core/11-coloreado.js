@@ -1,40 +1,40 @@
 // js/core/11-coloreado.js
 // ============================================
-// COLOREADO DINÁMICO - Basado en datos reales
+// COLOREADO DINÁMICO - Basado en datos reales del Banco Mundial
 // ============================================
 
 const Coloreado = {
-    // Umbrales para colorear por PIB per cápita
+    // Umbrales para colorear por PIB per cápita (USD)
     umbralesPIB: [
-        { max: 5000, color: '#b71c1c', nombre: 'Muy bajo' },      // Rojo oscuro
-        { max: 15000, color: '#ef6c00', nombre: 'Bajo' },         // Naranja
-        { max: 30000, color: '#f9a825', nombre: 'Medio' },        // Amarillo
-        { max: 50000, color: '#43a047', nombre: 'Alto' },         // Verde
-        { max: Infinity, color: '#2e7d32', nombre: 'Muy alto' }   // Verde oscuro
+        { max: 5000, color: '#b71c1c', label: '< 5.000 $' },
+        { max: 15000, color: '#ef6c00', label: '5.000 - 15.000 $' },
+        { max: 30000, color: '#f9a825', label: '15.000 - 30.000 $' },
+        { max: 50000, color: '#43a047', label: '30.000 - 50.000 $' },
+        { max: Infinity, color: '#2e7d32', label: '> 50.000 $' }
     ],
     
-    // Umbrales para colorear por inflación
+    // Umbrales para inflación (%)
     umbralesInflacion: [
-        { max: 2, color: '#2e7d32', nombre: 'Muy baja' },
-        { max: 4, color: '#f9a825', nombre: 'Moderada' },
-        { max: 10, color: '#ef6c00', nombre: 'Alta' },
-        { max: Infinity, color: '#b71c1c', nombre: 'Muy alta' }
+        { max: 2, color: '#2e7d32', label: '< 2%' },
+        { max: 4, color: '#f9a825', label: '2% - 4%' },
+        { max: 10, color: '#ef6c00', label: '4% - 10%' },
+        { max: Infinity, color: '#b71c1c', label: '> 10%' }
     ],
     
-    // Umbrales para colorear por desempleo
+    // Umbrales para desempleo (%)
     umbralesDesempleo: [
-        { max: 5, color: '#2e7d32', nombre: 'Muy bajo' },
-        { max: 8, color: '#43a047', nombre: 'Bajo' },
-        { max: 12, color: '#f9a825', nombre: 'Medio' },
-        { max: 20, color: '#ef6c00', nombre: 'Alto' },
-        { max: Infinity, color: '#b71c1c', nombre: 'Muy alto' }
+        { max: 5, color: '#2e7d32', label: '< 5%' },
+        { max: 8, color: '#43a047', label: '5% - 8%' },
+        { max: 12, color: '#f9a825', label: '8% - 12%' },
+        { max: 20, color: '#ef6c00', label: '12% - 20%' },
+        { max: Infinity, color: '#b71c1c', label: '> 20%' }
     ],
     
     // Obtener color según PIB
     getColorPorPIB: function(pib) {
-        if (!pib) return '#1a3a4a'; // Color neutro si no hay datos
-        for (let umbral of this.umbralesPIB) {
-            if (pib <= umbral.max) return umbral.color;
+        if (!pib || pib === 0) return '#1a3a4a';
+        for (let u of this.umbralesPIB) {
+            if (pib <= u.max) return u.color;
         }
         return '#1a3a4a';
     },
@@ -42,8 +42,8 @@ const Coloreado = {
     // Obtener color según inflación
     getColorPorInflacion: function(inflacion) {
         if (!inflacion) return '#1a3a4a';
-        for (let umbral of this.umbralesInflacion) {
-            if (inflacion <= umbral.max) return umbral.color;
+        for (let u of this.umbralesInflacion) {
+            if (inflacion <= u.max) return u.color;
         }
         return '#1a3a4a';
     },
@@ -51,32 +51,42 @@ const Coloreado = {
     // Obtener color según desempleo
     getColorPorDesempleo: function(desempleo) {
         if (!desempleo) return '#1a3a4a';
-        for (let umbral of this.umbralesDesempleo) {
-            if (desempleo <= umbral.max) return umbral.color;
+        for (let u of this.umbralesDesempleo) {
+            if (desempleo <= u.max) return u.color;
         }
         return '#1a3a4a';
     },
     
-    // Aplicar colores al mapa según PIB
+    // Buscar ISO3 por nombre del país
+    buscarISO3: function(nombrePais) {
+        if (!nombrePais || typeof APIBancoMundial === 'undefined') return null;
+        
+        const nombreNorm = nombrePais.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        
+        for (let [iso3, nombre] of Object.entries(APIBancoMundial.paisesSoportados)) {
+            const nombreAPINorm = nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            if (nombreAPINorm === nombreNorm) return iso3;
+        }
+        return null;
+    },
+    
+    // Aplicar colores por PIB
     async aplicarColoresPIB() {
         if (!capaPaisesGlobal) {
             console.warn('⚠️ Capa de países no disponible');
             return;
         }
         
-        console.log('🎨 Aplicando colores por PIB per cápita...');
-        
+        console.log('🎨 Coloreando mapa por PIB per cápita...');
         let coloreados = 0;
         
         for (let layer of capaPaisesGlobal.getLayers()) {
-            const nombrePais = layer.feature?.properties?.ADMIN || '';
+            const nombrePais = layer.feature?.properties?.ADMIN;
             if (!nombrePais) continue;
             
-            // Buscar ISO3
-            let iso3 = this.buscarISO3porNombre(nombrePais);
+            const iso3 = this.buscarISO3(nombrePais);
             if (!iso3) continue;
             
-            // Obtener datos del país
             const datos = await CacheDatos?.obtenerDatos(iso3);
             const pib = datos?.pib?.valor;
             
@@ -84,7 +94,7 @@ const Coloreado = {
                 const color = this.getColorPorPIB(pib);
                 layer.setStyle({
                     fillColor: color,
-                    fillOpacity: 0.7,
+                    fillOpacity: 0.75,
                     color: '#ffffff',
                     weight: 0.5
                 });
@@ -92,23 +102,22 @@ const Coloreado = {
             }
         }
         
-        console.log(`✅ ${coloreados} países coloreados según PIB`);
-        this.actualizarLeyenda('PIB per cápita (USD)');
+        console.log(`✅ ${coloreados} países coloreados por PIB`);
+        this.actualizarLeyenda('💰 PIB per cápita', this.umbralesPIB);
     },
     
     // Aplicar colores por inflación
     async aplicarColoresInflacion() {
         if (!capaPaisesGlobal) return;
         
-        console.log('🎨 Aplicando colores por inflación...');
-        
+        console.log('🎨 Coloreando mapa por inflación...');
         let coloreados = 0;
         
         for (let layer of capaPaisesGlobal.getLayers()) {
-            const nombrePais = layer.feature?.properties?.ADMIN || '';
+            const nombrePais = layer.feature?.properties?.ADMIN;
             if (!nombrePais) continue;
             
-            let iso3 = this.buscarISO3porNombre(nombrePais);
+            const iso3 = this.buscarISO3(nombrePais);
             if (!iso3) continue;
             
             const datos = await CacheDatos?.obtenerDatos(iso3);
@@ -118,7 +127,7 @@ const Coloreado = {
                 const color = this.getColorPorInflacion(inflacion);
                 layer.setStyle({
                     fillColor: color,
-                    fillOpacity: 0.7,
+                    fillOpacity: 0.75,
                     color: '#ffffff',
                     weight: 0.5
                 });
@@ -126,23 +135,22 @@ const Coloreado = {
             }
         }
         
-        console.log(`✅ ${coloreados} países coloreados según inflación`);
-        this.actualizarLeyenda('Inflación (%)');
+        console.log(`✅ ${coloreados} países coloreados por inflación`);
+        this.actualizarLeyenda('📈 Inflación', this.umbralesInflacion);
     },
     
     // Aplicar colores por desempleo
     async aplicarColoresDesempleo() {
         if (!capaPaisesGlobal) return;
         
-        console.log('🎨 Aplicando colores por desempleo...');
-        
+        console.log('🎨 Coloreando mapa por desempleo...');
         let coloreados = 0;
         
         for (let layer of capaPaisesGlobal.getLayers()) {
-            const nombrePais = layer.feature?.properties?.ADMIN || '';
+            const nombrePais = layer.feature?.properties?.ADMIN;
             if (!nombrePais) continue;
             
-            let iso3 = this.buscarISO3porNombre(nombrePais);
+            const iso3 = this.buscarISO3(nombrePais);
             if (!iso3) continue;
             
             const datos = await CacheDatos?.obtenerDatos(iso3);
@@ -152,7 +160,7 @@ const Coloreado = {
                 const color = this.getColorPorDesempleo(desempleo);
                 layer.setStyle({
                     fillColor: color,
-                    fillOpacity: 0.7,
+                    fillOpacity: 0.75,
                     color: '#ffffff',
                     weight: 0.5
                 });
@@ -160,54 +168,34 @@ const Coloreado = {
             }
         }
         
-        console.log(`✅ ${coloreados} países coloreados según desempleo`);
-        this.actualizarLeyenda('Desempleo (%)');
+        console.log(`✅ ${coloreados} países coloreados por desempleo`);
+        this.actualizarLeyenda('👥 Desempleo', this.umbralesDesempleo);
     },
     
-    // Buscar ISO3 por nombre del país
-    buscarISO3porNombre: function(nombrePais) {
-        if (!nombrePais) return null;
-        
-        const nombreNormalizado = nombrePais.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-        
-        for (let [iso3, nombre] of Object.entries(APIBancoMundial.paisesSoportados)) {
-            const nombreAPINormalizado = nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-            if (nombreAPINormalizado === nombreNormalizado) {
-                return iso3;
-            }
-        }
-        return null;
-    },
-    
-    // Actualizar la leyenda del mapa
-    actualizarLeyenda: function(titulo) {
-        // Buscar o crear contenedor de leyenda
+    // Actualizar la leyenda en el mapa
+    actualizarLeyenda: function(titulo, umbrales) {
         let leyenda = document.querySelector('.mapa-leyenda');
         if (!leyenda) {
             leyenda = document.createElement('div');
             leyenda.className = 'mapa-leyenda';
-            document.querySelector('.mapa-container')?.appendChild(leyenda);
+            const mapaContainer = document.querySelector('.mapa-container');
+            if (mapaContainer) mapaContainer.appendChild(leyenda);
         }
         
-        let contenido = `<h4>📊 ${titulo}</h4>`;
-        
-        // Determinar qué umbrales mostrar según el título
-        let umbrales = [];
-        if (titulo.includes('PIB')) umbrales = this.umbralesPIB;
-        else if (titulo.includes('Inflación')) umbrales = this.umbralesInflacion;
-        else if (titulo.includes('Desempleo')) umbrales = this.umbralesDesempleo;
-        
+        let html = `<div class="leyenda-titulo">${titulo}</div>`;
+        html += `<div class="leyenda-escala">`;
         for (let u of umbrales) {
-            const rango = u.max === Infinity ? `${u.nombre}` : `< ${u.max.toLocaleString()} ${titulo.includes('PIB') ? '$' : '%'}`;
-            contenido += `
-                <div class="leyenda-item">
-                    <span class="leyenda-color" style="background: ${u.color};"></span>
-                    <span class="leyenda-label">${rango}</span>
-                </div>
-            `;
+            html += `<div class="leyenda-color" style="background: ${u.color};"></div>`;
         }
+        html += `</div>`;
+        html += `<div class="leyenda-valores">`;
+        for (let u of umbrales) {
+            html += `<span>${u.label}</span>`;
+        }
+        html += `</div>`;
+        html += `<div class="leyenda-fuente">📊 Banco Mundial | Datos en tiempo real</div>`;
         
-        leyenda.innerHTML = contenido;
+        leyenda.innerHTML = html;
     },
     
     // Restablecer colores neutros
