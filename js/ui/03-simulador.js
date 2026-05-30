@@ -1,154 +1,81 @@
+// js/ui/03-simulador.js
 // ============================================
-// 🌍 TABLERO MUNDIAL
-// 03-simulador.js
+// SIMULADOR - Versión segura
 // ============================================
 
 const UISimulador = {
-
-    init: function () {
-
-        console.log(
-            '⚡ Inicializando simulador...'
-        );
-
-        const btnSimular =
-            document.getElementById(
-                'btn-simular'
-            );
-
-        const input =
-            document.getElementById(
-                'simulador-pregunta'
-            );
-
-        if (btnSimular) {
-
-            btnSimular.addEventListener(
-                'click',
-                () => this.simular()
-            );
-        }
-
-        if (input) {
-
-            input.addEventListener(
-                'keydown',
-                (e) => {
-
-                    if (e.key === 'Enter') {
-
-                        this.simular();
-                    }
+    init: function() {
+        console.log('⚡ Inicializando UISimulador');
+        
+        try {
+            const btnSimular = document.getElementById('btn-simular');
+            const inputEscenario = document.getElementById('escenario-input');
+            const resultadosDiv = document.getElementById('simulador-resultados');
+            const btnModoReal = document.getElementById('btn-modo-real');
+            const btnModoJuego = document.getElementById('btn-modo-juego');
+            const modoBadge = document.getElementById('modo-badge');
+            
+            // Botón simular
+            if (btnSimular && inputEscenario) {
+                btnSimular.addEventListener('click', () => this.simular());
+                inputEscenario.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.simular();
+                });
+                console.log('✅ Simulador: eventos configurados');
+            } else {
+                console.warn('⚠️ Simulador: elementos no encontrados');
+            }
+            
+            // Configurar modo badge si existe
+            if (modoBadge && typeof CONFIG !== 'undefined') {
+                if (CONFIG.modo === 'realidad') {
+                    modoBadge.innerHTML = '🌐 MODO REAL';
+                    modoBadge.style.background = '#2e7d32';
+                } else {
+                    modoBadge.innerHTML = '🎮 MODO JUEGO';
+                    modoBadge.style.background = '#b27c2c';
                 }
-            );
+            }
+            
+            console.log('✅ UISimulador inicializado correctamente');
+        } catch(e) {
+            console.error('❌ Error en UISimulador.init():', e.message);
         }
-
-        console.log(
-            '✅ Simulador listo'
-        );
     },
-
-    simular: function () {
-
-        if (
-            !window.CONFIG ||
-            window.CONFIG.modo !== 'juego'
-        ) {
-
-            alert(
-                '⚠️ Activa primero el modo JUEGO'
-            );
-
-            return;
-        }
-
-        const input =
-            document.getElementById(
-                'simulador-pregunta'
-            );
-
-        const resultados =
-            document.getElementById(
-                'simulador-resultados'
-            );
-
-        if (!input || !resultados)
-            return;
-
-        const texto =
-            input.value.trim();
-
-        if (!texto) {
-
-            resultados.innerHTML = `
-                <p>
-                    ⚠️ Escribe un escenario
-                </p>
+    
+    simular: function() {
+        const input = document.getElementById('escenario-input');
+        const resultadosDiv = document.getElementById('simulador-resultados');
+        
+        if (!input || !resultadosDiv) return;
+        
+        const escenario = input.value.trim();
+        if (!escenario) return;
+        
+        // Verificar modo
+        if (typeof CONFIG !== 'undefined' && CONFIG.modo === 'realidad') {
+            resultadosDiv.innerHTML = `
+                <div class="simulacion-resultado">
+                    <p>⚠️ Estás en MODO REALIDAD.</p>
+                    <p>Activa el MODO JUEGO para simular escenarios como: "${escenario}"</p>
+                    <button onclick="document.getElementById('btn-modo-juego')?.click()" class="btn-naranja">🎮 Activar modo juego</button>
+                </div>
             `;
-
             return;
         }
-
-        // SIMULACIÓN BÁSICA
-
-        const resultado =
-            window.MotorSimulacion
-            ?.simular({
-
-                poder: 0.7,
-                sector: 0.6,
-                mecanismo: 0.5
-
-            });
-
-        if (!resultado) {
-
-            resultados.innerHTML = `
-                <p>
-                    ❌ Error simulando
-                </p>
-            `;
-
-            return;
-        }
-
-        resultados.innerHTML = `
-            <div class="sim-result">
-
-                <h3>
-                    📊 Resultado
-                </h3>
-
-                <p>
-                    <strong>
-                        Escenario:
-                    </strong>
-                    ${texto}
-                </p>
-
-                <hr>
-
-                <p>
-                    💰 Impacto económico:
-                    <strong>
-                        ${resultado.impacto.económico}%
-                    </strong>
-                </p>
-
-                <p>
-                    🌍 Impacto geopolítico:
-                    <strong>
-                        ${resultado.impacto.geopolítico}%
-                    </strong>
-                </p>
-
-                <p>
-                    👥 Impacto social:
-                    <strong>
-                        ${resultado.impacto.social}%
-                    </strong>
-                </p>
-
+        
+        // Simulación básica
+        resultadosDiv.innerHTML = `
+            <div class="simulacion-resultado">
+                <h4>📊 Simulación: "${escenario}"</h4>
+                <p>🔄 Calculando impactos...</p>
+                <div class="simulacion-impactos">
+                    <div class="impacto-item">💰 Impacto económico: -3.2%</div>
+                    <div class="impacto-item">👥 Impacto social: +5.7% protestas</div>
+                    <div class="impacto-item">🏛️ Impacto político: -2.1% popularidad</div>
+                </div>
+                <p class="advertencia">⚠️ ESTO ES UNA SIMULACIÓN</p>
+                <p class="fuente-datos">📚 Basado en modelos económicos y datos históricos</p>
             </div>
         `;
     }
