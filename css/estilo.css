@@ -623,3 +623,195 @@ body {
     color: var(--text-muted, #9aaec2);
     font-size: 0.9rem;
 }
+
+/* ============================================ */
+/* DASHBOARD REAL - Estilos v5.0 */
+/* ============================================ */
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.dashboard-real {
+    animation: fadeIn 0.3s ease;
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--info, #4fc3f7);
+}
+
+.pais-titulo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.pais-bandera {
+    font-size: 2rem;
+}
+
+.pais-titulo h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--info, #4fc3f7);
+}
+
+.pais-codigo {
+    background: var(--bg-card, #1a2a30);
+    padding: 4px 12px;
+    border-radius: 30px;
+    font-size: 0.8rem;
+    font-family: monospace;
+}
+
+.dashboard-fuente {
+    background: var(--bg-card, #1a2a30);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    color: var(--text-muted, #9aaec2);
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.fecha-update {
+    font-family: monospace;
+}
+
+.indicadores-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.indicador-card {
+    background: var(--bg-card, #1a2a30);
+    border-radius: 16px;
+    padding: 15px;
+    text-align: center;
+    transition: transform 0.2s;
+}
+
+.indicador-card:hover {
+    transform: translateY(-3px);
+}
+
+.indicador-icono {
+    font-size: 2rem;
+    margin-bottom: 8px;
+}
+
+.indicador-valor {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.indicador-label {
+    font-size: 0.75rem;
+    color: var(--text-muted, #9aaec2);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.indicador-año {
+    font-size: 0.7rem;
+    color: var(--text-muted, #9aaec2);
+    margin-top: 5px;
+}
+
+.indicador-barra {
+    margin-top: 12px;
+    height: 6px;
+    background: var(--bg-panel, #0e1a22);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.indicador-barra .barra {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.5s ease;
+}
+
+.dashboard-fuentes {
+    background: var(--bg-card, #1a2a30);
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 0.7rem;
+    text-align: center;
+    color: var(--text-muted, #9aaec2);
+    margin-top: 15px;
+}
+
+.dashboard-nota {
+    font-size: 0.7rem;
+    text-align: center;
+    margin-top: 10px;
+    color: var(--text-muted, #9aaec2);
+    font-style: italic;
+}
+
+.dashboard-loading {
+    text-align: center;
+    padding: 50px 20px;
+    color: var(--text-muted, #9aaec2);
+}
+
+.dashboard-loading .loading-spinner {
+    font-size: 3rem;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.dashboard-error {
+    text-align: center;
+    padding: 40px 20px;
+    background: var(--bg-card, #1a2a30);
+    border-radius: 16px;
+}
+
+.dashboard-error .error-icono {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.dashboard-error h3 {
+    margin-bottom: 10px;
+    color: #ef5350;
+}
+
+.dashboard-error p {
+    color: var(--text-muted, #9aaec2);
+    margin-bottom: 20px;
+}
+
+.btn-reintentar {
+    background: var(--info, #4fc3f7);
+    color: #0a1219;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-reintentar:hover {
+    background: #7fd3ff;
+}
