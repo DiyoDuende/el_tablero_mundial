@@ -93,7 +93,12 @@ const MapaMundial = {
         
         // Aceptar tanto 'economia' como 'economico'
         if (capa === 'economia' || capa === 'economico') {
-            console.log('🎨 Aplicando capa ECONÓMICA');
+    console.log('🎨 Aplicando capa ECONÓMICA');
+    
+    this.mostrarLeyendaCargando('Cargando datos del Banco Mundial...');
+    
+    // ... el resto del código
+}
             
             // DATOS SIMULADOS DE PIB
             const pibData = {
