@@ -1,6 +1,6 @@
 // js/core/11-coloreado.js
 // ============================================
-// COLOREADO DINÁMICO - Usando ISO_A3 del GeoJSON
+// COLOREADO DINÁMICO - Usando ISO3166-1-Alpha-3 del GeoJSON
 // ============================================
 
 const Coloreado = {
@@ -37,10 +37,8 @@ const Coloreado = {
         let sinDatos = 0;
         
         for (let layer of capa.getLayers()) {
-            // Obtener ISO3 directamente del GeoJSON
-            const iso3 = layer.feature?.properties?.ISO_A3 || 
-                         layer.feature?.properties?.ADM0_A3 ||
-                         null;
+            // Obtener ISO3 directamente del GeoJSON (campo correcto)
+            const iso3 = layer.feature?.properties?.['ISO3166-1-Alpha-3'] || null;
             
             if (!iso3) {
                 sinIso3++;
@@ -120,19 +118,17 @@ const Coloreado = {
         console.log('🎨 Colores restablecidos');
     },
     
-    // Placeholders para otras capas (usando ISO3 también)
     async aplicarColoresInflacion() {
-        console.log('📈 Capa de inflación - Usando ISO3 del GeoJSON');
+        console.log('📈 Capa de inflación - Usando ISO3166-1-Alpha-3');
         const capa = window.capaPaisesGlobal;
         if (!capa) return;
         
         for (let layer of capa.getLayers()) {
-            const iso3 = layer.feature?.properties?.ISO_A3;
+            const iso3 = layer.feature?.properties?.['ISO3166-1-Alpha-3'];
             if (iso3) {
                 const datos = await window.CacheDatos?.obtenerDatos(iso3);
                 const inflacion = datos?.inflacion?.valor;
                 if (inflacion) {
-                    // Por ahora usar mismo color que PIB
                     const color = this.getColorPorPIB(inflacion * 1000);
                     layer.setStyle({ fillColor: color, fillOpacity: 0.75 });
                 }
@@ -142,7 +138,7 @@ const Coloreado = {
     },
     
     async aplicarColoresDesempleo() {
-        console.log('👥 Capa de desempleo - Usando ISO3 del GeoJSON');
+        console.log('👥 Capa de desempleo - Usando ISO3166-1-Alpha-3');
         this.actualizarLeyenda('👥 Desempleo (próximamente)', this.umbralesPIB);
     }
 };
