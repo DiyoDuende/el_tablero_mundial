@@ -1,6 +1,6 @@
 // js/core/11-coloreado.js
 // ============================================
-// COLOREADO DINÁMICO - Con diagnóstico y corrección
+// COLOREADO DINÁMICO - Fuerza consulta a API
 // ============================================
 
 const Coloreado = {
@@ -32,15 +32,10 @@ const Coloreado = {
         const capas = capa.getLayers();
         console.log(`🎨 Coloreando ${capas.length} países por PIB...`);
         
-        // ========================================
-        // VERSIÓN SECUENCIAL PERO CON ASYNC/AWAIT
-        // (más fiable que Promise.all para este caso)
-        // ========================================
-        
         let coloreados = 0;
-        let consultados = 0;
-        let fallos = 0;
+        let procesados = 0;
         
+        // Bucle SECUENCIAL para asegurar que cada consulta se completa
         for (let layer of capas) {
             const iso3 = layer.feature?.properties?.['ISO3166-1-Alpha-3'] || null;
             
@@ -54,11 +49,12 @@ const Coloreado = {
                 continue;
             }
             
-            consultados++;
+            procesados++;
             
             try {
-                // Esperar a que la promesa se resuelva COMPLETAMENTE
-                const datos = await window.CacheDatos?.obtenerDatos(iso3);
+                // IMPORTANTE: forzar actualización = true para evitar usar caché si está vacía
+                // pero mantener caché si ya existe
+                const datos = await window.CacheDatos?.obtenerDatos(iso3, false);
                 const pib = datos?.pib?.valor;
                 
                 if (pib && pib > 0) {
@@ -70,25 +66,24 @@ const Coloreado = {
                         weight: 0.5
                     });
                     coloreados++;
-                    // Mostrar progreso cada 10 países
+                    
+                    // Log cada 10 países
                     if (coloreados % 10 === 0) {
                         console.log(`   Progreso: ${coloreados} países coloreados...`);
                     }
-                } else {
-                    fallos++;
                 }
             } catch(e) {
-                fallos++;
                 console.warn(`⚠️ Error con ${iso3}:`, e.message);
             }
         }
         
         console.log(`✅ ${coloreados} países coloreados por PIB`);
-        console.log(`📊 Países consultados: ${consultados}`);
-        console.log(`📊 Fallos/ sin datos: ${fallos}`);
+        console.log(`📊 Países procesados (soportados): ${procesados}`);
         
         if (coloreados > 0) {
             this.actualizarLeyenda('💰 PIB per cápita', this.umbralesPIB);
+        } else if (procesados === 0) {
+            console.warn('⚠️ No se encontraron países soportados. Verifica APIBancoMundial.paisesSoportados');
         }
     },
     
