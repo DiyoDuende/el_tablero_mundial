@@ -33,19 +33,27 @@ const CacheDatos = {
         return datos.datos;
     },
     
-    // Obtener datos (con caché o API)
+    // Obtener datos (con caché o API) - VERSIÓN CORREGIDA
     async obtenerDatos(iso3, forzarActualizacion = false) {
+        // 1. Intentar obtener del caché (si no se fuerza actualización)
         if (!forzarActualizacion) {
             const cache = this.obtener(iso3);
             if (cache) return cache;
         }
         
-        // Si no hay caché, llamar a la API
+        // 2. Si no hay caché o se fuerza, consultar API
+        console.log(`🌐 Consultando API Banco Mundial para ${iso3}...`);
         const datos = await APIBancoMundial.getTodosIndicadores(iso3);
-        if (datos && datos.pib) {
+        
+        // 3. Guardar en caché si se obtuvieron datos
+        if (datos && datos.pib && datos.pib.valor) {
             this.guardar(iso3, datos);
+            return datos;
         }
-        return datos;
+        
+        // 4. Si no hay datos, devolver null (no guardar)
+        console.warn(`⚠️ No se pudieron obtener datos para ${iso3}`);
+        return null;
     },
     
     // Limpiar toda la caché
