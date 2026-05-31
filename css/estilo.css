@@ -872,3 +872,160 @@ body {
     font-size: 48px;
     margin-bottom: 15px;
 }
+
+/* Estilos para el Dashboard de País */
+.dashboard-pais {
+    background: var(--bg-panel);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-top: 15px;
+}
+
+.dashboard-tabs {
+    display: flex;
+    gap: 5px;
+    background: var(--bg-card);
+    padding: 10px;
+    border-bottom: 1px solid var(--border);
+}
+
+.tab-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.tab-btn:hover {
+    background: var(--accent);
+    color: white;
+}
+
+.tab-btn.active {
+    background: var(--info);
+    color: #0a1219;
+    font-weight: bold;
+}
+
+.tab-contenido {
+    display: none;
+    padding: 15px;
+}
+
+.tab-contenido.active {
+    display: block;
+}
+
+.economia-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.indicador-card {
+    background: var(--bg-card);
+    border-radius: 12px;
+    padding: 12px;
+    text-align: center;
+    border-left: 4px solid var(--info);
+}
+
+.indicador-card.bueno {
+    border-left-color: #2e7d32;
+}
+
+.indicador-card.regular {
+    border-left-color: #f57c00;
+}
+
+.indicador-card.malo {
+    border-left-color: #b71c1c;
+}
+
+.indicador-icono {
+    font-size: 1.8rem;
+    margin-bottom: 5px;
+}
+
+.indicador-valor {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: var(--info);
+}
+
+.indicador-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 5px;
+}
+
+.indicador-tendencia {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-top: 3px;
+}
+
+.analisis-economico {
+    background: var(--bg-card);
+    border-radius: 12px;
+    padding: 12px;
+    margin-top: 15px;
+}
+
+.analisis-economico h4 {
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+    color: var(--info);
+}
+
+.analisis-economico p {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--text-muted);
+}
+
+.leyes-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.ley-card {
+    background: var(--bg-card);
+    border-radius: 12px;
+    padding: 12px;
+    border: 1px solid var(--border);
+}
+
+.ley-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.ley-nombre {
+    font-weight: bold;
+    flex: 1;
+}
+
+.ley-estado {
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 20px;
+    text-transform: uppercase;
+}
+
+.ley-estado.activa {
+    background: #2e7d32;
+    color: white;
+}
+
+.ley-estado.tramitacion {
+    background: #f57c00;
+    color:
