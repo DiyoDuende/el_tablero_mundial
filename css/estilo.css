@@ -1029,3 +1029,85 @@ body {
 .ley-estado.tramitacion {
     background: #f57c00;
     color:
+
+   /* Estilos para Relaciones Globales v4.0 */
+.relaciones-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 15px;
+    padding: 10px;
+}
+
+.relaciones-entidad {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+}
+
+.relaciones-entidad:hover {
+    transform: translateY(-3px);
+    border-color: var(--info);
+    box-shadow: 0 5px 20px rgba(79, 195, 247, 0.2);
+}
+
+.entidad-icono {
+    font-size: 2.5rem;
+    margin-bottom: 8px;
+}
+
+.entidad-nombre {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.entidad-empleados {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 5px;
+}
+
+.conexiones-lista {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 10px 0;
+}
+
+.conexion-tag {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 30px;
+    padding: 5px 12px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.conexion-tag:hover {
+    background: var(--accent);
+    border-color: var(--info);
+}
+
+.empresa-tag {
+    background: rgba(79, 195, 247, 0.1);
+}
+
+.org-tag {
+    background: rgba(156, 39, 176, 0.1);
+}
+
+.detalle-puertas,
+.detalle-donaciones,
+.detalle-contratos,
+.detalle-comercio {
+    margin: 15px 0;
+    padding: 12px;
+    background: var(--bg-card);
+    border-radius: 10px;
+}
+
+.detalle-puertas h5
