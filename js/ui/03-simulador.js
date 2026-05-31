@@ -654,3 +654,178 @@ if (document.readyState === 'loading') {
 }
 
 window.UISimulador = UISimulador;
+
+Ñ/* Estilos para el Simulador v4.0 */
+.simulacion-cargando {
+    text-align: center;
+    padding: 30px;
+    background: var(--bg-panel);
+    border-radius: 16px;
+}
+
+.simulacion-cargando .spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid var(--border);
+    border-top-color: var(--info);
+    border-radius: 50%;
+    margin: 0 auto 15px;
+    animation: spin 1s linear infinite;
+}
+
+.simulacion-modo-real {
+    text-align: center;
+    padding: 30px;
+    background: var(--bg-panel);
+    border-radius: 16px;
+}
+
+.modo-real-icono {
+    font-size: 48px;
+    margin-bottom: 15px;
+}
+
+.simulacion-resultado {
+    background: var(--bg-panel);
+    border-radius: 16px;
+    padding: 20px;
+    border: 2px solid var(--warning);
+}
+
+.resultado-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--border);
+}
+
+.simulacion-badge {
+    background: #b27c2c;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+}
+
+.resultado-escenario {
+    background: var(--bg-card);
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-style: italic;
+}
+
+.resultado-impactos h5,
+.resultado-cadena h5,
+.resultado-riesgo h5,
+.resultado-sugerencias h5,
+.resultado-analisis-ia h5 {
+    color: var(--info);
+    margin-bottom: 12px;
+    font-size: 0.95rem;
+}
+
+.impacto-grupo {
+    margin-bottom: 15px;
+}
+
+.impacto-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+}
+
+.impacto-barra {
+    height: 10px;
+    background: var(--bg-card);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.impacto-barra-llena {
+    height: 100%;
+    transition: width 0.5s ease;
+}
+
+.resultado-cadena {
+    background: var(--bg-card);
+    border-radius: 12px;
+    padding: 15px;
+    margin: 20px 0;
+}
+
+.cadena-efectos {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.cadena-eslabon {
+    background: var(--bg-panel);
+    padding: 10px 15px;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.cadena-flecha {
+    font-size: 1.5rem;
+    color: var(--info);
+    animation: pulse 1.5s infinite;
+}
+
+.resultado-riesgo {
+    background: var(--bg-card);
+    border-radius: 12px;
+    padding: 15px;
+    margin: 20px 0;
+}
+
+.riesgo-indicador {
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.riesgo-barra {
+    height: 8px;
+    background: var(--bg-panel);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.riesgo-barra-llena {
+    height: 100%;
+    transition: width 0.5s ease;
+}
+
+.resultado-sugerencias {
+    background: rgba(79, 195, 247, 0.1);
+    border-radius: 12px;
+    padding: 15px;
+    margin: 20px 0;
+    border-left: 4px solid var(--info);
+}
+
+.resultado-sugerencias ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.resultado-sugerencias li {
+    margin: 8px 0;
+    color: var(--text-muted);
+}
+
+.resultado-analisis-ia {
+    background: rgba(156, 39, 176, 0.1);
+    border-radius: 12px;
+    padding: 15px;
+    margin: 20px 0;
+    border-left: 4px solid #9c27b0;
+}
+
+.analisis-detalle {
