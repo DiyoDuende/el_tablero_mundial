@@ -1,6 +1,6 @@
 // js/ui/00-mapa.js
 // ============================================
-// MAPA MUNDIAL - Inicialización y control
+// MAPA MUNDIAL - Usando ISO_A3 del GeoJSON
 // ============================================
 
 let mapaGlobal = null;
@@ -46,22 +46,18 @@ const MapaGlobal = {
                     onEachFeature: this.onEachFeature.bind(this)
                 }).addTo(mapaGlobal);
                 
-                // IMPORTANTE: actualizar la variable global
                 window.capaPaisesGlobal = capaPaisesGlobal;
-                window.capaPaises = capaPaisesGlobal; // Para compatibilidad
                 
                 console.log('✅ GeoJSON de países cargado');
                 console.log('📊 Total de países en el mapa:', capaPaisesGlobal.getLayers().length);
                 
-                // Aplicar colores después de cargar
+                // Solo UNA llamada al coloreado
                 setTimeout(() => {
                     if (window.Coloreado) {
                         console.log('🎨 Iniciando coloreado automático...');
                         window.Coloreado.aplicarColoresPIB();
-                    } else {
-                        console.warn('⚠️ Coloreado no disponible');
                     }
-                }, 3000);
+                }, 2000);
                 
                 window.dispatchEvent(new CustomEvent('mapa-listos'));
             })
@@ -71,34 +67,56 @@ const MapaGlobal = {
     },
     
     onEachFeature: function(feature, layer) {
-        const nombre = feature.properties?.ADMIN || feature.properties?.name || 'Desconocido';
+        // Obtener nombre del país
+        const nombre = feature.properties?.ADMIN || 
+                      feature.properties?.name || 
+                      'Desconocido';
+        
+        // Obtener ISO3 directamente del GeoJSON
+        const iso3 = feature.properties?.ISO_A3 || 
+                     feature.properties?.ADM0_A3 || 
+                     feature.properties?.iso_a3 ||
+                     null;
+        
+        // Tooltip con nombre
         layer.bindTooltip(nombre, { sticky: true });
         
+        // Click: pasar directamente el ISO3
         layer.on('click', () => {
-            this.onPaisClick(nombre);
+            this.onPaisClick(iso3, nombre);
         });
+        
+        // Diagnóstico: mostrar los primeros 10 países
+        if (window._mostradosDiagnostico === undefined) {
+            window._mostradosDiagnostico = 0;
+        }
+        if (window._mostradosDiagnostico < 10 && iso3) {
+            console.log(`   📍 ${nombre} → ${iso3}`);
+            window._mostradosDiagnostico++;
+        }
     },
     
-    onPaisClick: function(nombrePais) {
-        console.log('🔍 Clic en país:', nombrePais);
+    onPaisClick: function(iso3, nombre) {
+        console.log(`🔍 Clic en ${nombre} (ISO3: ${iso3})`);
         
-        let iso3 = null;
-        const nombreNormalizado = nombrePais.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-        
-        if (window.APIBancoMundial && window.APIBancoMundial.paisesSoportados) {
-            for (let [codigo, nombre] of Object.entries(window.APIBancoMundial.paisesSoportados)) {
-                const nombreNormalizadoAPI = nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-                if (nombreNormalizadoAPI === nombreNormalizado) {
-                    iso3 = codigo;
-                    break;
-                }
+        if (iso3 && window.APIBancoMundial && window.APIBancoMundial.isSoportado(iso3)) {
+            if (window.DashboardReal) {
+                window.DashboardReal.mostrar(iso3);
             }
-        }
-        
-        if (iso3 && window.DashboardReal) {
-            window.DashboardReal.mostrar(iso3);
         } else {
-            console.log(`ℹ️ No hay datos para: ${nombrePais}`);
+            console.log(`ℹ️ No hay datos económicos para ${nombre} (${iso3})`);
+            // Mostrar mensaje amigable
+            const container = document.getElementById('dashboard-container');
+            if (container) {
+                container.innerHTML = `
+                    <div class="dashboard-error">
+                        <div class="error-icono">🌍</div>
+                        <h3>${nombre}</h3>
+                        <p>No tenemos datos económicos disponibles para este país.</p>
+                        <p>Los datos del Banco Mundial están disponibles para la mayoría de los países.</p>
+                    </div>
+                `;
+            }
         }
     },
     
@@ -133,6 +151,7 @@ const BuscadorGlobal = {
             
             console.log('🔍 Buscando:', texto);
             
+            // Buscar por ISO3
             if (texto.length === 3 && /^[A-Za-z]{3}$/.test(texto)) {
                 const iso3 = texto.toUpperCase();
                 if (window.APIBancoMundial && window.APIBancoMundial.isSoportado(iso3)) {
@@ -141,17 +160,26 @@ const BuscadorGlobal = {
                 }
             }
             
-            if (window.APIBancoMundial && window.APIBancoMundial.paisesSoportados) {
-                const textoLower = texto.toLowerCase();
-                for (let [iso3, nombre] of Object.entries(window.APIBancoMundial.paisesSoportados)) {
-                    if (nombre.toLowerCase() === textoLower || nombre.toLowerCase().includes(textoLower)) {
-                        if (window.DashboardReal) window.DashboardReal.mostrar(iso3);
-                        return;
+            // Buscar por nombre (recorriendo las capas del mapa)
+            let encontrado = false;
+            if (window.capaPaisesGlobal) {
+                for (let layer of window.capaPaisesGlobal.getLayers()) {
+                    const nombre = layer.feature?.properties?.ADMIN || '';
+                    if (nombre.toLowerCase() === texto.toLowerCase() ||
+                        nombre.toLowerCase().includes(texto.toLowerCase())) {
+                        const iso3 = layer.feature?.properties?.ISO_A3;
+                        if (iso3 && window.DashboardReal) {
+                            window.DashboardReal.mostrar(iso3);
+                            encontrado = true;
+                            break;
+                        }
                     }
                 }
             }
             
-            alert(`❌ No se encontró "${texto}"`);
+            if (!encontrado) {
+                alert(`❌ No se encontró "${texto}"`);
+            }
         };
         
         input.addEventListener('keypress', (e) => {
@@ -175,4 +203,3 @@ document.addEventListener('DOMContentLoaded', () => {
 // Exportar para uso global
 window.MapaGlobal = MapaGlobal;
 window.BuscadorGlobal = BuscadorGlobal;
-window.capaPaisesGlobal = capaPaisesGlobal;
