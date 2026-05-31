@@ -1,6 +1,6 @@
 // js/core/11-coloreado.js
 // ============================================
-// COLOREADO DINÁMICO - Fuerza consulta a API
+// COLOREADO DINÁMICO - Versión definitiva
 // ============================================
 
 const Coloreado = {
@@ -34,26 +34,35 @@ const Coloreado = {
         
         let coloreados = 0;
         let procesados = 0;
+        let pendientes = 0;
         
-        // Bucle SECUENCIAL para asegurar que cada consulta se completa
+        // PRIMERO: Mostrar los primeros 10 países para diagnóstico
+        console.log('📋 Primeros 10 países del GeoJSON con su ISO3:');
+        let count = 0;
+        for (let layer of capas) {
+            const nombre = layer.feature?.properties?.name || '?';
+            const iso3 = layer.feature?.properties?.['ISO3166-1-Alpha-3'] || '?';
+            if (count < 10) {
+                console.log(`   ${count + 1}. ${nombre} → ${iso3}`);
+                count++;
+            } else {
+                break;
+            }
+        }
+        
+        // SEGUNDO: Procesar todos los países secuencialmente
         for (let layer of capas) {
             const iso3 = layer.feature?.properties?.['ISO3166-1-Alpha-3'] || null;
             
-            // Filtrar ISO3 inválidos
+            // Saltar ISO3 inválidos
             if (!iso3 || iso3 === '-99' || iso3.length !== 3) {
-                continue;
-            }
-            
-            // Solo países soportados por el Banco Mundial
-            if (!window.APIBancoMundial || !window.APIBancoMundial.isSoportado(iso3)) {
                 continue;
             }
             
             procesados++;
             
             try {
-                // IMPORTANTE: forzar actualización = true para evitar usar caché si está vacía
-                // pero mantener caché si ya existe
+                // Obtener datos (usa caché si existe, si no, consulta API)
                 const datos = await window.CacheDatos?.obtenerDatos(iso3, false);
                 const pib = datos?.pib?.valor;
                 
@@ -66,24 +75,21 @@ const Coloreado = {
                         weight: 0.5
                     });
                     coloreados++;
-                    
-                    // Log cada 10 países
-                    if (coloreados % 10 === 0) {
-                        console.log(`   Progreso: ${coloreados} países coloreados...`);
-                    }
+                } else {
+                    pendientes++;
                 }
             } catch(e) {
+                pendientes++;
                 console.warn(`⚠️ Error con ${iso3}:`, e.message);
             }
         }
         
         console.log(`✅ ${coloreados} países coloreados por PIB`);
-        console.log(`📊 Países procesados (soportados): ${procesados}`);
+        console.log(`📊 Países procesados (con ISO3 válido): ${procesados}`);
+        console.log(`📊 Países sin datos de PIB: ${pendientes}`);
         
         if (coloreados > 0) {
             this.actualizarLeyenda('💰 PIB per cápita', this.umbralesPIB);
-        } else if (procesados === 0) {
-            console.warn('⚠️ No se encontraron países soportados. Verifica APIBancoMundial.paisesSoportados');
         }
     },
     
