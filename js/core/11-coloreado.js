@@ -38,7 +38,11 @@ const Coloreado = {
         console.log('📋 Primeros 10 países del GeoJSON:');
         let contador = 0;
         for (let layer of capa.getLayers()) {
-            const nombre = layer.feature?.properties?.ADMIN;
+            const nombrePais =
+    layer.feature?.properties?.ADMIN ||
+    layer.feature?.properties?.name ||
+    layer.feature?.properties?.NAME ||
+    '';
             if (nombre && contador < 10) {
                 console.log(`   ${contador + 1}. "${nombre}"`);
                 contador++;
@@ -107,7 +111,11 @@ const Coloreado = {
         let encontrados = 0;
         
         for (let layer of capa.getLayers()) {
-            const nombrePais = layer.feature?.properties?.ADMIN;
+            const nombrePais =
+    layer.feature?.properties?.ADMIN ||
+    layer.feature?.properties?.name ||
+    layer.feature?.properties?.NAME ||
+    '';
             if (!nombrePais) continue;
             
             // Buscar ISO3 en el mapa de nombres
@@ -174,7 +182,11 @@ const Coloreado = {
         console.log('🔍 Buscando España por nombre exacto...');
         
         for (let layer of capa.getLayers()) {
-            const nombre = layer.feature?.properties?.ADMIN;
+            const nombrePais =
+    layer.feature?.properties?.ADMIN ||
+    layer.feature?.properties?.name ||
+    layer.feature?.properties?.NAME ||
+    '';
             console.log(`   Comparando con: "${nombre}"`);
             
             if (nombre === 'Spain' || nombre === 'España' || nombre?.toLowerCase().includes('spain')) {
