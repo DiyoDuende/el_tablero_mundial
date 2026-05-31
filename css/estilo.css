@@ -1111,3 +1111,1233 @@ body {
 }
 
 .detalle-puertas h5
+
+   /* ============================================ */
+/* NUEVOS ESTILOS PARA LA VERSIÓN V4.0          */
+/* (Añadir al final del archivo estilo.css)    */
+/* ============================================ */
+
+/* --- ESTILOS PARA EL VISOR DE CADENA DE IMPACTO --- */
+.visor-cadena {
+    background: var(--bg-panel);
+    border-radius: 16px;
+    padding: 20px;
+    margin: 20px 0;
+    border: 2px solid var(--info);
+}
+
+.visor-header {
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--border);
+}
+
+.visor-header h4 {
+    color: var(--info);
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+}
+
+.visor-evento {
+    color: var(--warning);
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.cadena-completa {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.evento-inicial {
+    background: var(--bg-card);
+    border-radius: 12px;
+    padding: 15px;
+    border-left: 8px solid var(--danger);
+}
+
+.evento-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.evento-icono {
+    font-size: 2rem;
+}
+
+.evento-titulo {
+    font-weight: bold;
+    color: var(--danger);
+    font-size: 1.1rem;
+}
+
+.evento-detalle {
+    line-height: 1.8;
+}
+
+.cadena-flecha-impacto {
+    text-align: center;
+    font-size: 2rem;
+    color: var(--info);
+    margin: 5px 0;
+    animation: pulse 1.5s infinite;
+}
+
+.impacto-nivel {
+    background: var(--bg-card);
+    border-radius: 12px;
+    padding: 15px;
+    border-left: 8px solid var(--warning);
+}
+
+.impacto-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+
+.impacto-icono {
+    font-size: 1.8rem;
+}
+
+.impacto-titulo {
+    font-weight: bold;
+    color: var(--warning);
+    font-size: 1.1rem;
+}
+
+.impacto-fecha {
+    margin-left: auto;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.impacto-detalle {
+    margin-left: 10px;
+}
+
+.impacto-item {
+    padding: 8px 0;
+    border-bottom: 1px dotted var(--border);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 5px;
+}
+
+.impacto-item:last-child {
+    border-bottom: none;
+}
+
+.impacto-concepto {
+    font-weight: 500;
+    min-width: 150px;
+}
+
+.impacto-valor {
+    font-weight: bold;
+    color: var(--info);
+    min-width: 60px;
+}
+
+.impacto-fuente {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-style: italic;
+    margin-left: auto;
+}
+
+.evolucion-temporal {
+    background: var(--bg-card);
+    border-radius: 12px;
+    padding: 15px;
+    margin: 20px 0;
+}
+
+.evolucion-temporal h5 {
+    color: var(--info);
+    margin-bottom: 15px;
+}
+
+.grafico-barras {
+    margin-bottom: 15px;
+}
+
+.barra-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 8px 0;
+}
+
+.barra-label {
+    min-width: 100px;
+    font-size: 0.9rem;
+}
+
+.barra-contenedor {
+    flex: 1;
+    height: 20px;
+    background: #1e3a4a;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.barra-llena {
+    height: 100%;
+    transition: width 0.3s;
+}
+
+.barra-valor {
+    min-width: 50px;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.linea-tiempo {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+}
+
+.visor-controles {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+    justify-content: center;
+}
+
+.visor-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 16px;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+}
+
+.visor-btn:hover {
+    background: var(--accent);
+    color: white;
+    border-color: var(--info);
+}
+
+.visor-fuentes {
+    background: var(--bg-card);
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    text-align: center;
+    border-top: 1px solid var(--border);
+}
+
+.visor-no-resultados {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-muted);
+}
+
+/* --- ESTILOS PARA EL MÓDULO LEGISLATIVO --- */
+.panel-legislativo {
+    background: #1a2a30;
+    border-radius: 16px;
+    padding: 20px;
+    margin: 20px 0;
+    border-left: 6px solid #9c27b0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    max-height: 800px;
+    overflow-y: auto;
+}
+
+.selector-pais-legal {
+    margin-bottom: 15px;
+}
+
+.selector-pais-legal label {
+    color: #b0d8f0;
+    margin-right: 10px;
+}
+
+.select-pais {
+    background: #0e1c26;
+    color: white;
+    border: 1px solid #2a5f7a;
+    border-radius: 8px;
+    padding: 8px 12px;
+    width: 100%;
+}
+
+.filtros-leyes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.filtro-ley {
+    background: #1e3a4a;
+    border: 1px solid #2a5f7a;
+    color: #c0d8e8;
+    border-radius: 30px;
+    padding: 6px 15px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.filtro-ley:hover {
+    background: #2a5a7a;
+    color: white;
+}
+
+.filtro-ley.activo {
+    background: #9c27b0;
+    border-color: #ce93d8;
+    color: white;
+}
+
+.lista-leyes-container {
+    margin-bottom: 20px;
+}
+
+.lista-leyes-container h4 {
+    color: #ce93d8;
+    font-size: 1rem;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #2a5f7a;
+    padding-bottom: 5px;
+}
+
+.lista-leyes {
+    max-height: 200px;
+    overflow-y: auto;
+    background: #0e1a22;
+    border-radius: 8px;
+    padding: 5px;
+}
+
+.ley-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    border-bottom: 1px solid #1a3a4a;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.ley-item:hover {
+    background: #1a3a4a;
+}
+
+.ley-item.seleccionada {
+    background: #2a4a60;
+    border-left: 4px solid #ce93d8;
+}
+
+.detalle-ley-container {
+    background: #0e1a22;
+    border-radius: 12px;
+    padding: 15px;
+    border-left: 4px solid #9c27b0;
+}
+
+.placeholder-ley {
+    color: #88aacc;
+    font-style: italic;
+    text-align: center;
+    padding: 20px;
+    margin: 0;
+}
+
+.traduccion-ciudadana {
+    margin-bottom: 20px;
+}
+
+.traduccion-ciudadana h5 {
+    color: #ce93d8;
+    margin-bottom: 10px;
+    font-size: 1rem;
+}
+
+.traduccion-ciudadana p {
+    background: #1a2f3a;
+    padding: 12px;
+    border-radius: 8px;
+    line-height: 1.6;
+}
+
+.texto-original {
+    margin-top: 10px;
+}
+
+.texto-original summary {
+    color: #88aacc;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.texto-original summary:hover {
+    color: #ce93d8;
+}
+
+.texto-original p {
+    margin-top: 10px;
+    font-family: monospace;
+    background: #0e1a22;
+    border-left: 3px solid #4a6a7a;
+    padding: 10px;
+}
+
+.beneficiarios-perjudicados {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.beneficiarios h6, .perjudicados h6 {
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid;
+}
+
+.beneficiarios h6 {
+    color: #81c784;
+    border-bottom-color: #81c784;
+}
+
+.perjudicados h6 {
+    color: #ef5350;
+    border-bottom-color: #ef5350;
+}
+
+.beneficiarios ul, .perjudicados ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.beneficiarios li {
+    padding: 4px 0 4px 20px;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="%2381c784"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>') left center no-repeat;
+    background-size: 16px;
+}
+
+.perjudicados li {
+    padding: 4px 0 4px 20px;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="%23ef5350"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>') left center no-repeat;
+    background-size: 16px;
+}
+
+.efectos-ley {
+    background: #1a2f3a;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.efectos-ley h5 {
+    color: #ce93d8;
+    margin-bottom: 10px;
+}
+
+.efectos-ley p {
+    font-weight: bold;
+    margin-top: 10px;
+    color: #b0d8f0;
+}
+
+.efectos-ley ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.efectos-ley li {
+    padding: 4px 0;
+    border-bottom: 1px dotted #2a5f7a;
+    display: flex;
+    justify-content: space-between;
+}
+
+.interpretacion-estrategica {
+    background: #1a2a40;
+    padding: 12px;
+    border-radius: 8px;
+    border-left: 4px solid #4fc3f7;
+}
+
+.interpretacion-estrategica h5 {
+    color: #4fc3f7;
+    margin-bottom: 8px;
+}
+
+/* --- ESTILOS PARA VERIFICADOR CIUDADANO V4.0 --- */
+.verificacion-cargando {
+    text-align: center;
+    padding: 40px;
+    background: var(--bg-panel);
+    border-radius: 12px;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid var(--border);
+    border-top-color: var(--info);
+    border-radius: 50%;
+    margin: 0 auto 15px;
+    animation: spin 1s linear infinite;
+}
+
+.verificacion-principal {
+    background: var(--bg-panel);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-left: 6px solid;
+}
+
+.verificacion-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.verificacion-icono {
+    font-size: 1.5rem;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.verificacion-estado {
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.verificacion-pregunta {
+    background: var(--bg-card);
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-style: italic;
+}
+
+.verificacion-explicacion p {
+    margin-top: 8px;
+    line-height: 1.6;
+}
+
+.factores-impacto {
+    background: var(--bg-panel);
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.factores-impacto h5 {
+    margin-bottom: 15px;
+    color: var(--info);
+}
+
+.factor-item {
+    margin-bottom: 12px;
+}
+
+.factor-nombre {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.factor-barra {
+    height: 8px;
+    background: var(--bg-card);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 5px 0;
+}
+
+.factor-porcentaje {
+    font-size: 0.85rem;
+    color: var(--info);
+    margin-top: 3px;
+}
+
+.factor-descripcion {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 5px;
+}
+
+.cadena-impacto-integrada {
+    margin-bottom: 20px;
+}
+
+.leyes-relacionadas {
+    background: var(--bg-panel);
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.leyes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.ley-card {
+    background: var(--bg-card);
+    border-radius: 10px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    transition: all 0.2s;
+}
+
+.ley-card:hover {
+    border-color: var(--info);
+}
+
+.ley-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+}
+
+.ley-nombre {
+    font-weight: bold;
+    flex: 1;
+}
+
+.ley-explicacion {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+}
+
+.ley-beneficiarios {
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+    color: #81c784;
+}
+
+.verificacion-acciones {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.verificacion-acciones button {
+    padding: 8px 16px;
+    border-radius: 30px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+}
+
+.btn-simular-desde-verificador {
+    background: #b27c2c;
+    color: white;
+}
+
+.btn-simular-desde-verificador:hover {
+    background: #c98c3a;
+}
+
+.btn-buscar-leyes {
+    background: #9c27b0;
+    color: white;
+}
+
+.btn-buscar-leyes:hover {
+    background: #b042c4;
+}
+
+.btn-compartir {
+    background: #2a7faa;
+    color: white;
+}
+
+.btn-compartir:hover {
+    background: #359bcb;
+}
+
+.fuentes-verificacion {
+    background: var(--bg-card);
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 15px;
+}
+
+.fuentes-verificacion ul {
+    margin-top: 8px;
+    padding-left: 20px;
+}
+
+.fuentes-verificacion li {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin: 3px 0;
+}
+
+.verificacion-timestamp {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+}
+
+.modo-real-badge {
+    background: #2e7d32;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+}
+
+.modo-juego-badge {
+    background: #b27c2c;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+}
+
+.verificacion-error {
+    text-align: center;
+    padding: 30px;
+}
+
+.historial-verificaciones {
+    background: var(--bg-panel);
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.historial-verificaciones h5 {
+    color: var(--info);
+    margin-bottom: 10px;
+}
+
+.historial-verificaciones ul {
+    list-style: none;
+    padding: 0;
+}
+
+.historial-verificaciones li {
+    padding: 8px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.historial-verificaciones li:hover {
+    background: var(--bg-card);
+}
+
+.btn-limpiar-historial {
+    background: var(--danger);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+/* --- ESTILOS PARA SIMULADOR V4.0 --- */
+.simulacion-cargando {
+    text-align: center;
+    padding: 30px;
+    background: var(--bg-panel);
+    border-radius: 16px;
+}
+
+.simulacion-cargando .spinner {
+    width: 50px;
+    height: 50px;
+}
+
+.simulacion-modo-real {
+    text-align: center;
+    padding: 30px;
+    background: var(--bg-panel);
+    border-radius: 16px;
+}
+
+.modo-real-icono {
+    font-size: 48px;
+    margin-bottom: 15px;
+}
+
+.simulacion-resultado {
+    background: var(--bg-panel);
+    border-radius: 16px;
+    padding: 20px;
+    border: 2px solid var(--warning);
+}
+
+.resultado-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--border);
+}
+
+.simulacion-badge {
+    background: #b27c2c;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+}
+
+.resultado-escenario {
+    background: var(--bg-card);
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-style: italic;
+}
+
+.resultado-impactos h5,
+.resultado-cadena h5,
+.resultado-riesgo h5,
+.resultado-sugerencias h5,
+.resultado-analisis-ia h5 {
+    color: var(--info);
+    margin-bottom: 12px;
+    font-size: 0.95rem;
+}
+
+.impacto-grupo {
+    margin-bottom: 15px;
+}
+
+.impacto-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+}
+
+.impacto-barra {
+    height: 10px;
+    background: var(--bg-card);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.impacto-barra-llena {
+    height: 100%;
+    transition: width 0.5s ease;
+}
+
+.resultado-cadena {
+    background: var(--bg-card);
+    border-radius: 12px;
+    padding: 15px;
+    margin: 20px 0;
+}
+
+.cadena-efectos {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.cadena-eslabon {
+    background: var(--bg-panel);
+    padding: 10px 15px;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.cadena-flecha {
+    font-size: 1.5rem;
+    color: var(--info);
+    animation: pulse 1.5s infinite;
+}
+
+.resultado-riesgo {
+    background: var(--bg-card);
+    border-radius: 12px;
+    padding: 15px;
+    margin: 20px 0;
+}
+
+.riesgo-indicador {
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.riesgo-barra {
+    height: 8px;
+    background: var(--bg-panel);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.riesgo-barra-llena {
+    height: 100%;
+    transition: width 0.5s ease;
+}
+
+.resultado-sugerencias {
+    background: rgba(79, 195, 247, 0.1);
+    border-radius: 12px;
+    padding: 15px;
+    margin: 20px 0;
+    border-left: 4px solid var(--info);
+}
+
+.resultado-sugerencias ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.resultado-sugerencias li {
+    margin: 8px 0;
+    color: var(--text-muted);
+}
+
+.resultado-analisis-ia {
+    background: rgba(156, 39, 176, 0.1);
+    border-radius: 12px;
+    padding: 15px;
+    margin: 20px 0;
+    border-left: 4px solid #9c27b0;
+}
+
+.analisis-detalle {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 10px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.resultado-acciones {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.btn-exportar-simulacion,
+.btn-reiniciar-simulador {
+    padding: 8px 16px;
+    border-radius: 30px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+}
+
+.btn-exportar-simulacion {
+    background: var(--info);
+    color: #0a1219;
+}
+
+.btn-reiniciar-simulador {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text);
+}
+
+.btn-exportar-simulacion:hover,
+.btn-reiniciar-simulador:hover {
+    transform: scale(1.02);
+}
+
+.resultado-footer {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border);
+}
+
+.resultado-footer .advertencia {
+    color: var(--warning);
+    font-size: 0.8rem;
+    margin-bottom: 5px;
+}
+
+.resultado-footer .fuente-datos {
+    font-size: 0.7rem;
+}
+
+.resultado-footer .timestamp {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-top: 5px;
+}
+
+.sugerencias-rapidas {
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+}
+
+.sugerencias-rapidas h5 {
+    color: var(--info);
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+}
+
+.sugerencias-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.sugerencia-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 6px 12px;
+    border-radius: 30px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.sugerencia-btn:hover {
+    background: var(--accent);
+    border-color: var(--info);
+}
+
+/* --- TIMELINE GLOBAL --- */
+.timeline-global {
+    background: var(--bg-panel);
+    border-radius: 16px;
+    padding: 20px;
+    margin: 20px 0;
+    border: 2px solid var(--info);
+}
+
+.timeline-filtros {
+    background: var(--bg-card);
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.filtros-tipo {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.filtro-tipo-btn {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    padding: 6px 12px;
+    border-radius: 30px;
+    cursor: pointer;
+}
+
+.filtro-tipo-btn:hover {
+    background: var(--accent);
+    color: white;
+}
+
+.filtro-tipo-btn.activo {
+    background: var(--info);
+    color: #0a1219;
+}
+
+.filtros-año {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.filtro-año-btn {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    padding: 6px 12px;
+    border-radius: 30px;
+    cursor: pointer;
+    min-width: 60px;
+}
+
+.filtro-año-btn:hover {
+    background: var(--accent);
+    color: white;
+}
+
+.filtro-año-btn.activo {
+    background: var(--warning);
+    color: white;
+}
+
+.timeline-año {
+    margin-bottom: 30px;
+}
+
+.año-header {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--info);
+    margin-bottom: 15px;
+    border-left: 4px solid var(--info);
+    padding-left: 10px;
+}
+
+.año-linea {
+    position: relative;
+    height: 60px;
+    background: var(--bg-card);
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.linea-puntos {
+    display: flex;
+    justify-content: space-between;
+    height: 100%;
+    padding: 0 10px;
+}
+
+.punto-mes {
+    width: 4px;
+    height: 100%;
+    background: var(--border);
+    border-radius: 2px;
+}
+
+.hitos-linea {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.hito-marcador {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+}
+
+.hito-icono {
+    font-size: 1.5rem;
+    background: var(--bg-card);
+    border: 2px solid var(--info);
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hito-icono:hover {
+    transform: scale(1.2);
+}
+
+.hitos-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.hito-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 8px 12px;
+    background: var(--bg-card);
+    border-radius: 8px;
+    cursor: pointer;
+    border-left: 4px solid transparent;
+}
+
+.hito-item:hover {
+    background: var(--accent);
+}
+
+.hito-item.seleccionado {
+    border-left-color: var(--info);
+    background: var(--accent);
+}
+
+.hito-fecha {
+    min-width: 60px;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.hito-titulo {
+    flex: 1;
+}
+
+.hito-magnitud {
+    background: var(--bg-panel);
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+}
+
+/* ============================================ */
+/* ANIMACIONES GLOBALES                        */
+/* ============================================ */
+
+@keyframes fadeOut {
+    0% { opacity: 1; }
+    70% { opacity: 1; }
+    100% { opacity: 0; visibility: hidden; }
+}
+
+@keyframes pulse {
+    0% { opacity: 0.5; transform: translateY(0); }
+    50% { opacity: 1; transform: translateY(5px); }
+    100% { opacity: 0.5; transform: translateY(0); }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
