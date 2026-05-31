@@ -48,13 +48,18 @@ const MapaGlobal = {
                 
                 // IMPORTANTE: actualizar la variable global
                 window.capaPaisesGlobal = capaPaisesGlobal;
+                window.capaPaises = capaPaisesGlobal; // Para compatibilidad
                 
                 console.log('✅ GeoJSON de países cargado');
+                console.log('📊 Total de países en el mapa:', capaPaisesGlobal.getLayers().length);
                 
                 // Aplicar colores después de cargar
                 setTimeout(() => {
                     if (window.Coloreado) {
+                        console.log('🎨 Iniciando coloreado automático...');
                         window.Coloreado.aplicarColoresPIB();
+                    } else {
+                        console.warn('⚠️ Coloreado no disponible');
                     }
                 }, 3000);
                 
@@ -114,7 +119,6 @@ const MapaGlobal = {
 
 const BuscadorGlobal = {
     init: function() {
-        // Usar el ID correcto de tu HTML
         const input = document.getElementById('buscador-rapido');
         const btn = document.getElementById('btn-buscar');
         
@@ -123,14 +127,12 @@ const BuscadorGlobal = {
             return;
         }
         
-        // Función de búsqueda
         const buscar = () => {
             const texto = input.value.trim();
             if (!texto) return;
             
             console.log('🔍 Buscando:', texto);
             
-            // Buscar por ISO3
             if (texto.length === 3 && /^[A-Za-z]{3}$/.test(texto)) {
                 const iso3 = texto.toUpperCase();
                 if (window.APIBancoMundial && window.APIBancoMundial.isSoportado(iso3)) {
@@ -139,7 +141,6 @@ const BuscadorGlobal = {
                 }
             }
             
-            // Buscar por nombre
             if (window.APIBancoMundial && window.APIBancoMundial.paisesSoportados) {
                 const textoLower = texto.toLowerCase();
                 for (let [iso3, nombre] of Object.entries(window.APIBancoMundial.paisesSoportados)) {
@@ -153,7 +154,6 @@ const BuscadorGlobal = {
             alert(`❌ No se encontró "${texto}"`);
         };
         
-        // Eventos
         input.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') buscar();
         });
