@@ -1,6 +1,6 @@
 // js/core/11-coloreado.js
 // ============================================
-// COLOREADO DINÁMICO - Con filtro de países válidos
+// COLOREADO DINÁMICO - Optimizado y definitivo
 // ============================================
 
 const Coloreado = {
@@ -12,12 +12,30 @@ const Coloreado = {
         { max: Infinity, color: '#2e7d32', label: '> 50.000 $' }
     ],
     
+    // Códigos ISO3 que NO deben consultarse
+    codigosIgnorar: new Set([
+        '-99', 'ATA', 'TWN', 'VAT', 'ESH', 'JEY', 'GGY', 'BLM', 'IOT',
+        'UMI', 'MSR', 'AIA', 'VGB', 'CYM', 'BMU', 'HMD', 'SHN', 'FLK',
+        'SGS', 'PCN', 'NFK', 'COK', 'WLF', 'NIU', 'ALA', 'SPM', 'ATF',
+        'IOT', 'SXM', 'MAF', 'GUF', 'GLP', 'MTQ', 'REU', 'MYT', 'PYF',
+        'NCL', 'GIB', 'AND', 'MCO', 'LIE', 'SMR', 'MHL', 'FSM', 'PLW',
+        'KIR', 'TUV', 'VUT', 'SLB', 'TON', 'WSM', 'ASM', 'GUM', 'MNP'
+    ]),
+    
     getColorPorPIB: function(pib) {
         if (!pib || pib === 0) return '#1a3a4a';
         for (let u of this.umbralesPIB) {
             if (pib <= u.max) return u.color;
         }
         return '#1a3a4a';
+    },
+    
+    // Verificar si un país debe ser consultado
+    debeConsultar: function(iso3) {
+        if (!iso3 || iso3.length !== 3) return false;
+        if (this.codigosIgnorar.has(iso3)) return false;
+        if (!window.APIBancoMundial || !window.APIBancoMundial.isSoportado(iso3)) return false;
+        return true;
     },
     
     async aplicarColoresPIB() {
@@ -29,50 +47,54 @@ const Coloreado = {
             return;
         }
         
-        const totalPaises = capa.getLayers().length;
-        console.log(`🎨 Coloreando países por PIB (solo países soportados)...`);
+        const capas = capa.getLayers();
+        console.log(`🎨 Coloreando ${capas.length} países por PIB (paralelizado)...`);
         
-        let coloreados = 0;
-        let sinDatos = 0;
-        let noSoportados = 0;
+        // Recolectar todas las promesas
+        const promesas = [];
         
-        for (let layer of capa.getLayers()) {
+        for (let layer of capas) {
             const iso3 = layer.feature?.properties?.['ISO3166-1-Alpha-3'] || null;
             
-            // Filtrar ISO3 inválidos
-            if (!iso3 || iso3 === '-99' || iso3.length !== 3) {
-                noSoportados++;
+            if (!this.debeConsultar(iso3)) {
                 continue;
             }
             
-            // Solo colorear países que están en la lista soportada del Banco Mundial
-            if (!window.APIBancoMundial || !window.APIBancoMundial.isSoportado(iso3)) {
-                noSoportados++;
-                continue;
-            }
-            
-            try {
-                const datos = await window.CacheDatos?.obtenerDatos(iso3);
-                const pib = datos?.pib?.valor;
-                if (pib && pib > 0) {
-                    const color = this.getColorPorPIB(pib);
-                    layer.setStyle({
-                        fillColor: color,
-                        fillOpacity: 0.75,
-                        color: '#ffffff',
-                        weight: 0.5
-                    });
-                    coloreados++;
-                } else {
-                    sinDatos++;
+            const promesa = (async () => {
+                try {
+                    const datos = await window.CacheDatos?.obtenerDatos(iso3);
+                    const pib = datos?.pib?.valor;
+                    if (pib && pib > 0) {
+                        const color = this.getColorPorPIB(pib);
+                        return { layer, color };
+                    }
+                } catch(e) {
+                    // Error silencioso
                 }
-            } catch(e) {
-                sinDatos++;
+                return null;
+            })();
+            
+            promesas.push(promesa);
+        }
+        
+        // Ejecutar todas en paralelo
+        const resultados = await Promise.all(promesas);
+        
+        // Aplicar colores
+        let coloreados = 0;
+        for (const res of resultados) {
+            if (res && res.color) {
+                res.layer.setStyle({
+                    fillColor: res.color,
+                    fillOpacity: 0.75,
+                    color: '#ffffff',
+                    weight: 0.5
+                });
+                coloreados++;
             }
         }
         
         console.log(`✅ ${coloreados} países coloreados por PIB`);
-        console.log(`📊 Países sin datos o no soportados: ${sinDatos + noSoportados}`);
         
         if (coloreados > 0) {
             this.actualizarLeyenda('💰 PIB per cápita', this.umbralesPIB);
