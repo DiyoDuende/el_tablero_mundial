@@ -1,6 +1,6 @@
 // js/core/11-coloreado.js
 // ============================================
-// COLOREADO DINÁMICO - Versión definitiva
+// COLOREADO DINÁMICO - Basado en datos reales
 // ============================================
 
 const Coloreado = {
@@ -22,75 +22,34 @@ const Coloreado = {
     
     async aplicarColoresPIB() {
         const capa = window.capaPaisesGlobal;
-        
         if (!capa) {
-            console.warn('⚠️ capaPaisesGlobal no disponible, reintentando...');
             setTimeout(() => this.aplicarColoresPIB(), 1000);
             return;
         }
         
-        const capas = capa.getLayers();
-        console.log(`🎨 Coloreando ${capas.length} países por PIB...`);
-        
         let coloreados = 0;
-        let procesados = 0;
-        let pendientes = 0;
         
-        // PRIMERO: Mostrar los primeros 10 países para diagnóstico
-        console.log('📋 Primeros 10 países del GeoJSON con su ISO3:');
-        let count = 0;
-        for (let layer of capas) {
-            const nombre = layer.feature?.properties?.name || '?';
-            const iso3 = layer.feature?.properties?.['ISO3166-1-Alpha-3'] || '?';
-            if (count < 10) {
-                console.log(`   ${count + 1}. ${nombre} → ${iso3}`);
-                count++;
-            } else {
-                break;
-            }
-        }
-        
-        // SEGUNDO: Procesar todos los países secuencialmente
-        for (let layer of capas) {
-            const iso3 = layer.feature?.properties?.['ISO3166-1-Alpha-3'] || null;
+        for (let layer of capa.getLayers()) {
+            const iso3 = layer.feature?.properties?.['ISO3166-1-Alpha-3'];
+            if (!iso3 || iso3 === '-99') continue;
+            if (!APIBancoMundial.isSoportado(iso3)) continue;
             
-            // Saltar ISO3 inválidos
-            if (!iso3 || iso3 === '-99' || iso3.length !== 3) {
-                continue;
-            }
+            const datos = await CacheDatos.obtenerDatos(iso3);
+            const pib = datos?.pib?.valor;
             
-            procesados++;
-            
-            try {
-                // Obtener datos (usa caché si existe, si no, consulta API)
-                const datos = await window.CacheDatos?.obtenerDatos(iso3, false);
-                const pib = datos?.pib?.valor;
-                
-                if (pib && pib > 0) {
-                    const color = this.getColorPorPIB(pib);
-                    layer.setStyle({
-                        fillColor: color,
-                        fillOpacity: 0.75,
-                        color: '#ffffff',
-                        weight: 0.5
-                    });
-                    coloreados++;
-                } else {
-                    pendientes++;
-                }
-            } catch(e) {
-                pendientes++;
-                console.warn(`⚠️ Error con ${iso3}:`, e.message);
+            if (pib && pib > 0) {
+                layer.setStyle({
+                    fillColor: this.getColorPorPIB(pib),
+                    fillOpacity: 0.75,
+                    color: '#ffffff',
+                    weight: 0.5
+                });
+                coloreados++;
             }
         }
         
         console.log(`✅ ${coloreados} países coloreados por PIB`);
-        console.log(`📊 Países procesados (con ISO3 válido): ${procesados}`);
-        console.log(`📊 Países sin datos de PIB: ${pendientes}`);
-        
-        if (coloreados > 0) {
-            this.actualizarLeyenda('💰 PIB per cápita', this.umbralesPIB);
-        }
+        this.actualizarLeyenda('💰 PIB per cápita', this.umbralesPIB);
     },
     
     actualizarLeyenda: function(titulo, umbrales) {
@@ -121,7 +80,6 @@ const Coloreado = {
     resetearColores: function() {
         const capa = window.capaPaisesGlobal;
         if (!capa) return;
-        
         for (let layer of capa.getLayers()) {
             layer.setStyle({
                 fillColor: '#1a3a4a',
@@ -130,21 +88,8 @@ const Coloreado = {
                 weight: 1
             });
         }
-        
         const leyenda = document.querySelector('.mapa-leyenda');
         if (leyenda) leyenda.remove();
-        
-        console.log('🎨 Colores restablecidos');
-    },
-    
-    async aplicarColoresInflacion() {
-        console.log('📈 Capa de inflación - Próximamente');
-        this.actualizarLeyenda('📈 Inflación (próximamente)', this.umbralesPIB);
-    },
-    
-    async aplicarColoresDesempleo() {
-        console.log('👥 Capa de desempleo - Próximamente');
-        this.actualizarLeyenda('👥 Desempleo (próximamente)', this.umbralesPIB);
     }
 };
 
