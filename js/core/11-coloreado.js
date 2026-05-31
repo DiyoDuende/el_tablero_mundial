@@ -12,6 +12,50 @@ const Coloreado = {
         { max: Infinity, color: '#2e7d32', label: '> 50.000 $' }
     ],
     
+    // Mapa de nombres de GeoJSON a códigos ISO3
+    mapaNombres: {
+        'Spain': 'ESP',
+        'France': 'FRA',
+        'Germany': 'DEU',
+        'Italy': 'ITA',
+        'Portugal': 'PRT',
+        'United Kingdom': 'GBR',
+        'Ireland': 'IRL',
+        'Netherlands': 'NLD',
+        'Belgium': 'BEL',
+        'Austria': 'AUT',
+        'Switzerland': 'CHE',
+        'Sweden': 'SWE',
+        'Norway': 'NOR',
+        'Denmark': 'DNK',
+        'Finland': 'FIN',
+        'Poland': 'POL',
+        'Czech Republic': 'CZE',
+        'Hungary': 'HUN',
+        'Romania': 'ROU',
+        'Greece': 'GRC',
+        'United States': 'USA',
+        'Canada': 'CAN',
+        'Mexico': 'MEX',
+        'Brazil': 'BRA',
+        'Argentina': 'ARG',
+        'Chile': 'CHL',
+        'Colombia': 'COL',
+        'Peru': 'PER',
+        'China': 'CHN',
+        'Japan': 'JPN',
+        'South Korea': 'KOR',
+        'India': 'IND',
+        'Indonesia': 'IDN',
+        'Turkey': 'TUR',
+        'Saudi Arabia': 'SAU',
+        'Russia': 'RUS',
+        'Australia': 'AUS',
+        'New Zealand': 'NZL',
+        'South Africa': 'ZAF',
+        'Egypt': 'EGY'
+    },
+    
     getColorPorPIB: function(pib) {
         if (!pib || pib === 0) return '#1a3a4a';
         for (let u of this.umbralesPIB) {
@@ -20,26 +64,35 @@ const Coloreado = {
         return '#1a3a4a';
     },
     
-    buscarISO3: function(nombrePais) {
-        if (!nombrePais || typeof APIBancoMundial === 'undefined') return null;
+    // Obtener ISO3 desde el nombre del GeoJSON
+    obtenerISO3: function(nombrePais) {
+        if (!nombrePais) return null;
         
-        const nombreNorm = nombrePais.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        // 1. Buscar en el mapa directo
+        if (this.mapaNombres[nombrePais]) {
+            return this.mapaNombres[nombrePais];
+        }
         
-        for (let [iso3, nombre] of Object.entries(APIBancoMundial.paisesSoportados)) {
-            const nombreAPINorm = nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-            if (nombreAPINorm === nombreNorm) {
-                return iso3;
+        // 2. Buscar en el mapa de APIBancoMundial
+        if (window.APIBancoMundial && window.APIBancoMundial.paisesSoportados) {
+            const nombreNorm = nombrePais.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            
+            for (let [iso3, nombre] of Object.entries(window.APIBancoMundial.paisesSoportados)) {
+                const nombreAPINorm = nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                if (nombreAPINorm === nombreNorm) {
+                    return iso3;
+                }
             }
         }
+        
         return null;
     },
     
     async aplicarColoresPIB() {
-        // Usar window.capaPaisesGlobal (la variable global)
         const capa = window.capaPaisesGlobal;
         
         if (!capa) {
-            console.warn('⚠️ capaPaisesGlobal no disponible, reintentando en 1 segundo...');
+            console.warn('⚠️ capaPaisesGlobal no disponible, reintentando...');
             setTimeout(() => this.aplicarColoresPIB(), 1000);
             return;
         }
@@ -48,14 +101,16 @@ const Coloreado = {
         console.log(`🎨 Coloreando ${totalPaises} países por PIB...`);
         
         const promesas = [];
-        let paisesConDatos = 0;
+        let paisesEncontrados = 0;
         
         for (let layer of capa.getLayers()) {
             const nombrePais = layer.feature?.properties?.ADMIN;
             if (!nombrePais) continue;
             
-            const iso3 = this.buscarISO3(nombrePais);
+            const iso3 = this.obtenerISO3(nombrePais);
             if (!iso3) continue;
+            
+            paisesEncontrados++;
             
             const promesa = (async () => {
                 try {
@@ -72,7 +127,7 @@ const Coloreado = {
                         return true;
                     }
                 } catch(e) {
-                    console.warn(`Error con ${iso3}:`, e.message);
+                    // Error silencioso por país
                 }
                 return false;
             })();
@@ -80,16 +135,57 @@ const Coloreado = {
             promesas.push(promesa);
         }
         
+        console.log(`📊 Países con código ISO3 encontrados: ${paisesEncontrados}`);
+        
         const resultados = await Promise.all(promesas);
         const coloreados = resultados.filter(r => r === true).length;
         
-        console.log(`✅ ${coloreados} de ${totalPaises} países coloreados por PIB`);
+        console.log(`✅ ${coloreados} países coloreados por PIB`);
         
         if (coloreados > 0) {
             this.actualizarLeyenda('💰 PIB per cápita', this.umbralesPIB);
         } else {
-            console.warn('⚠️ No se pudo colorear ningún país. Verifica la conexión con el Banco Mundial.');
+            console.warn('⚠️ No se encontraron datos de PIB. Verifica la conexión.');
+            // Intentar colorear España como prueba
+            this.probarColorearEspana();
         }
+    },
+    
+    // Función de prueba para verificar que el coloreado funciona
+    probarColorearEspana: async function() {
+        console.log('🔍 Probando coloreado con España...');
+        const capa = window.capaPaisesGlobal;
+        if (!capa) return;
+        
+        for (let layer of capa.getLayers()) {
+            const nombre = layer.feature?.properties?.ADMIN;
+            if (nombre === 'Spain') {
+                const datos = await window.CacheDatos?.obtenerDatos('ESP');
+                if (datos?.pib?.valor) {
+                    layer.setStyle({
+                        fillColor: '#43a047',
+                        fillOpacity: 0.75,
+                        color: '#ffffff',
+                        weight: 0.5
+                    });
+                    console.log('✅ España coloreada manualmente como prueba');
+                    this.actualizarLeyenda('💰 PIB per cápita (prueba)', this.umbralesPIB);
+                } else {
+                    console.warn('⚠️ No se pudieron obtener datos de España');
+                }
+                break;
+            }
+        }
+    },
+    
+    async aplicarColoresInflacion() {
+        console.log('📈 Capa de inflación - Próximamente');
+        this.actualizarLeyenda('📈 Inflación (próximamente)', this.umbralesInflacion || this.umbralesPIB);
+    },
+    
+    async aplicarColoresDesempleo() {
+        console.log('👥 Capa de desempleo - Próximamente');
+        this.actualizarLeyenda('👥 Desempleo (próximamente)', this.umbralesDesempleo || this.umbralesPIB);
     },
     
     actualizarLeyenda: function(titulo, umbrales) {
