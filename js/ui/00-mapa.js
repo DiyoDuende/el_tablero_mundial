@@ -71,40 +71,46 @@ const MapaGlobal = {
                       feature.properties?.ADMIN || 
                       'Desconocido';
         
-        // Obtener ISO3 directamente del GeoJSON (campo correcto)
-        const iso3 = feature.properties?.['ISO3166-1-Alpha-3'] || 
-                     feature.properties?.ISO_A3 || 
-                     null;
-        
         // Tooltip con nombre
         layer.bindTooltip(nombre, { sticky: true });
         
-        // Click: pasar directamente el ISO3
+        // Click: pasar el feature completo (contiene ISO3)
         layer.on('click', () => {
-            this.onPaisClick(iso3, nombre);
+            this.onPaisClick(feature);
         });
     },
     
-    onPaisClick: function(iso3, nombre) {
-        console.log(`🔍 Clic en ${nombre} (ISO3: ${iso3})`);
+    onPaisClick: function(feature) {
+        const nombre = feature.properties?.name || 
+                      feature.properties?.ADMIN || 
+                      'Desconocido';
         
-        if (iso3 && window.APIBancoMundial && window.APIBancoMundial.isSoportado(iso3)) {
-            if (window.DashboardReal) {
-                window.DashboardReal.mostrar(iso3);
+        const iso3 = feature.properties?.['ISO3166-1-Alpha-3'] || null;
+        
+        console.log(`🔍 Clic en país: ${nombre} (ISO3: ${iso3})`);
+        
+        // Validar ISO3
+        if (iso3 && iso3 !== '-99' && iso3.length === 3) {
+            if (window.APIBancoMundial && window.APIBancoMundial.isSoportado(iso3)) {
+                if (window.DashboardReal) {
+                    window.DashboardReal.mostrar(iso3);
+                    return;
+                }
             }
-        } else {
-            console.log(`ℹ️ No hay datos económicos para ${nombre} (${iso3})`);
-            const container = document.getElementById('dashboard-container');
-            if (container) {
-                container.innerHTML = `
-                    <div class="dashboard-error">
-                        <div class="error-icono">🌍</div>
-                        <h3>${nombre}</h3>
-                        <p>No tenemos datos económicos disponibles para este país.</p>
-                        <p>Los datos del Banco Mundial están disponibles para la mayoría de los países.</p>
-                    </div>
-                `;
-            }
+        }
+        
+        // Si no hay datos, mostrar mensaje amigable
+        console.log(`ℹ️ No hay datos económicos para ${nombre} (${iso3})`);
+        const container = document.getElementById('dashboard-container');
+        if (container) {
+            container.innerHTML = `
+                <div class="dashboard-error">
+                    <div class="error-icono">🌍</div>
+                    <h3>${nombre}</h3>
+                    <p>No tenemos datos económicos disponibles para este país.</p>
+                    <p>Los datos del Banco Mundial están disponibles para la mayoría de los países.</p>
+                </div>
+            `;
         }
     },
     
@@ -139,24 +145,26 @@ const BuscadorGlobal = {
             
             console.log('🔍 Buscando:', texto);
             
-            // Buscar en el mapa por nombre
-            if (window.capaPaisesGlobal) {
-                for (let layer of window.capaPaisesGlobal.getLayers()) {
-                    const nombre = layer.feature?.properties?.name || '';
-                    if (nombre.toLowerCase() === texto.toLowerCase() ||
-                        nombre.toLowerCase().includes(texto.toLowerCase())) {
-                        layer.fireEvent('click');
+            // Buscar por código ISO3 directo
+            if (texto.length === 3 && /^[A-Za-z]{3}$/.test(texto)) {
+                const iso3 = texto.toUpperCase();
+                if (window.APIBancoMundial && window.APIBancoMundial.isSoportado(iso3)) {
+                    if (window.DashboardReal) {
+                        window.DashboardReal.mostrar(iso3);
                         return;
                     }
                 }
             }
             
-            // Buscar por ISO3
-            if (texto.length === 3 && /^[A-Za-z]{3}$/.test(texto)) {
-                const iso3 = texto.toUpperCase();
-                if (window.APIBancoMundial && window.APIBancoMundial.isSoportado(iso3)) {
-                    if (window.DashboardReal) window.DashboardReal.mostrar(iso3);
-                    return;
+            // Buscar en el mapa por nombre
+            if (window.capaPaisesGlobal) {
+                for (let layer of window.capaPaisesGlobal.getLayers()) {
+                    const nombre = layer.feature?.properties?.name || '';
+                    if (nombre.toLowerCase() === texto.toLowerCase()) {
+                        // Simular clic en el país
+                        layer.fireEvent('click');
+                        return;
+                    }
                 }
             }
             
