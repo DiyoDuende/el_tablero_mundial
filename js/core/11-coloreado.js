@@ -1,6 +1,6 @@
 // js/core/11-coloreado.js
 // ============================================
-// COLOREADO DINÁMICO - Con diagnóstico
+// COLOREADO DINÁMICO - Basado en datos reales del Banco Mundial
 // ============================================
 
 const Coloreado = {
@@ -33,29 +33,28 @@ const Coloreado = {
         console.log(`🎨 Coloreando ${totalPaises} países por PIB...`);
         
         // ========================================
-        // DIAGNÓSTICO: Mostrar primeros 10 nombres
+        // DIAGNÓSTICO: Mostrar primeros 10 nombres REALES del GeoJSON
         // ========================================
         console.log('📋 Primeros 10 países del GeoJSON:');
         let contador = 0;
         for (let layer of capa.getLayers()) {
-            const nombrePais =
-    layer.feature?.properties?.ADMIN ||
-    layer.feature?.properties?.name ||
-    layer.feature?.properties?.NAME ||
-    '';
-            if (nombre && contador < 10) {
-                console.log(`   ${contador + 1}. "${nombre}"`);
+            const nombrePais = layer.feature?.properties?.ADMIN || 
+                              layer.feature?.properties?.name || 
+                              layer.feature?.properties?.NAME ||
+                              'sin nombre';
+            if (contador < 10) {
+                console.log(`   ${contador + 1}. "${nombrePais}"`);
                 contador++;
+            } else {
+                break;
             }
         }
         
         // ========================================
-        // Construir mapa de nombres automáticamente
+        // Mapa de nombres GeoJSON a ISO3 (basado en el GeoJSON real)
         // ========================================
-        const mapaNombres = {};
-        
-        // Países más comunes (GeoJSON usa nombres en inglés)
-        const listaNombres = {
+        // Los nombres son los que aparecen en el diagnóstico
+        const mapaNombres = {
             'Spain': 'ESP',
             'France': 'FRA',
             'Germany': 'DEU',
@@ -100,10 +99,6 @@ const Coloreado = {
             'Egypt': 'EGY'
         };
         
-        for (let [nombreGeo, iso3] of Object.entries(listaNombres)) {
-            mapaNombres[nombreGeo] = iso3;
-        }
-        
         // ========================================
         // Colorear países
         // ========================================
@@ -111,34 +106,23 @@ const Coloreado = {
         let encontrados = 0;
         
         for (let layer of capa.getLayers()) {
-            const nombrePais =
-    layer.feature?.properties?.ADMIN ||
-    layer.feature?.properties?.name ||
-    layer.feature?.properties?.NAME ||
-    '';
+            const nombrePais = layer.feature?.properties?.ADMIN || 
+                              layer.feature?.properties?.name || 
+                              layer.feature?.properties?.NAME ||
+                              '';
             if (!nombrePais) continue;
             
             // Buscar ISO3 en el mapa de nombres
             let iso3 = mapaNombres[nombrePais];
             
             if (!iso3) {
-                // Intentar limpiar el nombre (quitar "The", "Republic of", etc.)
+                // Intentar limpiar el nombre
                 let nombreLimpio = nombrePais
                     .replace(/^The /, '')
                     .replace(/^Republic of /, '')
-                    .replace(/^Kingdom of /, '');
+                    .replace(/^Kingdom of /, '')
+                    .replace(/ \(the\)$/, '');
                 iso3 = mapaNombres[nombreLimpio];
-            }
-            
-            if (!iso3 && window.APIBancoMundial?.paisesSoportados) {
-                // Buscar por coincidencia parcial
-                for (let [codigo, nombre] of Object.entries(window.APIBancoMundial.paisesSoportados)) {
-                    if (nombrePais.toLowerCase().includes(nombre.toLowerCase()) ||
-                        nombre.toLowerCase().includes(nombrePais.toLowerCase())) {
-                        iso3 = codigo;
-                        break;
-                    }
-                }
             }
             
             if (iso3) {
@@ -165,48 +149,13 @@ const Coloreado = {
         console.log(`📊 Países con código ISO3 encontrados: ${encontrados}`);
         console.log(`✅ ${coloreados} países coloreados por PIB`);
         
-        if (coloreados === 0 && encontrados === 0) {
-            console.error('❌ CRÍTICO: No se encontró ningún país. Los nombres del GeoJSON no coinciden.');
-            console.log('💡 Solución: Revisa la lista de nombres mostrada arriba y actualiza el mapa de nombres.');
-            
-            // Intentar colorear España directamente por su nombre exacto
-            await this.probarColorearEspanaDirecto(capa);
-        }
-        
         if (coloreados > 0) {
             this.actualizarLeyenda('💰 PIB per cápita', this.umbralesPIB);
-        }
-    },
-    
-    async probarColorearEspanaDirecto(capa) {
-        console.log('🔍 Buscando España por nombre exacto...');
-        
-        for (let layer of capa.getLayers()) {
-            const nombrePais =
-    layer.feature?.properties?.ADMIN ||
-    layer.feature?.properties?.name ||
-    layer.feature?.properties?.NAME ||
-    '';
-            console.log(`   Comparando con: "${nombre}"`);
-            
-            if (nombre === 'Spain' || nombre === 'España' || nombre?.toLowerCase().includes('spain')) {
-                console.log(`✅ Encontrado: "${nombre}"`);
-                const datos = await window.CacheDatos?.obtenerDatos('ESP');
-                if (datos?.pib?.valor) {
-                    const color = this.getColorPorPIB(datos.pib.valor);
-                    layer.setStyle({
-                        fillColor: color,
-                        fillOpacity: 0.75,
-                        color: '#ffffff',
-                        weight: 0.5
-                    });
-                    console.log(`🎨 España coloreada con PIB: ${datos.pib.valor} USD`);
-                    this.actualizarLeyenda('💰 PIB per cápita (prueba)', this.umbralesPIB);
-                } else {
-                    console.warn('⚠️ No se pudieron obtener datos de España');
-                }
-                break;
-            }
+        } else {
+            console.warn('⚠️ No se encontraron datos. Verifica los nombres mostrados arriba.');
+            // Mostrar ayuda
+            console.log('💡 Si ves "Spain" en la lista, el código debería funcionar.');
+            console.log('💡 Si ves "España", cambia "Spain" por "España" en mapaNombres.');
         }
     },
     
