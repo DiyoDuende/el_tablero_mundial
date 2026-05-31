@@ -1,6 +1,6 @@
 // js/ui/00-mapa.js
 // ============================================
-// MAPA MUNDIAL - Usando ISO_A3 del GeoJSON
+// MAPA MUNDIAL - Usando ISO3166-1-Alpha-3 del GeoJSON
 // ============================================
 
 let mapaGlobal = null;
@@ -51,7 +51,6 @@ const MapaGlobal = {
                 console.log('✅ GeoJSON de países cargado');
                 console.log('📊 Total de países en el mapa:', capaPaisesGlobal.getLayers().length);
                 
-                // Solo UNA llamada al coloreado
                 setTimeout(() => {
                     if (window.Coloreado) {
                         console.log('🎨 Iniciando coloreado automático...');
@@ -68,14 +67,13 @@ const MapaGlobal = {
     
     onEachFeature: function(feature, layer) {
         // Obtener nombre del país
-        const nombre = feature.properties?.ADMIN || 
-                      feature.properties?.name || 
+        const nombre = feature.properties?.name || 
+                      feature.properties?.ADMIN || 
                       'Desconocido';
         
-        // Obtener ISO3 directamente del GeoJSON
-        const iso3 = feature.properties?.ISO_A3 || 
-                     feature.properties?.ADM0_A3 || 
-                     feature.properties?.iso_a3 ||
+        // Obtener ISO3 directamente del GeoJSON (campo correcto)
+        const iso3 = feature.properties?.['ISO3166-1-Alpha-3'] || 
+                     feature.properties?.ISO_A3 || 
                      null;
         
         // Tooltip con nombre
@@ -85,15 +83,6 @@ const MapaGlobal = {
         layer.on('click', () => {
             this.onPaisClick(iso3, nombre);
         });
-        
-        // Diagnóstico: mostrar los primeros 10 países
-        if (window._mostradosDiagnostico === undefined) {
-            window._mostradosDiagnostico = 0;
-        }
-        if (window._mostradosDiagnostico < 10 && iso3) {
-            console.log(`   📍 ${nombre} → ${iso3}`);
-            window._mostradosDiagnostico++;
-        }
     },
     
     onPaisClick: function(iso3, nombre) {
@@ -105,7 +94,6 @@ const MapaGlobal = {
             }
         } else {
             console.log(`ℹ️ No hay datos económicos para ${nombre} (${iso3})`);
-            // Mostrar mensaje amigable
             const container = document.getElementById('dashboard-container');
             if (container) {
                 container.innerHTML = `
@@ -151,6 +139,18 @@ const BuscadorGlobal = {
             
             console.log('🔍 Buscando:', texto);
             
+            // Buscar en el mapa por nombre
+            if (window.capaPaisesGlobal) {
+                for (let layer of window.capaPaisesGlobal.getLayers()) {
+                    const nombre = layer.feature?.properties?.name || '';
+                    if (nombre.toLowerCase() === texto.toLowerCase() ||
+                        nombre.toLowerCase().includes(texto.toLowerCase())) {
+                        layer.fireEvent('click');
+                        return;
+                    }
+                }
+            }
+            
             // Buscar por ISO3
             if (texto.length === 3 && /^[A-Za-z]{3}$/.test(texto)) {
                 const iso3 = texto.toUpperCase();
@@ -160,26 +160,7 @@ const BuscadorGlobal = {
                 }
             }
             
-            // Buscar por nombre (recorriendo las capas del mapa)
-            let encontrado = false;
-            if (window.capaPaisesGlobal) {
-                for (let layer of window.capaPaisesGlobal.getLayers()) {
-                    const nombre = layer.feature?.properties?.ADMIN || '';
-                    if (nombre.toLowerCase() === texto.toLowerCase() ||
-                        nombre.toLowerCase().includes(texto.toLowerCase())) {
-                        const iso3 = layer.feature?.properties?.ISO_A3;
-                        if (iso3 && window.DashboardReal) {
-                            window.DashboardReal.mostrar(iso3);
-                            encontrado = true;
-                            break;
-                        }
-                    }
-                }
-            }
-            
-            if (!encontrado) {
-                alert(`❌ No se encontró "${texto}"`);
-            }
+            alert(`❌ No se encontró "${texto}"`);
         };
         
         input.addEventListener('keypress', (e) => {
