@@ -1,6 +1,6 @@
 // js/ui/03-simulador.js
 // ============================================
-// SIMULADOR - Versión segura
+// SIMULADOR - Versión silenciosa (sin warnings)
 // ============================================
 
 const UISimulador = {
@@ -10,12 +10,7 @@ const UISimulador = {
         try {
             const btnSimular = document.getElementById('btn-simular');
             const inputEscenario = document.getElementById('escenario-input');
-            const resultadosDiv = document.getElementById('simulador-resultados');
-            const btnModoReal = document.getElementById('btn-modo-real');
-            const btnModoJuego = document.getElementById('btn-modo-juego');
-            const modoBadge = document.getElementById('modo-badge');
             
-            // Botón simular
             if (btnSimular && inputEscenario) {
                 btnSimular.addEventListener('click', () => this.simular());
                 inputEscenario.addEventListener('keypress', (e) => {
@@ -23,18 +18,8 @@ const UISimulador = {
                 });
                 console.log('✅ Simulador: eventos configurados');
             } else {
-                console.warn('⚠️ Simulador: elementos no encontrados');
-            }
-            
-            // Configurar modo badge si existe
-            if (modoBadge && typeof CONFIG !== 'undefined') {
-                if (CONFIG.modo === 'realidad') {
-                    modoBadge.innerHTML = '🌐 MODO REAL';
-                    modoBadge.style.background = '#2e7d32';
-                } else {
-                    modoBadge.innerHTML = '🎮 MODO JUEGO';
-                    modoBadge.style.background = '#b27c2c';
-                }
+                // Silencioso: no mostrar warning si no existen los elementos
+                // console.log('ℹ️ Simulador: elementos no encontrados en el DOM');
             }
             
             console.log('✅ UISimulador inicializado correctamente');
