@@ -1,42 +1,28 @@
+// js/simulador/06-decaimiento.js
 // ============================================
-// DECAIMIENTO - Efectos temporales
+// DECAIMIENTO - Cómo se disipan los efectos
 // ============================================
 
-const Decaimiento = {
+const DECAIMIENTO = {
+    factorPorTurno: 0.85,  // 15% de decaimiento por turno
     
-    lambda: 0.1,
-    
-    constantes: {
-        militar: 0.05,
-        económico: 0.1,
-        social: 0.15,
-        financiero: 0.2,
-        político: 0.1,
-        energético: 0.08
-    },
-    
-    calcular: function(impactoInicial, tiempo, poder) {
-        const lambda = this.constantes[poder] || this.lambda;
-        return impactoInicial * Math.exp(-lambda * tiempo);
-    },
-    
-    tiempoParaPorcentaje: function(porcentaje, poder) {
-        const lambda = this.constantes[poder] || this.lambda;
-        return -Math.log(porcentaje) / lambda;
-    },
-    
-    aplicar: function(territorioId, tiempoTranscurrido) {
-        if (CONFIG.modo !== 'juego') return;
-        
-        for (let poder of PODERES.lista) {
-            const valorActual = EstadoTablero.obtenerPoder(territorioId, poder);
-            const desviacion = valorActual - 0.5;
-            const nuevaDesviacion = desviacion * Math.exp(-this.lambda * tiempoTranscurrido);
-            const nuevoValor = 0.5 + nuevaDesviacion;
-            
-            EstadoTablero.setPoder(territorioId, poder, nuevoValor);
+    aplicar: function(valor, turnosTranscurridos) {
+        let resultado = valor;
+        for (let i = 0; i < turnosTranscurridos; i++) {
+            resultado = resultado * this.factorPorTurno;
         }
+        return Math.max(0, Math.round(resultado * 10) / 10);
+    },
+    
+    tiempoVida: function(valorInicial, umbral = 1) {
+        let turnos = 0;
+        let valor = valorInicial;
+        while (valor > umbral && turnos < 50) {
+            valor = valor * this.factorPorTurno;
+            turnos++;
+        }
+        return turnos;
     }
 };
 
-window.Decaimiento = Decaimiento;
+window.DECAIMIENTO = DECAIMIENTO;
