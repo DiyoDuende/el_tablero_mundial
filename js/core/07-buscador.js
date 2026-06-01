@@ -1,6 +1,6 @@
 // js/core/07-buscador.js
 // ============================================
-// BUSCADOR GLOBAL - Conecta con el mapa y los paneles
+// BUSCADOR GLOBAL - Conecta con el mapa y el dashboard
 // ============================================
 
 const BuscadorGlobal = {
@@ -42,7 +42,7 @@ const BuscadorGlobal = {
             const iso3 = iso3Match[1].toUpperCase();
             if (typeof DashboardReal !== 'undefined' && DashboardReal.mostrar) {
                 DashboardReal.mostrar(iso3);
-                // También centrar el mapa en el país
+                // También centrar el mapa en el país si existe la función
                 if (typeof MapaGlobal !== 'undefined' && MapaGlobal.centrarEnPais) {
                     MapaGlobal.centrarEnPais(iso3);
                 }
