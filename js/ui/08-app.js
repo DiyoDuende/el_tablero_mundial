@@ -222,60 +222,28 @@ document.addEventListener('DOMContentLoaded', () => {
             Coloreado.aplicarColoresPIB();
         }
     }, 3000);
-    
-    console.log('✅ App principal inicializada correctamente');
 
     // ========================================
-// ACTIVAR COLOREADO DEL MAPA
-// ========================================
-setTimeout(() => {
-    if (typeof Coloreado !== 'undefined') {
-        console.log('🎨 Activando coloreado del mapa...');
-        Coloreado.aplicarColoresPIB();
-    } else {
-        console.warn('⚠️ Coloreado no disponible');
+    // 11. Conectar botones de capa
+    // ========================================
+    const btnPIB = document.querySelector('.capa-icon[title="PIB"]') || 
+                   document.querySelector('.capa-icon[title="Económico"]');
+    const btnInflacion = document.querySelector('.capa-icon[title="Inflación"]');
+    const btnDesempleo = document.querySelector('.capa-icon[title="Desempleo"]');
+    const btnReset = document.querySelector('.capa-icon[title="Restablecer"]');
+
+    if (btnPIB && typeof Coloreado !== 'undefined') {
+        btnPIB.addEventListener('click', () => Coloreado.aplicarColoresPIB());
     }
-}, 3000);
-
-// ========================================
-// CONECTAR BOTONES DE CAPA
-// ========================================
-const btnPIB = document.querySelector('.capa-icon[title="PIB"]') || 
-               document.querySelector('.capa-icon[title="Económico"]');
-const btnInflacion = document.querySelector('.capa-icon[title="Inflación"]');
-const btnDesempleo = document.querySelector('.capa-icon[title="Desempleo"]');
-const btnReset = document.querySelector('.capa-icon[title="Restablecer"]');
-
-if (btnPIB && typeof Coloreado !== 'undefined') {
-    btnPIB.addEventListener('click', () => Coloreado.aplicarColoresPIB());
-}
-if (btnInflacion && typeof Coloreado !== 'undefined') {
-    btnInflacion.addEventListener('click', () => Coloreado.aplicarColoresInflacion());
-}
-if (btnDesempleo && typeof Coloreado !== 'undefined') {
-    btnDesempleo.addEventListener('click', () => Coloreado.aplicarColoresDesempleo());
-}
-if (btnReset && typeof Coloreado !== 'undefined') {
-    btnReset.addEventListener('click', () => Coloreado.resetearColores());
-}
-
-// ========================================
-// CONECTAR MODALES DE README Y NORMAS
-// ========================================
-const btnReadme = document.getElementById('btn-readme');
-const btnNormas = document.getElementById('btn-normas');
-const modalReadme = document.getElementById('modal-readme');
-const modalNormas = document.getElementById('modal-normas');
-
-if (btnReadme && modalReadme) {
-    btnReadme.addEventListener('click', () => {
-        modalReadme.style.display = 'flex';
-    });
-}
-if (btnNormas && modalNormas) {
-    btnNormas.addEventListener('click', () => {
-        modalNormas.style.display = 'flex';
-    });
-}
+    if (btnInflacion && typeof Coloreado !== 'undefined') {
+        btnInflacion.addEventListener('click', () => Coloreado.aplicarColoresInflacion());
+    }
+    if (btnDesempleo && typeof Coloreado !== 'undefined') {
+        btnDesempleo.addEventListener('click', () => Coloreado.aplicarColoresDesempleo());
+    }
+    if (btnReset && typeof Coloreado !== 'undefined') {
+        btnReset.addEventListener('click', () => Coloreado.resetearColores());
+    }
     
+    console.log('✅ App principal inicializada correctamente');
 });
