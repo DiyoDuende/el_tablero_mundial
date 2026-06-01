@@ -12,7 +12,7 @@
     <!-- Estilos propios -->
     <link rel="stylesheet" href="css/estilo.css">
     
-    <!-- Marcador para resaltar markdown -->
+    <!-- Marcador para markdown -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
@@ -75,6 +75,11 @@
                     <button class="capa-icon" data-capa="corporaciones" title="Corporaciones">🏢</button>
                 </div>
             </div>
+            
+            <!-- CONTENEDOR DEL DASHBOARD (datos del país) -->
+            <div id="dashboard-container" class="dashboard-container"></div>
+            
+            <!-- PANEL DE INFORMACIÓN ESTÁTICA -->
             <div class="panel-info" id="panel-info">
                 <div class="info-header">
                     <h3 id="pais-nombre">🇪🇸 España</h3>
@@ -99,7 +104,7 @@
         </div>
     </div>
 
-    <!-- VERIFICADOR CIUDADANO (oculto por defecto) -->
+    <!-- VERIFICADOR CIUDADANO -->
     <div id="verificador-panel" class="verificador-container" style="display: none;">
         <div class="verificador-header">
             <h3>✅ VERIFICADOR CIUDADANO · Explicación automática</h3>
@@ -114,7 +119,7 @@
         </div>
     </div>
 
-    <!-- RELACIONES GLOBALES (oculto por defecto) -->
+    <!-- RELACIONES GLOBALES -->
     <div id="relaciones-globales-panel" class="relaciones-globales-container" style="display: none;">
         <div class="relaciones-globales-header">
             <h4>🌐 MAPA GLOBAL DE RELACIONES</h4>
@@ -123,7 +128,7 @@
         <div id="relaciones-contenido"></div>
     </div>
 
-    <!-- TIMELINE GLOBAL (oculto por defecto) -->
+    <!-- TIMELINE GLOBAL -->
     <div id="timeline-panel" class="timeline-global-container" style="display: none;">
         <div class="timeline-global-header">
             <h4>🌐 VISOR DE LÍNEA TEMPORAL GLOBAL</h4>
@@ -181,15 +186,14 @@
 <script src="js/core/04-flujos.js"></script>
 <script src="js/core/05-verificador.js"></script>
 <script src="js/core/06-idioma.js"></script>
-<script src="js/core/07-datos-lugares.js"></script>
 <script src="js/core/08-datos-reales.js"></script>
 
-<!-- APIs y Simulación (NUEVOS) -->
+<!-- APIs y Simulación -->
 <script src="js/core/09-bancomundial.js"></script>
 <script src="js/core/10-cache-datos.js"></script>
 <script src="js/core/11-coloreado.js"></script>
 
-<!-- Simulador avanzado -->
+<!-- Simulador base -->
 <script src="js/simulador/00-poderes.js"></script>
 <script src="js/simulador/01-sectores.js"></script>
 <script src="js/simulador/02-objetivos.js"></script>
@@ -199,17 +203,36 @@
 <script src="js/simulador/06-decaimiento.js"></script>
 <script src="js/simulador/07-motor.js"></script>
 
+<!-- Módulos avanzados del simulador (opcionales, pero recomendados) -->
+<script src="js/simulador/08-explicador.js"></script>
+<script src="js/simulador/09-cadena-impacto.js"></script>
+<script src="js/simulador/10-visor-cadena.js"></script>
+<script src="js/simulador/11-timeline-global.js"></script>
+<script src="js/simulador/13-factor-territorio.js"></script>
+
+<!-- Legislativo (opcional) -->
+<script src="js/simulador/legislativo/leyes.js"></script>
+<script src="js/simulador/legislativo/interprete-legal.js"></script>
+<script src="js/simulador/legislativo/impactos.js"></script>
+
 <!-- Intérpretes -->
 <script src="js/simulador/interpretes/geopolitico.js"></script>
 <script src="js/simulador/interpretes/economico.js"></script>
 <script src="js/simulador/interpretes/legislativo.js"></script>
 <script src="js/simulador/interpretes/social.js"></script>
 
-<!-- UI -->
+<!-- UI Principal -->
 <script src="js/ui/00-mapa.js"></script>
 <script src="js/ui/01-panel-info.js"></script>
 <script src="js/ui/02-verificador.js"></script>
 <script src="js/ui/03-simulador.js"></script>
+
+<!-- UI adicional -->
+<script src="js/ui/05-relaciones.js"></script>
+<script src="js/ui/06-relaciones-globales.js"></script>
+<script src="js/ui/07-timeline.js"></script>
+
+<!-- Dashboard y App -->
 <script src="js/ui/09-dashboard.js"></script>
 <script src="js/ui/08-app.js"></script>
 
