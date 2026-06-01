@@ -1,6 +1,6 @@
 // js/ui/00-mapa.js
 // ============================================
-// MAPA MUNDIAL - Versión corregida v4.1
+// MAPA MUNDIAL - Inicialización y control
 // ============================================
 
 let mapaGlobal = null;
@@ -15,14 +15,16 @@ const MapaGlobal = {
     },
     
     init: function() {
+        // Protección: comprobar que Leaflet está cargado
+        if (typeof L === 'undefined') {
+            console.error('❌ Leaflet no está cargado');
+            return;
+        }
+        
         if (mapaGlobal) return;
         
-        console.log('🗺️ Inicializando mapa...');
-        
-        // Crear mapa
         mapaGlobal = L.map('mapa-mundial').setView(this.config.centro, this.config.zoom);
         
-        // Añadir capa base
         L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; CartoDB',
             subdomains: 'abcd',
@@ -30,8 +32,8 @@ const MapaGlobal = {
             minZoom: 1
         }).addTo(mapaGlobal);
         
-        // Cargar GeoJSON
         this.cargarGeoJSON();
+        console.log('🗺️ Mapa inicializado');
     },
     
     cargarGeoJSON: function() {
@@ -50,72 +52,37 @@ const MapaGlobal = {
                     onEachFeature: this.onEachFeature.bind(this)
                 }).addTo(mapaGlobal);
                 
-                // ============================================
-                // FIX 3: Actualizar window.capaPaisesGlobal
-                // ============================================
                 window.capaPaisesGlobal = capaPaisesGlobal;
                 
                 console.log('✅ GeoJSON de países cargado');
-                console.log('📊 Total de países:', capaPaisesGlobal.getLayers().length);
+                console.log('📊 Total de países en el mapa:', capaPaisesGlobal.getLayers().length);
                 
-                // ============================================
-                // FIX 2: Disparar evento 'mapa-listos'
-                // ============================================
-                window.dispatchEvent(new CustomEvent('mapa-listos'));
-                
-                // Aplicar coloreado si existe
                 setTimeout(() => {
-                    if (window.Coloreado && typeof window.Coloreado.aplicarColoresPIB === 'function') {
+                    if (window.Coloreado) {
                         window.Coloreado.aplicarColoresPIB();
                     }
-                }, 500);
+                }, 2000);
+                
+                window.dispatchEvent(new CustomEvent('mapa-listos'));
             })
             .catch(error => {
                 console.error('❌ Error cargando GeoJSON:', error);
-                // Disparar evento incluso con error para no bloquear
-                window.dispatchEvent(new CustomEvent('mapa-listos', { detail: { error: true } }));
             });
     },
     
     onEachFeature: function(feature, layer) {
-        const nombre = feature.properties?.name || 
-                      feature.properties?.ADMIN || 
-                      'Desconocido';
+        const nombre = feature.properties?.name || feature.properties?.ADMIN || 'Desconocido';
         
-        // Tooltip con nombre
         layer.bindTooltip(nombre, { sticky: true });
         
-        // Click
         layer.on('click', () => {
-            this.onPaisClick(feature);
-        });
-    },
-    
-    onPaisClick: function(feature) {
-        const nombre = feature.properties?.name || 
-                      feature.properties?.ADMIN || 
-                      'Desconocido';
-        
-        const iso3 = feature.properties?.['ISO3166-1-Alpha-3'] || null;
-        
-        console.log(`🔍 Clic en país: ${nombre} (ISO3: ${iso3})`);
-        
-        if (iso3 && iso3 !== '-99' && iso3.length === 3) {
-            if (window.DashboardReal && typeof window.DashboardReal.mostrar === 'function') {
+            const iso3 = feature.properties?.['ISO3166-1-Alpha-3'];
+            if (iso3 && window.DashboardReal) {
                 window.DashboardReal.mostrar(iso3);
+            } else {
+                console.log(`ℹ️ No hay datos para: ${nombre}`);
             }
-        } else {
-            const container = document.getElementById('dashboard-container');
-            if (container) {
-                container.innerHTML = `
-                    <div class="dashboard-error">
-                        <div class="error-icono">🌍</div>
-                        <h3>${nombre}</h3>
-                        <p>No tenemos datos económicos disponibles para este país.</p>
-                    </div>
-                `;
-            }
-        }
+        });
     },
     
     centrarEn: function(lat, lon, zoom = 6) {
@@ -124,35 +91,76 @@ const MapaGlobal = {
         }
     },
     
-    centrarEnPais: function(iso3) {
-        if (!capaPaisesGlobal) return;
-        
-        let encontrado = false;
-        capaPaisesGlobal.eachLayer(layer => {
-            const layerIso3 = layer.feature?.properties?.['ISO3166-1-Alpha-3'];
-            if (layerIso3 === iso3) {
-                const latlng = layer.getBounds().getCenter();
-                this.centrarEn(latlng.lat, latlng.lng, 5);
-                layer.fireEvent('click');
-                encontrado = true;
-            }
-        });
-        
-        if (!encontrado) {
-            console.log(`⚠️ No se encontró el país con ISO3: ${iso3}`);
-        }
-    },
-    
     getMapa: function() {
         return mapaGlobal;
     }
 };
 
-// Inicializar cuando el DOM esté listo
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => MapaGlobal.init());
-} else {
-    MapaGlobal.init();
-}
+// ============================================
+// BUSCADOR GLOBAL
+// ============================================
 
+const BuscadorGlobal = {
+    init: function() {
+        const input = document.getElementById('buscador-global');
+        const btn = document.getElementById('btn-buscar');
+        
+        if (!input) {
+            console.log('⚠️ Buscador no encontrado');
+            return;
+        }
+        
+        const buscar = () => {
+            const texto = input.value.trim();
+            if (!texto) return;
+            
+            console.log('🔍 Buscando:', texto);
+            
+            // Buscar por código ISO3 directo
+            if (texto.length === 3 && /^[A-Za-z]{3}$/.test(texto)) {
+                const iso3 = texto.toUpperCase();
+                if (window.APIBancoMundial && window.APIBancoMundial.isSoportado(iso3)) {
+                    if (window.DashboardReal) window.DashboardReal.mostrar(iso3);
+                    return;
+                }
+            }
+            
+            // Buscar en el mapa por nombre
+            if (window.capaPaisesGlobal) {
+                for (let layer of window.capaPaisesGlobal.getLayers()) {
+                    const nombre = layer.feature?.properties?.name || '';
+                    if (nombre.toLowerCase() === texto.toLowerCase() || 
+                        nombre.toLowerCase().includes(texto.toLowerCase())) {
+                        const iso3 = layer.feature?.properties?.['ISO3166-1-Alpha-3'];
+                        if (iso3 && window.DashboardReal) {
+                            window.DashboardReal.mostrar(iso3);
+                            return;
+                        }
+                    }
+                }
+            }
+            
+            alert(`❌ No se encontró "${texto}"`);
+        };
+        
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') buscar();
+        });
+        
+        if (btn) {
+            btn.addEventListener('click', buscar);
+        }
+        
+        console.log('🔍 Buscador global inicializado');
+    }
+};
+
+// Inicializar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', () => {
+    MapaGlobal.init();
+    BuscadorGlobal.init();
+});
+
+// Exportar para uso global
 window.MapaGlobal = MapaGlobal;
+window.BuscadorGlobal = BuscadorGlobal;
