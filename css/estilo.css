@@ -2629,3 +2629,18 @@ body {
     70% { opacity: 1; }
     100% { opacity: 0; visibility: hidden; }
 }
+
+/* ============================================ */
+/* CORRECCIÓN: ALTURA DEL MAPA (AÑADIR AL FINAL) */
+/* ============================================ */
+.mapa-container,
+#mapa-mundial {
+    height: 100%;
+    width: 100%;
+    min-height: 500px;
+}
+
+.main-container {
+    height: 600px;
+    min-height: 500px;
+}
