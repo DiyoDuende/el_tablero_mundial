@@ -7,36 +7,28 @@ const UIVerificador = {
     init: function() {
         console.log('✅ Inicializando UIVerificador v4.0');
         
-        try {
-            const btnVerificar = document.getElementById('btn-verificar');
-            const inputPregunta = document.getElementById('verificador-pregunta');
-            const btnCerrar = document.getElementById('btn-cerrar-verificador');
-            const btnPanel = document.getElementById('btn-verificador-panel');
-            const panel = document.getElementById('verificador-panel');
-            
-            if (btnVerificar && inputPregunta) {
-                btnVerificar.addEventListener('click', () => this.verificar());
-                inputPregunta.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') this.verificar();
-                });
-            }
-            
-            if (btnCerrar && panel) {
-                btnCerrar.addEventListener('click', () => {
-                    panel.style.display = 'none';
-                });
-            }
-            
-            if (btnPanel && panel) {
-                btnPanel.addEventListener('click', () => {
-                    panel.style.display = 'block';
-                    inputPregunta?.focus();
-                });
-            }
-            
-            console.log('✅ UIVerificador inicializado correctamente');
-        } catch(e) {
-            console.error('❌ Error en UIVerificador.init():', e.message);
+        const btnVerificar = document.getElementById('btn-verificar');
+        const inputPregunta = document.getElementById('verificador-pregunta');
+        const btnCerrar = document.getElementById('btn-cerrar-verificador');
+        const btnPanel = document.getElementById('btn-verificador-panel');
+        const panel = document.getElementById('verificador-panel');
+        
+        if (btnVerificar && inputPregunta) {
+            btnVerificar.addEventListener('click', () => this.verificar());
+            inputPregunta.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') this.verificar();
+            });
+        }
+        
+        if (btnCerrar && panel) {
+            btnCerrar.addEventListener('click', () => panel.style.display = 'none');
+        }
+        
+        if (btnPanel && panel) {
+            btnPanel.addEventListener('click', () => {
+                panel.style.display = 'block';
+                inputPregunta?.focus();
+            });
         }
     },
     
@@ -49,29 +41,26 @@ const UIVerificador = {
         const pregunta = input.value.trim();
         if (!pregunta) return;
         
-        // Mostrar carga
         resultadoDiv.innerHTML = `<div class="verificacion-cargando">🔍 Verificando "<strong>${this.escapeHTML(pregunta)}</strong>"...</div>`;
         
         let respuesta = null;
         
-        // Usar el verificador real si existe
+        // Usar el verificador real (js/core/05-verificador.js)
         if (typeof Verificador !== 'undefined' && Verificador.verificar) {
             respuesta = Verificador.verificar(pregunta);
         }
         
-        // Si no hay respuesta o no se encontró, usar respuesta genérica inteligente
+        // Si no hay respuesta o no se encontró, usar respuesta genérica
         if (!respuesta || !respuesta.encontrado) {
             respuesta = this.respuestaGenerica(pregunta);
         }
         
-        // Generar HTML
         resultadoDiv.innerHTML = this.generarHTML(respuesta, pregunta);
     },
     
     respuestaGenerica: function(pregunta) {
         const p = pregunta.toLowerCase();
         
-        // Base de conocimiento local
         if (p.includes('petróleo') || p.includes('gasolina')) {
             return {
                 encontrado: true,
@@ -127,10 +116,6 @@ const UIVerificador = {
             estadoIcono = '📊';
             estadoColor = '#2e7d32';
             estadoTexto = 'DATO VERIFICADO';
-        } else if (respuesta.estado === 'verdadero') {
-            estadoIcono = '✅';
-            estadoColor = '#2e7d32';
-            estadoTexto = 'VERDADERO';
         } else if (respuesta.estado === 'falso') {
             estadoIcono = '❌';
             estadoColor = '#b71c1c';
@@ -150,14 +135,7 @@ const UIVerificador = {
         if (respuesta.factores && respuesta.factores.length > 0) {
             html += `<div class="factores-impacto"><h5>📊 FACTORES DE IMPACTO</h5>`;
             for (let f of respuesta.factores) {
-                html += `
-                    <div class="factor-item">
-                        <div class="factor-nombre">${f.nombre}</div>
-                        <div class="factor-barra"><div class="barra-llena" style="width: ${f.porcentaje}%; background: #4fc3f7;"></div></div>
-                        <div class="factor-porcentaje">${f.porcentaje}%</div>
-                        <div class="factor-descripcion">${f.descripcion || ''}</div>
-                    </div>
-                `;
+                html += `<div class="factor-item"><div class="factor-nombre">${f.nombre}</div><div class="factor-barra"><div class="barra-llena" style="width: ${f.porcentaje}%; background: #4fc3f7;"></div></div><div class="factor-porcentaje">${f.porcentaje}%</div><div class="factor-descripcion">${f.descripcion || ''}</div></div>`;
             }
             html += `</div>`;
         }
@@ -166,10 +144,7 @@ const UIVerificador = {
         for (let f of (respuesta.fuentes || ['Verificador ciudadano'])) {
             html += `<li>📄 ${f}</li>`;
         }
-        html += `</ul></div>`;
-        
-        html += `<div class="verificacion-timestamp"><span>🕐 Verificado: ${new Date().toLocaleString()}</span></div>`;
-        html += `</div>`;
+        html += `</ul></div></div>`;
         
         return html;
     },
@@ -182,21 +157,10 @@ const UIVerificador = {
             if (m === '>') return '&gt;';
             return m;
         });
-    },
-    
-    toggle: function() {
-        const panel = document.getElementById('verificador-panel');
-        if (panel) {
-            const isVisible = panel.style.display === 'block';
-            panel.style.display = isVisible ? 'none' : 'block';
-            if (!isVisible) {
-                document.getElementById('verificador-pregunta')?.focus();
-            }
-        }
     }
 };
 
-// Inicializar
+// Inicialización
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => UIVerificador.init());
 } else {
