@@ -99,6 +99,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
+    console.log('✅ Botones de README y NORMAS configurados');
+    
     // ========================================
     // 4. Cargar contenido de README y NORMAS
     // ========================================
@@ -122,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // ========================================
-    // 5. Verificador y otros botones
+    // 5. Verificador - Usar classList para modal
     // ========================================
     
     const btnVerificador = document.getElementById('btn-verificador-panel');
@@ -131,18 +133,20 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (btnVerificador && verificadorPanel) {
         btnVerificador.addEventListener('click', () => {
-            verificadorPanel.style.display = 'block';
+            verificadorPanel.classList.add('active');
         });
     }
     
     if (btnCerrarVerificador && verificadorPanel) {
         btnCerrarVerificador.addEventListener('click', () => {
-            verificadorPanel.style.display = 'none';
+            verificadorPanel.classList.remove('active');
         });
     }
     
+    console.log('✅ Verificador configurado');
+    
     // ========================================
-    // 6. Relaciones Globales
+    // 6. Relaciones Globales - Usar classList para modal
     // ========================================
     
     const btnRelaciones = document.getElementById('btn-relaciones-globales');
@@ -151,18 +155,20 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (btnRelaciones && relacionesPanel) {
         btnRelaciones.addEventListener('click', () => {
-            relacionesPanel.style.display = 'block';
+            relacionesPanel.classList.add('active');
         });
     }
     
     if (btnCerrarRelaciones && relacionesPanel) {
         btnCerrarRelaciones.addEventListener('click', () => {
-            relacionesPanel.style.display = 'none';
+            relacionesPanel.classList.remove('active');
         });
     }
     
+    console.log('✅ Relaciones Globales configurado');
+    
     // ========================================
-    // 7. Timeline Global
+    // 7. Timeline Global - Usar classList para modal
     // ========================================
     
     const btnTimeline = document.getElementById('btn-timeline-panel');
@@ -171,15 +177,17 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (btnTimeline && timelinePanel) {
         btnTimeline.addEventListener('click', () => {
-            timelinePanel.style.display = 'block';
+            timelinePanel.classList.add('active');
         });
     }
     
     if (btnCerrarTimeline && timelinePanel) {
         btnCerrarTimeline.addEventListener('click', () => {
-            timelinePanel.style.display = 'none';
+            timelinePanel.classList.remove('active');
         });
     }
+    
+    console.log('✅ Timeline Global configurado');
     
     // ========================================
     // 8. Buscador rápido del panel lateral
@@ -223,59 +231,28 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }, 3000);
     
-    console.log('✅ App principal inicializada correctamente');
-
     // ========================================
-// ACTIVAR COLOREADO DEL MAPA
-// ========================================
-setTimeout(() => {
-    if (typeof Coloreado !== 'undefined') {
-        console.log('🎨 Activando coloreado del mapa...');
-        Coloreado.aplicarColoresPIB();
-    } else {
-        console.warn('⚠️ Coloreado no disponible');
-    }
-}, 3000);
-
-// ========================================
-// CONECTAR BOTONES DE CAPA
-// ========================================
-const btnPIB = document.querySelector('.capa-icon[title="PIB"]') || 
-               document.querySelector('.capa-icon[title="Económico"]');
-const btnInflacion = document.querySelector('.capa-icon[title="Inflación"]');
-const btnDesempleo = document.querySelector('.capa-icon[title="Desempleo"]');
-const btnReset = document.querySelector('.capa-icon[title="Restablecer"]');
-
-if (btnPIB && typeof Coloreado !== 'undefined') {
-    btnPIB.addEventListener('click', () => Coloreado.aplicarColoresPIB());
-}
-if (btnInflacion && typeof Coloreado !== 'undefined') {
-    btnInflacion.addEventListener('click', () => Coloreado.aplicarColoresInflacion());
-}
-if (btnDesempleo && typeof Coloreado !== 'undefined') {
-    btnDesempleo.addEventListener('click', () => Coloreado.aplicarColoresDesempleo());
-}
-if (btnReset && typeof Coloreado !== 'undefined') {
-    btnReset.addEventListener('click', () => Coloreado.resetearColores());
-}
-
-// ========================================
-// CONECTAR MODALES DE README Y NORMAS
-// ========================================
-const btnReadme = document.getElementById('btn-readme');
-const btnNormas = document.getElementById('btn-normas');
-const modalReadme = document.getElementById('modal-readme');
-const modalNormas = document.getElementById('modal-normas');
-
-if (btnReadme && modalReadme) {
-    btnReadme.addEventListener('click', () => {
-        modalReadme.style.display = 'flex';
-    });
-}
-if (btnNormas && modalNormas) {
-    btnNormas.addEventListener('click', () => {
-        modalNormas.style.display = 'flex';
-    });
-}
+    // 11. Conectar botones de capa
+    // ========================================
     
+    const btnPIB = document.querySelector('.capa-icon[title="PIB"]') || 
+                   document.querySelector('.capa-icon[title="Económico"]');
+    const btnInflacion = document.querySelector('.capa-icon[title="Inflación"]');
+    const btnDesempleo = document.querySelector('.capa-icon[title="Desempleo"]');
+    const btnReset = document.querySelector('.capa-icon[title="Restablecer"]');
+    
+    if (btnPIB && typeof Coloreado !== 'undefined') {
+        btnPIB.addEventListener('click', () => Coloreado.aplicarColoresPIB());
+    }
+    if (btnInflacion && typeof Coloreado !== 'undefined') {
+        btnInflacion.addEventListener('click', () => Coloreado.aplicarColoresInflacion());
+    }
+    if (btnDesempleo && typeof Coloreado !== 'undefined') {
+        btnDesempleo.addEventListener('click', () => Coloreado.aplicarColoresDesempleo());
+    }
+    if (btnReset && typeof Coloreado !== 'undefined') {
+        btnReset.addEventListener('click', () => Coloreado.resetearColores());
+    }
+    
+    console.log('✅ App principal inicializada correctamente');
 });
