@@ -104,21 +104,39 @@ document.addEventListener('DOMContentLoaded', () => {
     // ========================================
     
     if (typeof marked !== 'undefined') {
+        // Cargar README
         fetch('README.md')
-            .then(response => response.text())
+            .then(response => {
+                if (!response.ok) throw new Error('README no encontrado');
+                return response.text();
+            })
             .then(text => {
                 const readmeDiv = document.getElementById('readme-contenido');
                 if (readmeDiv) readmeDiv.innerHTML = marked.parse(text);
+                console.log('✅ README cargado');
             })
-            .catch(err => console.error('Error cargando README:', err));
+            .catch(err => {
+                console.warn('⚠️ Error cargando README:', err.message);
+                const readmeDiv = document.getElementById('readme-contenido');
+                if (readmeDiv) readmeDiv.innerHTML = '<p>📖 Documentación no disponible</p>';
+            });
         
-        fetch('NORMAS.md')
-            .then(response => response.text())
+        // Cargar NORMAS
+        fetch('Normas.md')
+            .then(response => {
+                if (!response.ok) throw new Error('Normas no encontrado');
+                return response.text();
+            })
             .then(text => {
                 const normasDiv = document.getElementById('normas-contenido');
                 if (normasDiv) normasDiv.innerHTML = marked.parse(text);
+                console.log('✅ Normas cargadas');
             })
-            .catch(err => console.error('Error cargando NORMAS:', err));
+            .catch(err => {
+                console.warn('⚠️ Error cargando Normas:', err.message);
+                const normasDiv = document.getElementById('normas-contenido');
+                if (normasDiv) normasDiv.innerHTML = '<p>📜 Normas no disponibles</p>';
+            });
     }
     
     // ========================================
