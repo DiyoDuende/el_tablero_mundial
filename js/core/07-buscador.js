@@ -1,14 +1,15 @@
 // js/core/07-buscador.js
 // ============================================
-// BUSCADOR GLOBAL - Conecta con el mapa y el dashboard
+// BUSCADOR GLOBAL - Versión corregida v4.1
 // ============================================
 
 const BuscadorGlobal = {
     init: function() {
         console.log('🔍 Inicializando BuscadorGlobal');
         
-        const input = document.getElementById('buscador-rapido');
-        const btnBuscar = document.getElementById('btn-buscar');
+        // Buscar por múltiples IDs posibles (por si acaso)
+        const input = document.getElementById('buscador-rapido') || 
+                      document.getElementById('buscador-global');
         
         if (!input) {
             console.warn('⚠️ Buscador: input no encontrado');
@@ -24,6 +25,7 @@ const BuscadorGlobal = {
             if (e.key === 'Enter') buscarHandler();
         });
         
+        const btnBuscar = document.getElementById('btn-buscar');
         if (btnBuscar) {
             btnBuscar.addEventListener('click', buscarHandler);
         }
@@ -36,33 +38,30 @@ const BuscadorGlobal = {
         
         console.log(`🔍 Buscando: "${texto}"`);
         
-        // 1. Buscar por código ISO3 (ej: ESP, FRA, USA)
+        // 1. Buscar por código ISO3
         const iso3Match = texto.match(/^([A-Z]{3})$/i);
         if (iso3Match) {
             const iso3 = iso3Match[1].toUpperCase();
-            if (typeof DashboardReal !== 'undefined' && DashboardReal.mostrar) {
-                DashboardReal.mostrar(iso3);
-                // También centrar el mapa en el país si existe la función
-                if (typeof MapaGlobal !== 'undefined' && MapaGlobal.centrarEnPais) {
-                    MapaGlobal.centrarEnPais(iso3);
+            if (window.DashboardReal && typeof window.DashboardReal.mostrar === 'function') {
+                window.DashboardReal.mostrar(iso3);
+                if (window.MapaGlobal && typeof window.MapaGlobal.centrarEnPais === 'function') {
+                    window.MapaGlobal.centrarEnPais(iso3);
                 }
                 return;
             }
         }
         
-        // 2. Buscar en el mapa por nombre de país
-        if (typeof capaPaisesGlobal !== 'undefined' && capaPaisesGlobal) {
+        // 2. Buscar en el mapa por nombre
+        if (window.capaPaisesGlobal) {
             let encontrado = false;
-            capaPaisesGlobal.eachLayer(layer => {
+            window.capaPaisesGlobal.eachLayer(layer => {
                 const nombrePais = layer.feature?.properties?.ADMIN || 
                                    layer.feature?.properties?.name;
                 if (nombrePais && nombrePais.toLowerCase() === texto.toLowerCase()) {
-                    // Simular clic en el país
                     layer.fireEvent('click');
-                    // Centrar mapa
-                    if (typeof MapaGlobal !== 'undefined' && MapaGlobal.centrarEn) {
+                    if (window.MapaGlobal && typeof window.MapaGlobal.centrarEn === 'function') {
                         const latlng = layer.getBounds().getCenter();
-                        MapaGlobal.centrarEn(latlng.lat, latlng.lng, 5);
+                        window.MapaGlobal.centrarEn(latlng.lat, latlng.lng, 5);
                     }
                     encontrado = true;
                 }
@@ -95,11 +94,11 @@ const BuscadorGlobal = {
     }
 };
 
-// Inicializar cuando el DOM esté listo
+// Inicialización
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => BuscadorGlobal.init());
 } else {
-    BuscadorGlobal.init();
+    setTimeout(() => BuscadorGlobal.init(), 100);
 }
 
 window.BuscadorGlobal = BuscadorGlobal;
