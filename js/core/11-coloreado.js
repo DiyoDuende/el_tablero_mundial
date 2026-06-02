@@ -21,35 +21,52 @@ const Coloreado = {
     },
     
     async aplicarColoresPIB() {
-        const capa = window.capaPaisesGlobal;
+        const capa = window.MapaMundial?.capaPaises;
         if (!capa) {
-            setTimeout(() => this.aplicarColoresPIB(), 1000);
+            console.warn('⚠️ Capa de países no disponible');
             return;
         }
         
+        const iso3Map = {
+            'Spain': 'ESP', 'France': 'FRA', 'Germany': 'DEU', 'Italy': 'ITA',
+            'Portugal': 'PRT', 'United Kingdom': 'GBR', 'United States of America': 'USA',
+            'China': 'CHN', 'Russia': 'RUS', 'Brazil': 'BRA', 'India': 'IND',
+            'Japan': 'JPN', 'Canada': 'CAN', 'Mexico': 'MEX', 'Australia': 'AUS',
+            'South Africa': 'ZAF', 'Netherlands': 'NLD', 'Sweden': 'SWE', 'Norway': 'NOR',
+            'Switzerland': 'CHE', 'Argentina': 'ARG', 'Chile': 'CHL', 'Colombia': 'COL',
+            'Peru': 'PER', 'Venezuela': 'VEN', 'Egypt': 'EGY', 'Turkey': 'TUR',
+            'South Korea': 'KOR', 'Poland': 'POL', 'Ukraine': 'UKR', 'Romania': 'ROU',
+            'Greece': 'GRC', 'Austria': 'AUT', 'Belgium': 'BEL', 'Czech Republic': 'CZE',
+            'Denmark': 'DNK', 'Finland': 'FIN', 'Hungary': 'HUN', 'Ireland': 'IRL'
+        };
+        
         let coloreados = 0;
         
-        for (let layer of capa.getLayers()) {
-            const iso3 = layer.feature?.properties?.['ISO3166-1-Alpha-3'];
-            if (!iso3 || iso3 === '-99') continue;
-            if (!APIBancoMundial.isSoportado(iso3)) continue;
+        capa.eachLayer(layer => {
+            const nombre = layer.feature?.properties?.ADMIN || '';
+            const iso3 = iso3Map[nombre];
             
-            const datos = await CacheDatos.obtenerDatos(iso3);
-            const pib = datos?.pib?.valor;
-            
-            if (pib && pib > 0) {
-                layer.setStyle({
-                    fillColor: this.getColorPorPIB(pib),
-                    fillOpacity: 0.75,
-                    color: '#ffffff',
-                    weight: 0.5
+            if (iso3 && APIBancoMundial.isSoportado(iso3)) {
+                CacheDatos.obtenerDatos(iso3).then(datos => {
+                    const pib = datos?.pib?.valor;
+                    if (pib) {
+                        const color = this.getColorPorPIB(pib);
+                        layer.setStyle({
+                            fillColor: color,
+                            fillOpacity: 0.75,
+                            color: '#ffffff',
+                            weight: 0.5
+                        });
+                        coloreados++;
+                        if (coloreados === 1) {
+                            this.actualizarLeyenda('💰 PIB per cápita', this.umbralesPIB);
+                        }
+                    }
                 });
-                coloreados++;
             }
-        }
+        });
         
-        console.log(`✅ ${coloreados} países coloreados por PIB`);
-        this.actualizarLeyenda('💰 PIB per cápita', this.umbralesPIB);
+        console.log(`🎨 Coloreando mapa por PIB...`);
     },
     
     actualizarLeyenda: function(titulo, umbrales) {
@@ -78,16 +95,18 @@ const Coloreado = {
     },
     
     resetearColores: function() {
-        const capa = window.capaPaisesGlobal;
+        const capa = window.MapaMundial?.capaPaises;
         if (!capa) return;
-        for (let layer of capa.getLayers()) {
+        
+        capa.eachLayer(layer => {
             layer.setStyle({
-                fillColor: '#1a3a4a',
-                fillOpacity: 0.6,
+                fillColor: '#2c3e50',
+                fillOpacity: 0.3,
                 color: '#4fc3f7',
                 weight: 1
             });
-        }
+        });
+        
         const leyenda = document.querySelector('.mapa-leyenda');
         if (leyenda) leyenda.remove();
     }
