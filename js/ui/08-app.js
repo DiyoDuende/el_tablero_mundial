@@ -10,6 +10,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (window.UIRelacionesGlobales && UIRelacionesGlobales.init) UIRelacionesGlobales.init();
     if (window.UITimeline && UITimeline.init) UITimeline.init();
     if (window.DashboardReal) DashboardReal.mostrar('ESP');
+    
+    // Activar coloreado automático
+setTimeout(() => {
+    if (window.Coloreado) {
+        Coloreado.aplicarColoresPIB();
+    }
+}, 3000);
 
     // ============================================
     // PANELES MODALES
