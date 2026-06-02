@@ -463,3 +463,50 @@ body {
     color: #0a1219;
     border-color: var(--info, #4fc3f7);
 }
+
+/* Dashboard dentro del panel lateral */
+.dashboard-container {
+    margin: 10px 0;
+    padding: 10px;
+    background: var(--bg-card, #16222b);
+    border-radius: 12px;
+    border-left: 3px solid var(--info, #4fc3f7);
+}
+
+.dashboard-real {
+    background: transparent;
+    padding: 0;
+}
+
+.dashboard-real .dashboard-header {
+    border-bottom: 1px solid var(--border, #2a4050);
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+}
+
+.dashboard-real .dashboard-header h2 {
+    font-size: 1.1rem;
+}
+
+.indicadores-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+
+.indicador-card {
+    padding: 8px;
+}
+
+.indicador-icono {
+    font-size: 1.2rem;
+}
+
+.indicador-valor {
+    font-size: 0.9rem;
+}
+
+.indicador-label,
+.indicador-año {
+    font-size: 0.7rem;
+}
