@@ -7,16 +7,27 @@ const MapaMundial = {
     geoJsonCargado: false,
 
     init: function() {
-        console.log('🗺️ Inicializando mapa...');
-        this.map = L.map('mapa-mundial', {
-    center: [20, 0],
-    zoom: 2,
-    minZoom: 2,      // No dejar alejar más de este nivel
-    maxZoom: 10,     // No dejar acercar más de este nivel
-    zoomControl: true,
-    maxBounds: [[-85, -180], [85, 180]],   // Limitar desplazamiento
-    maxBoundsViscosity: 1.0                // Hace que el rebote al límite sea suave
-});
+    console.log('🗺️ Inicializando mapa...');
+    this.map = L.map('mapa-mundial', {
+        center: [20, 0],
+        zoom: 2,
+        minZoom: 2,
+        maxZoom: 8,
+        zoomControl: true,
+        maxBounds: [[-70, -140], [70, 140]],
+        maxBoundsViscosity: 0.8
+    });
+    
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; CartoDB',
+        subdomains: 'abcd',
+        maxZoom: 19,
+        minZoom: 1
+    }).addTo(this.map);
+    
+    this.cargarGeoJSON();
+    console.log('✅ Mapa inicializado');
+}
 
     // Función auxiliar para obtener el nombre del país de forma robusta
     obtenerNombrePais: function(properties) {
