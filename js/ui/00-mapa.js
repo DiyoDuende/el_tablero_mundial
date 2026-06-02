@@ -9,14 +9,14 @@ const MapaMundial = {
     init: function() {
     console.log('🗺️ Inicializando mapa...');
     this.map = L.map('mapa-mundial', {
-        center: [20, 0],
-        zoom: 2,
-        minZoom: 2,
-        maxZoom: 8,
-        zoomControl: true,
-        maxBounds: [[-70, -140], [70, 140]],
-        maxBoundsViscosity: 0.8
-    });
+    center: [0, 0],
+    zoom: 1.5,
+    minZoom: 1.5,
+    maxZoom: 8,
+    zoomControl: true,
+    maxBounds: [[-90, -180], [90, 180]],
+    maxBoundsViscosity: 0.5
+});
     
     L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; CartoDB',
