@@ -1,3 +1,4 @@
+[Normas.md](https://github.com/user-attachments/files/28508921/Normas.md)
 # NORMAS DEL TABLERO MUNDIAL
 
 ## Principios fundamentales
