@@ -430,3 +430,36 @@ body {
     border-top: 1px solid var(--border);
     padding-top: 10px;
 }
+
+/* ===== CAPAS DE PODER (botones horizontales) ===== */
+.capas-poder {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin: 15px 0;
+}
+
+.capa-btn {
+    background: var(--bg-card, #16222b);
+    border: 1px solid var(--border, #2a4050);
+    color: var(--text-muted, #9aaec2);
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 500;
+}
+
+.capa-btn:hover {
+    background: var(--accent, #2a7faa);
+    color: white;
+    border-color: var(--info, #4fc3f7);
+}
+
+.capa-btn.activo {
+    background: var(--info, #4fc3f7);
+    color: #0a1219;
+    border-color: var(--info, #4fc3f7);
+}
