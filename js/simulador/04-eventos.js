@@ -1,27 +1,49 @@
-// js/simulador/04-eventos.js
 // ============================================
-// EVENTOS - Catálogo de eventos globales
+// EVENTOS - Catálogo
 // ============================================
 
-const EVENTOS_GLOBALES = {
+const EVENTOS = {
+    
     catalogo: {
-        'crisis_energetica': {
+        crisis_energetica: {
+            id: 'crisis_energetica',
             nombre: 'Crisis energética',
-            impactos: { económico: -0.3, geopolítico: -0.2, social: -0.25 },
-            duracion: 6,
-            probabilidad: 0.1
+            tipo: 'económico',
+            impactos: { energía: -0.4, económico: -0.2 },
+            duracion: '12 meses',
+            probabilidad_base: 0.1
         },
-        'subida_petroleo': {
-            nombre: 'Subida del petróleo',
-            impactos: { económico: -0.2, social: -0.1 },
-            duracion: 3,
-            probabilidad: 0.15
+        huelga_general: {
+            id: 'huelga_general',
+            nombre: 'Huelga general',
+            tipo: 'social',
+            impactos: { social: -0.4, económico: -0.2 },
+            duracion: '1 mes',
+            probabilidad_base: 0.2
         },
-        'protestas': {
-            nombre: 'Protestas sociales',
-            impactos: { social: -0.3, político: -0.1 },
-            duracion: 2,
-            probabilidad: 0.2
+        sequia: {
+            id: 'sequia',
+            nombre: 'Sequía prolongada',
+            tipo: 'climático',
+            impactos: { ecosistema: -0.3, agricultura: -0.5 },
+            duracion: '24 meses',
+            probabilidad_base: 0.15
+        },
+        sanciones: {
+            id: 'sanciones',
+            nombre: 'Sanciones internacionales',
+            tipo: 'geopolítico',
+            impactos: { económico: -0.3, comercial: -0.4 },
+            duracion: 'variable',
+            probabilidad_base: 0.1
+        },
+        subida_tipos: {
+            id: 'subida_tipos',
+            nombre: 'Subida de tipos de interés',
+            tipo: 'financiero',
+            impactos: { financiero: -0.2, económico: -0.1 },
+            duracion: '6 meses',
+            probabilidad_base: 0.2
         }
     },
     
@@ -29,9 +51,16 @@ const EVENTOS_GLOBALES = {
         return this.catalogo[id] || null;
     },
     
-    listar: function() {
-        return Object.keys(this.catalogo);
+    aplicar: function(eventoId, territorioId) {
+        const evento = this.get(eventoId);
+        if (!evento) return null;
+        
+        return {
+            ...evento,
+            territorio: territorioId,
+            timestamp: new Date().toISOString()
+        };
     }
 };
 
-window.EVENTOS_GLOBALES = EVENTOS_GLOBALES;
+window.EVENTOS = EVENTOS;
