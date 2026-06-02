@@ -1,71 +1,56 @@
+[Readme.md](https://github.com/user-attachments/files/28508898/Readme.md)
 # 🌍 TABLERO MUNDIAL
 
-## Descripción
+## Simulador Geopolítico Global · Datos reales · Verificador ciudadano
 
-Tablero Mundial es una plataforma interactiva de visualización geopolítica, económica y de poder global.
+### 🔍 ¿Qué es?
+Un tablero interactivo que muestra el **poder real** en el mundo: no solo países, sino también corporaciones, instituciones, movimientos sociales y el ecosistema.
 
-### Características principales
+### 🎯 Características principales
 
-- **🌐 Modo Real**: Datos verificados de fuentes oficiales en tiempo real
-- **🎮 Modo Juego**: Simulador de escenarios geopolíticos
-- **📊 Dashboard Interactivo**: Información detallada por país
-- **✅ Verificador Ciudadano**: Explicaciones basadas en datos
-- **🌐 Red Global**: Visualización de relaciones internacionales
-- **📅 Timeline Global**: Línea temporal de eventos
+| | |
+|---|---|
+| 🗺️ **Mapa mundial** | 70% de la pantalla, interactivo, clic en cualquier lugar |
+| 📊 **Panel lateral** | Información detallada del lugar seleccionado |
+| ✅ **Verificador ciudadano** | Explica por qué pasan las cosas con datos |
+| 🔗 **Cadena de impacto** | Visualiza relaciones causa-efecto |
+| 📅 **Timeline global** | Evolución temporal de eventos |
+| 🎮 **Modo simulación** | "¿Qué pasaría si..." con resultados realistas |
+| 📚 **Fuentes verificadas** | Siempre mostramos el origen de los datos |
 
-### Capas de Poder
+### 🏛️ Capas de poder
+- 🏛️ Político · 💰 Económico · ⚔️ Militar · 📜 Legislativo
+- 👥 Social · 🌍 Ecosistema · 🏢 Corporaciones
 
-1. **🏛️ Político** - Gobiernos y decisiones políticas
-2. **💰 Económico** - Mercados e indicadores financieros
-3. **⚔️ Militar** - Fuerzas militares y estrategia
-4. **⚖️ Judicial** - Sistemas legales y justicia
-5. **📜 Legislativo** - Leyes y regulaciones
-6. **📺 Medios** - Comunicación y medios
-7. **👥 Social** - Movimientos sociales y opinión pública
-8. **🌍 Ecosistema** - Clima y sostenibilidad
-9. **🏢 Corporaciones** - Poder empresarial global
+### 🌐 Idiomas soportados
+- 🇪🇸 Español
+- 🇬🇧 Inglés
+- 🇫🇷 Francés
+- 🇧🇷 Portugués
+- 🇩🇪 Alemán
+- 🇨🇳 Chino
+- 🇸🇦 Árabe
 
-## Estructura del Proyecto
+### 📁 Estructura del proyecto
 
-```
-├── index.html              # Página principal
+tablero-mundial/
+├── index.html
 ├── css/
-│   └── estilo.css         # Estilos principales
 ├── js/
-│   ├── core/              # Funcionalidad base
-│   ├── simulador/         # Motor de simulación
-│   └── ui/                # Interfaz de usuario
-├── lang/                  # Archivos de idioma
-├── README.md              # Este archivo
-└── Normas.md              # Normas de uso
-```
+│   ├── core/           # Territorios, actores, estado
+│   ├── simulador/      # Poderes, eventos, motor
+│   └── ui/             # Interfaz de usuario
+├── lang/               # Archivos de traducción
+└── docs/               # Documentación
 
-## Fuentes de Datos
+### 📚 Fuentes de datos
+- INE (España)
+- Eurostat (Europa)
+- Banco Mundial (global)
+- International Energy Agency
+- Datos abiertos gubernamentales
 
-- **INE** (Instituto Nacional de Estadística)
-- **Eurostat** (Oficina de Estadística de la UE)
-- **Banco Mundial**
-- **IEA** (Agencia Internacional de la Energía)
-- **datos.gob.es** (Portal de datos abiertos del Gobierno)
+### 📝 Licencia
+Código abierto · Uso libre · Datos públicos
 
-## Principios
-
-✅ **Transparencia**: Todas las fuentes son públicas y verificables
-
-✅ **Veracidad**: Solo datos de fuentes oficiales
-
-✅ **Separación clara**: Modo Real vs Modo Juego siempre diferenciado
-
-✅ **Sin sesgos**: Múltiples fuentes por dato
-
-## Uso
-
-1. Abre `index.html` en tu navegador
-2. Selecciona **Modo Real** o **Modo Juego**
-3. Interactúa con el mapa para ver datos de países
-4. Usa el verificador para obtener explicaciones de eventos
-5. Simula escenarios en el Modo Juego
-
-## Licencia
-
-Proyecto de código abierto para fines educativos y de transparencia.
+**🌍 Porque entender el poder es el primer paso para no ser manipulado.**
