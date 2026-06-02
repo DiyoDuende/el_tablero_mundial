@@ -1,34 +1,32 @@
-// js/simulador/01-sectores.js
 // ============================================
-// SECTORES - Sectores económicos y sociales
+// SECTORES - Los 10 sectores
 // ============================================
 
 const SECTORES = {
-    valores: {
-        'educación': 0.5,
-        'sanidad': 0.55,
-        'energía': 0.8,
-        'infraestructuras': 0.6,
-        'industria': 0.7,
-        'comercio': 0.65,
-        'tecnología': 0.75,
-        'agricultura': 0.5,
-        'medio_ambiente': 0.5,
-        'defensa': 0.85
+    lista: [
+        'educación', 'sanidad', 'energía', 'infraestructuras',
+        'industria', 'comercio', 'tecnología', 'agricultura',
+        'medio_ambiente', 'defensa'
+    ],
+    
+    get: function(territorio, sector) {
+        return 0.5; // Por implementar con APIs reales
     },
     
-    get: function(sector) {
-        const key = typeof sector === 'string' ? sector.toLowerCase() : sector;
-        return this.valores[key] || 0.5;
-    },
-    
-    set: function(sector, valor) {
-        const key = typeof sector === 'string' ? sector.toLowerCase() : sector;
-        this.valores[key] = Math.max(0, Math.min(1, valor));
-    },
-    
-    listar: function() {
-        return Object.keys(this.valores);
+    describir: function(sector) {
+        const descripciones = {
+            educación: 'Formación, universidades, investigación académica',
+            sanidad: 'Hospitales, salud pública, atención médica',
+            energía: 'Producción y distribución de energía',
+            infraestructuras: 'Carreteras, puertos, aeropuertos, telecomunicaciones',
+            industria: 'Fabricación, producción industrial',
+            comercio: 'Exportaciones, importaciones, mercados',
+            tecnología: 'I+D, innovación, digitalización',
+            agricultura: 'Cultivos, ganadería, pesca',
+            medio_ambiente: 'Clima, biodiversidad, recursos naturales',
+            defensa: 'Industria militar, seguridad'
+        };
+        return descripciones[sector] || 'Sector no definido';
     }
 };
 
