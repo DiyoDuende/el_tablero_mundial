@@ -1,20 +1,7 @@
 {
-  "titulo": "WORLD BOARD",
-  "documentacion": "📋 Documentation",
-  "normas": "📜 Rules",
-  "datosReales": "🌐 Real Data",
-  "simulacion": "🎮 Simulation",
-  "verificador": "✅ Verifier",
-  "buscar": "Search",
-  "pais": "Country",
-  "economia": "Economy",
-  "leyes": "Laws",
-  "geopolitica": "Geopolitics",
-  "social": "Social",
-  "clima": "Climate",
-  "objetivos": "Objectives",
-  "alertas": "Alerts",
-  "estable": "Stable",
-  "riesgo": "Risk",
-  "critico": "Critical"
+    "titulo": "WORLD BOARD",
+    "documentacion": "📋 Documentation",
+    "datosReales": "🌐 Real data",
+    "simulacion": "🎮 Simulation",
+    "verificador": "✅ Verifier"
 }
