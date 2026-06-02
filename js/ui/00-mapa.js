@@ -27,7 +27,11 @@ const MapaMundial = {
     
     this.cargarGeoJSON();
     console.log('✅ Mapa inicializado');
-}
+},   // ← LA COMA ES LO ÚNICO QUE FALTA
+
+obtenerNombrePais: function(properties) {
+    return properties?.ADMIN || properties?.name || properties?.NAME || '';
+},
 
     // Función auxiliar para obtener el nombre del país de forma robusta
     obtenerNombrePais: function(properties) {
