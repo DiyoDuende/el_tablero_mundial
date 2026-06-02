@@ -8,13 +8,15 @@ const MapaMundial = {
 
     init: function() {
         console.log('🗺️ Inicializando mapa...');
-        this.map = L.map('mapa-mundial').setView([20, 0], 2);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap'
-        }).addTo(this.map);
-        this.cargarGeoJSON();
-        console.log('✅ Mapa listo');
-    },
+        this.map = L.map('mapa-mundial', {
+    center: [20, 0],
+    zoom: 2,
+    minZoom: 2,      // No dejar alejar más de este nivel
+    maxZoom: 10,     // No dejar acercar más de este nivel
+    zoomControl: true,
+    maxBounds: [[-85, -180], [85, 180]],   // Limitar desplazamiento
+    maxBoundsViscosity: 1.0                // Hace que el rebote al límite sea suave
+});
 
     // Función auxiliar para obtener el nombre del país de forma robusta
     obtenerNombrePais: function(properties) {
