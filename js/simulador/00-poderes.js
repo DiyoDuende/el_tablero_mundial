@@ -1,36 +1,37 @@
-// js/simulador/00-poderes.js
-// ============================================
-// PODERES - Tipos de poder y valores base
+// ============================================// PODERES - Los 12 poderes
 // ============================================
 
 const PODERES = {
-    valores: {
-        'político': 0.7,
-        'económico': 0.8,
-        'financiero': 0.75,
-        'militar': 0.9,
-        'judicial': 0.5,
-        'social': 0.6,
-        'mediático': 0.65,
-        'religioso': 0.4,
-        'criminal': 0.3,
-        'científico': 0.55,
-        'territorial': 0.6,
-        'ecosistema': 0.5
+    lista: [
+        'político', 'económico', 'financiero', 'militar', 'judicial',
+        'social', 'mediático', 'religioso', 'criminal', 'científico',
+        'territorial', 'ecosistema'
+    ],
+    
+    get: function(territorio, poder) {
+        return EstadoTablero.obtenerPoder(territorio, poder);
     },
     
-    get: function(poder) {
-        const key = typeof poder === 'string' ? poder.toLowerCase() : poder;
-        return this.valores[key] || 0.5;
+    set: function(territorio, poder, valor) {
+        EstadoTablero.setPoder(territorio, poder, valor);
     },
     
-    set: function(poder, valor) {
-        const key = typeof poder === 'string' ? poder.toLowerCase() : poder;
-        this.valores[key] = Math.max(0, Math.min(1, valor));
-    },
-    
-    listar: function() {
-        return Object.keys(this.valores);
+    describir: function(poder) {
+        const descripciones = {
+            político: 'Capacidad de tomar decisiones y gobernar',
+            económico: 'Producción, comercio y recursos financieros',
+            financiero: 'Control sobre bancos, inversiones y capital',
+            militar: 'Fuerzas armadas y capacidad de defensa',
+            judicial: 'Sistema de justicia y aplicación de leyes',
+            social: 'Cohesión social, bienestar y servicios públicos',
+            mediático: 'Control sobre información y opinión pública',
+            religioso: 'Influencia de instituciones religiosas',
+            criminal: 'Actividades ilegales organizadas',
+            científico: 'Investigación, innovación y conocimiento',
+            territorial: 'Control sobre territorio y recursos naturales',
+            ecosistema: 'Estado del medio ambiente y clima'
+        };
+        return descripciones[poder] || 'Poder no definido';
     }
 };
 
