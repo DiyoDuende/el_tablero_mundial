@@ -89,17 +89,105 @@ obtenerNombrePais: function(properties) {
 
 obtenerISO3: function(nombre) {
     const mapa = {
+        // Europa Occidental
         'Spain': 'ESP', 'France': 'FRA', 'Germany': 'DEU', 'Italy': 'ITA',
-        'Portugal': 'PRT', 'United Kingdom': 'GBR', 'United States of America': 'USA',
-        'China': 'CHN', 'Russia': 'RUS', 'Brazil': 'BRA', 'India': 'IND',
-        'Japan': 'JPN', 'Canada': 'CAN', 'Mexico': 'MEX', 'Australia': 'AUS',
-        'South Africa': 'ZAF', 'Netherlands': 'NLD', 'Sweden': 'SWE', 'Norway': 'NOR',
-        'Switzerland': 'CHE', 'Argentina': 'ARG', 'Chile': 'CHL', 'Colombia': 'COL',
-        'Peru': 'PER', 'Venezuela': 'VEN', 'Egypt': 'EGY', 'Turkey': 'TUR',
-        'South Korea': 'KOR', 'Poland': 'POL', 'Ukraine': 'UKR', 'Romania': 'ROU',
-        'Greece': 'GRC', 'Austria': 'AUT', 'Belgium': 'BEL', 'Czech Republic': 'CZE',
-        'Denmark': 'DNK', 'Finland': 'FIN', 'Hungary': 'HUN', 'Ireland': 'IRL'
+        'Portugal': 'PRT', 'United Kingdom': 'GBR', 'Ireland': 'IRL',
+        'Netherlands': 'NLD', 'Belgium': 'BEL', 'Luxembourg': 'LUX',
+        'Switzerland': 'CHE', 'Austria': 'AUT', 'Denmark': 'DNK',
+        'Sweden': 'SWE', 'Norway': 'NOR', 'Finland': 'FIN', 'Iceland': 'ISL',
+        
+        // Europa del Este
+        'Poland': 'POL', 'Czech Republic': 'CZE', 'Slovakia': 'SVK',
+        'Hungary': 'HUN', 'Romania': 'ROU', 'Bulgaria': 'BGR',
+        'Slovenia': 'SVN', 'Croatia': 'HRV', 'Lithuania': 'LTU',
+        'Latvia': 'LVA', 'Estonia': 'EST', 'Greece': 'GRC',
+        
+        // Península Balcánica
+        'Albania': 'ALB', 'North Macedonia': 'MKD', 'Bosnia and Herzegovina': 'BIH',
+        'Serbia': 'SRB', 'Montenegro': 'MNE', 'Kosovo': 'XKX',
+        
+        // América del Norte
+        'United States of America': 'USA', 'Canada': 'CAN', 'Mexico': 'MEX',
+        
+        // Centroamérica y Caribe
+        'Guatemala': 'GTM', 'Belize': 'BLZ', 'Honduras': 'HND',
+        'El Salvador': 'SLV', 'Nicaragua': 'NIC', 'Costa Rica': 'CRI',
+        'Panama': 'PAN', 'Cuba': 'CUB', 'Dominican Republic': 'DOM',
+        'Haiti': 'HTI', 'Jamaica': 'JAM', 'Bahamas': 'BHS',
+        'Trinidad and Tobago': 'TTO', 'Barbados': 'BRB',
+        
+        // América del Sur
+        'Brazil': 'BRA', 'Argentina': 'ARG', 'Chile': 'CHL',
+        'Colombia': 'COL', 'Peru': 'PER', 'Venezuela': 'VEN',
+        'Uruguay': 'URY', 'Paraguay': 'PRY', 'Bolivia': 'BOL',
+        'Ecuador': 'ECU', 'Guyana': 'GUY', 'Suriname': 'SUR',
+        
+        // Asia Oriental
+        'China': 'CHN', 'Japan': 'JPN', 'South Korea': 'KOR',
+        'North Korea': 'PRK', 'Mongolia': 'MNG', 'Taiwan': 'TWN',
+        
+        // Sudeste Asiático
+        'Indonesia': 'IDN', 'Malaysia': 'MYS', 'Thailand': 'THA',
+        'Vietnam': 'VNM', 'Philippines': 'PHL', 'Singapore': 'SGP',
+        'Myanmar': 'MMR', 'Cambodia': 'KHM', 'Laos': 'LAO',
+        'Brunei': 'BRN', 'East Timor': 'TLS',
+        
+        // Asia del Sur
+        'India': 'IND', 'Pakistan': 'PAK', 'Bangladesh': 'BGD',
+        'Nepal': 'NPL', 'Sri Lanka': 'LKA', 'Bhutan': 'BTN',
+        'Maldives': 'MDV',
+        
+        // Asia Central
+        'Kazakhstan': 'KAZ', 'Uzbekistan': 'UZB', 'Turkmenistan': 'TKM',
+        'Kyrgyzstan': 'KGZ', 'Tajikistan': 'TJK', 'Afghanistan': 'AFG',
+        
+        // Oriente Medio
+        'Turkey': 'TUR', 'Saudi Arabia': 'SAU', 'Iran': 'IRN',
+        'Iraq': 'IRQ', 'Syria': 'SYR', 'Jordan': 'JOR',
+        'Lebanon': 'LBN', 'Israel': 'ISR', 'Palestine': 'PSE',
+        'United Arab Emirates': 'ARE', 'Qatar': 'QAT', 'Kuwait': 'KWT',
+        'Oman': 'OMN', 'Yemen': 'YEM', 'Bahrain': 'BHR',
+        
+        // África del Norte
+        'Egypt': 'EGY', 'Morocco': 'MAR', 'Algeria': 'DZA',
+        'Tunisia': 'TUN', 'Libya': 'LBY', 'Sudan': 'SDN',
+        'South Sudan': 'SSD', 'Mauritania': 'MRT',
+        
+        // África Occidental
+        'Nigeria': 'NGA', 'Ghana': 'GHA', 'Ivory Coast': 'CIV',
+        'Senegal': 'SEN', 'Mali': 'MLI', 'Burkina Faso': 'BFA',
+        'Niger': 'NER', 'Guinea': 'GIN', 'Guinea-Bissau': 'GNB',
+        'Cabo Verde': 'CPV', 'Gambia': 'GMB', 'Benin': 'BEN',
+        'Togo': 'TGO', 'Liberia': 'LBR', 'Sierra Leone': 'SLE',
+        
+        // África Central
+        'Cameroon': 'CMR', 'Central African Republic': 'CAF',
+        'Chad': 'TCD', 'Gabon': 'GAB', 'Republic of the Congo': 'COG',
+        'Democratic Republic of the Congo': 'COD', 'Equatorial Guinea': 'GNQ',
+        'São Tomé and Principe': 'STP',
+        
+        // África Oriental
+        'Ethiopia': 'ETH', 'Kenya': 'KEN', 'Tanzania': 'TZA',
+        'Uganda': 'UGA', 'Rwanda': 'RWA', 'Burundi': 'BDI',
+        'Somalia': 'SOM', 'Djibouti': 'DJI', 'Eritrea': 'ERI',
+        'South Africa': 'ZAF', 'Zambia': 'ZMB', 'Zimbabwe': 'ZWE',
+        'Mozambique': 'MOZ', 'Malawi': 'MWI', 'Angola': 'AGO',
+        'Botswana': 'BWA', 'Namibia': 'NAM', 'Eswatini': 'SWZ',
+        'Lesotho': 'LSO', 'Madagascar': 'MDG', 'Seychelles': 'SYC',
+        'Comoros': 'COM', 'Mauritius': 'MUS',
+        
+        // Oceanía
+        'Australia': 'AUS', 'New Zealand': 'NZL', 'Papua New Guinea': 'PNG',
+        'Fiji': 'FJI', 'Solomon Islands': 'SLB', 'Vanuatu': 'VUT',
+        'Samoa': 'WSM', 'Tonga': 'TON', 'Kiribati': 'KIR',
+        'Micronesia': 'FSM', 'Marshall Islands': 'MHL', 'Palau': 'PLW',
+        'Nauru': 'NRU', 'Tuvalu': 'TUV',
+        
+        // Territorios especiales (sin datos económicos, pero los dejamos)
+        'Greenland': 'GRL', 'Puerto Rico': 'PRI', 'Hong Kong': 'HKG',
+        'Macao': 'MAC', 'New Caledonia': 'NCL', 'French Polynesia': 'PYF'
     };
+    
     return mapa[nombre] || null;
 },
 
