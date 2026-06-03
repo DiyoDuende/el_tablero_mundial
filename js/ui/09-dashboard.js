@@ -32,9 +32,13 @@ const DashboardReal = {
         container.innerHTML = `
             <div class="dashboard-real">
                 <div class="dashboard-header">
-                    <h2>${nombre}</h2>
-                    <span class="pais-codigo">${iso3}</span>
+                    <div class="pais-titulo">
+                        <span class="pais-bandera">${this.getBandera(iso3)}</span>
+                        <h2>${nombre}</h2>
+                    </div>
+                    <span class="pais-estado">🟢 ESTABLE</span>
                 </div>
+                
                 <div class="indicadores-grid">
                     <div class="indicador-card">
                         <div class="indicador-icono">💰</div>
@@ -61,9 +65,52 @@ const DashboardReal = {
                         <div class="indicador-año">${deudaAnio}</div>
                     </div>
                 </div>
+                
+                <!-- BOTONES DE SECCIÓN (antes estaban en panel-info) -->
+                <div class="info-botones">
+                    <button class="info-btn" data-seccion="economia">📊 Economía</button>
+                    <button class="info-btn" data-seccion="leyes">⚖️ Leyes</button>
+                    <button class="info-btn" data-seccion="geopolitica">🏛️ Geopolítica</button>
+                    <button class="info-btn" data-seccion="social">👥 Social</button>
+                    <button class="info-btn" data-seccion="clima">🌍 Clima</button>
+                </div>
+                
                 <div class="dashboard-fuentes">📚 Fuentes: Banco Mundial · Datos oficiales</div>
             </div>
         `;
+        
+        // Vincular eventos de los botones después de crearlos
+        this.vincularEventosBotones();
+    },
+    
+    vincularEventosBotones: function() {
+        document.querySelectorAll('.info-btn').forEach(btn => {
+            btn.removeEventListener('click', this.manejadorClick);
+            btn.addEventListener('click', this.manejadorClick.bind(this));
+        });
+    },
+    
+    manejadorClick: function(e) {
+        const seccion = e.currentTarget.dataset.seccion;
+        console.log(`📂 Sección seleccionada: ${seccion}`);
+        
+        // Por ahora, mostrar mensaje de que está en desarrollo
+        // Más adelante conectaremos con datos reales
+        alert(`📊 Sección "${seccion}" - Próximamente disponible con datos reales`);
+    },
+    
+    getBandera: function(iso3) {
+        const banderas = {
+            'ESP': '🇪🇸', 'FRA': '🇫🇷', 'DEU': '🇩🇪', 'ITA': '🇮🇹',
+            'PRT': '🇵🇹', 'GBR': '🇬🇧', 'IRL': '🇮🇪', 'NLD': '🇳🇱',
+            'BEL': '🇧🇪', 'AUT': '🇦🇹', 'CHE': '🇨🇭', 'SWE': '🇸🇪',
+            'NOR': '🇳🇴', 'DNK': '🇩🇰', 'FIN': '🇫🇮', 'POL': '🇵🇱',
+            'USA': '🇺🇸', 'CAN': '🇨🇦', 'MEX': '🇲🇽', 'BRA': '🇧🇷',
+            'ARG': '🇦🇷', 'CHL': '🇨🇱', 'COL': '🇨🇴', 'PER': '🇵🇪',
+            'CHN': '🇨🇳', 'JPN': '🇯🇵', 'KOR': '🇰🇷', 'IND': '🇮🇳',
+            'RUS': '🇷🇺', 'AUS': '🇦🇺', 'ZAF': '🇿🇦'
+        };
+        return banderas[iso3] || '🌍';
     }
 };
 
