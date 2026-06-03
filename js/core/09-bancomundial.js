@@ -104,21 +104,64 @@ const APIBancoMundial = {
             return null;
         }
     },
+
+    // Obtener densidad de población (EN.POP.DNST)
+async getDensidadPoblacion(iso3) {
+    const url = `${this.baseURL}/${iso3}/indicator/EN.POP.DNST?format=json&per_page=10`;
+    try {
+        const respuesta = await fetch(url);
+        const datos = await respuesta.json();
+        if (!datos[1]) return null;
+        for (let item of datos[1]) {
+            if (item.value !== null) {
+                return { valor: item.value, año: item.date, unidad: 'hab/km²' };
+            }
+        }
+        return null;
+    } catch (error) {
+        return null;
+    }
+},
+
+// Obtener esperanza de vida (SP.DYN.LE00.IN)
+async getEsperanzaVida(iso3) {
+    const url = `${this.baseURL}/${iso3}/indicator/SP.DYN.LE00.IN?format=json&per_page=10`;
+    try {
+        const respuesta = await fetch(url);
+        const datos = await respuesta.json();
+        if (!datos[1]) return null;
+        for (let item of datos[1]) {
+            if (item.value !== null) {
+                return { valor: item.value, año: item.date, unidad: 'años' };
+            }
+        }
+        return null;
+    } catch (error) {
+        return null;
+    }
+},
     
     async getTodosIndicadores(iso3) {
-        const [pib, inflacion, desempleo, poblacion, deuda] = await Promise.all([
-            this.getPIBPerCapita(iso3),
-            this.getInflacion(iso3),
-            this.getDesempleo(iso3),
-            this.getPoblacion(iso3),
-            this.getDeudaPublica(iso3)
-        ]);
-        return { iso3, pib, inflacion, desempleo, poblacion, deuda, ultimaActualizacion: new Date().toISOString() };
-    },
-    
-    isSoportado(iso3) {
-        return this.paisesSoportados.hasOwnProperty(iso3);
-    }
-};
+    const [pib, inflacion, desempleo, poblacion, deuda, densidad, esperanzaVida] = await Promise.all([
+        this.getPIBPerCapita(iso3),
+        this.getInflacion(iso3),
+        this.getDesempleo(iso3),
+        this.getPoblacion(iso3),
+        this.getDeudaPublica(iso3),
+        this.getDensidadPoblacion(iso3),
+        this.getEsperanzaVida(iso3)
+    ]);
+    return { 
+        iso3, 
+        pib, 
+        inflacion, 
+        desempleo, 
+        poblacion, 
+        deuda,
+        densidad,
+        esperanzaVida,
+        ultimaActualizacion: new Date().toISOString() 
+    };
+},
 
 window.APIBancoMundial = APIBancoMundial;
