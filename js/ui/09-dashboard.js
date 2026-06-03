@@ -40,6 +40,7 @@ const DashboardReal = {
         const deuda = datos.deuda?.valor ? datos.deuda.valor.toFixed(1) : 'N/D';
         const deudaAnio = datos.deuda?.año || '2024';
         
+        // Nuevos indicadores sociales
         const densidad = datos.densidad?.valor ? datos.densidad.valor.toFixed(1) : 'N/D';
         const densidadAnio = datos.densidad?.año || '2024';
         const esperanzaVida = datos.esperanzaVida?.valor ? datos.esperanzaVida.valor.toFixed(1) : 'N/D';
@@ -55,6 +56,7 @@ const DashboardReal = {
                     <span class="pais-estado">🟢 ESTABLE</span>
                 </div>
                 
+                <!-- INDICADORES ECONÓMICOS -->
                 <div class="indicadores-grid">
                     <div class="indicador-card">
                         <div class="indicador-icono">💰</div>
@@ -80,6 +82,11 @@ const DashboardReal = {
                         <div class="indicador-label">Deuda pública</div>
                         <div class="indicador-año">${deudaAnio}</div>
                     </div>
+                </div>
+                
+                <!-- INDICADORES SOCIALES -->
+                <div class="seccion-titulo">👥 SOCIAL</div>
+                <div class="indicadores-grid">
                     <div class="indicador-card">
                         <div class="indicador-icono">🗺️</div>
                         <div class="indicador-valor">${densidad}</div>
@@ -94,6 +101,7 @@ const DashboardReal = {
                     </div>
                 </div>
                 
+                <!-- BOTONES DE SECCIÓN -->
                 <div class="info-botones">
                     <button class="info-btn" data-seccion="economia">📊 Economía</button>
                     <button class="info-btn" data-seccion="leyes">⚖️ Leyes</button>
@@ -106,11 +114,15 @@ const DashboardReal = {
             </div>
         `;
         
-        // Vincular eventos de los botones (forma segura)
+        // Vincular eventos de los botones
+        this.vincularEventosBotones();
+    },
+    
+    vincularEventosBotones: function() {
         const botones = document.querySelectorAll('.info-btn');
         botones.forEach(btn => {
             btn.removeEventListener('click', this.handleClick);
-            btn.addEventListener('click', this.handleClick);
+            btn.addEventListener('click', this.handleClick.bind(this));
         });
     },
     
