@@ -21,12 +21,13 @@ const APIBancoMundial = {
     },
     
     async getPIBPerCapita(iso3) {
-        const url = `${this.baseURL}/${iso3}/indicator/NY.GDP.PCAP.CD?format=json&per_page=10`;
+        const url = this.baseURL + '/' + iso3 + '/indicator/NY.GDP.PCAP.CD?format=json&per_page=10';
         try {
             const respuesta = await fetch(url);
             const datos = await respuesta.json();
             if (!datos[1]) return null;
-            for (let item of datos[1]) {
+            for (var i = 0; i < datos[1].length; i++) {
+                var item = datos[1][i];
                 if (item.value !== null) {
                     return { valor: item.value, año: item.date, unidad: 'USD' };
                 }
@@ -38,12 +39,13 @@ const APIBancoMundial = {
     },
     
     async getInflacion(iso3) {
-        const url = `${this.baseURL}/${iso3}/indicator/FP.CPI.TOTL.ZG?format=json&per_page=10`;
+        const url = this.baseURL + '/' + iso3 + '/indicator/FP.CPI.TOTL.ZG?format=json&per_page=10';
         try {
             const respuesta = await fetch(url);
             const datos = await respuesta.json();
             if (!datos[1]) return null;
-            for (let item of datos[1]) {
+            for (var i = 0; i < datos[1].length; i++) {
+                var item = datos[1][i];
                 if (item.value !== null) {
                     return { valor: item.value, año: item.date, unidad: '%' };
                 }
@@ -55,12 +57,13 @@ const APIBancoMundial = {
     },
     
     async getDesempleo(iso3) {
-        const url = `${this.baseURL}/${iso3}/indicator/SL.UEM.TOTL.ZS?format=json&per_page=10`;
+        const url = this.baseURL + '/' + iso3 + '/indicator/SL.UEM.TOTL.ZS?format=json&per_page=10';
         try {
             const respuesta = await fetch(url);
             const datos = await respuesta.json();
             if (!datos[1]) return null;
-            for (let item of datos[1]) {
+            for (var i = 0; i < datos[1].length; i++) {
+                var item = datos[1][i];
                 if (item.value !== null) {
                     return { valor: item.value, año: item.date, unidad: '%' };
                 }
@@ -72,12 +75,13 @@ const APIBancoMundial = {
     },
     
     async getPoblacion(iso3) {
-        const url = `${this.baseURL}/${iso3}/indicator/SP.POP.TOTL?format=json&per_page=10`;
+        const url = this.baseURL + '/' + iso3 + '/indicator/SP.POP.TOTL?format=json&per_page=10';
         try {
             const respuesta = await fetch(url);
             const datos = await respuesta.json();
             if (!datos[1]) return null;
-            for (let item of datos[1]) {
+            for (var i = 0; i < datos[1].length; i++) {
+                var item = datos[1][i];
                 if (item.value !== null) {
                     return { valor: item.value, año: item.date, unidad: 'habitantes' };
                 }
@@ -89,12 +93,13 @@ const APIBancoMundial = {
     },
     
     async getDeudaPublica(iso3) {
-        const url = `${this.baseURL}/${iso3}/indicator/GC.DOD.TOTL.GD.ZS?format=json&per_page=10`;
+        const url = this.baseURL + '/' + iso3 + '/indicator/GC.DOD.TOTL.GD.ZS?format=json&per_page=10';
         try {
             const respuesta = await fetch(url);
             const datos = await respuesta.json();
             if (!datos[1]) return null;
-            for (let item of datos[1]) {
+            for (var i = 0; i < datos[1].length; i++) {
+                var item = datos[1][i];
                 if (item.value !== null) {
                     return { valor: item.value, año: item.date, unidad: '% PIB' };
                 }
@@ -104,64 +109,69 @@ const APIBancoMundial = {
             return null;
         }
     },
-
-    // Obtener densidad de población (EN.POP.DNST)
-async getDensidadPoblacion(iso3) {
-    const url = `${this.baseURL}/${iso3}/indicator/EN.POP.DNST?format=json&per_page=10`;
-    try {
-        const respuesta = await fetch(url);
-        const datos = await respuesta.json();
-        if (!datos[1]) return null;
-        for (let item of datos[1]) {
-            if (item.value !== null) {
-                return { valor: item.value, año: item.date, unidad: 'hab/km²' };
+    
+    // NUEVOS INDICADORES SOCIALES (sin optional chaining)
+    async getDensidadPoblacion(iso3) {
+        const url = this.baseURL + '/' + iso3 + '/indicator/EN.POP.DNST?format=json&per_page=10';
+        try {
+            const respuesta = await fetch(url);
+            const datos = await respuesta.json();
+            if (!datos[1]) return null;
+            for (var i = 0; i < datos[1].length; i++) {
+                var item = datos[1][i];
+                if (item.value !== null) {
+                    return { valor: item.value, año: item.date, unidad: 'hab/km²' };
+                }
             }
+            return null;
+        } catch (error) {
+            return null;
         }
-        return null;
-    } catch (error) {
-        return null;
-    }
-},
-
-// Obtener esperanza de vida (SP.DYN.LE00.IN)
-async getEsperanzaVida(iso3) {
-    const url = `${this.baseURL}/${iso3}/indicator/SP.DYN.LE00.IN?format=json&per_page=10`;
-    try {
-        const respuesta = await fetch(url);
-        const datos = await respuesta.json();
-        if (!datos[1]) return null;
-        for (let item of datos[1]) {
-            if (item.value !== null) {
-                return { valor: item.value, año: item.date, unidad: 'años' };
+    },
+    
+    async getEsperanzaVida(iso3) {
+        const url = this.baseURL + '/' + iso3 + '/indicator/SP.DYN.LE00.IN?format=json&per_page=10';
+        try {
+            const respuesta = await fetch(url);
+            const datos = await respuesta.json();
+            if (!datos[1]) return null;
+            for (var i = 0; i < datos[1].length; i++) {
+                var item = datos[1][i];
+                if (item.value !== null) {
+                    return { valor: item.value, año: item.date, unidad: 'años' };
+                }
             }
+            return null;
+        } catch (error) {
+            return null;
         }
-        return null;
-    } catch (error) {
-        return null;
-    }
-},
+    },
     
     async getTodosIndicadores(iso3) {
-    const [pib, inflacion, desempleo, poblacion, deuda, densidad, esperanzaVida] = await Promise.all([
-        this.getPIBPerCapita(iso3),
-        this.getInflacion(iso3),
-        this.getDesempleo(iso3),
-        this.getPoblacion(iso3),
-        this.getDeudaPublica(iso3),
-        this.getDensidadPoblacion(iso3),
-        this.getEsperanzaVida(iso3)
-    ]);
-    return { 
-        iso3, 
-        pib, 
-        inflacion, 
-        desempleo, 
-        poblacion, 
-        deuda,
-        densidad,
-        esperanzaVida,
-        ultimaActualizacion: new Date().toISOString() 
-    };
-},
+        var pib = await this.getPIBPerCapita(iso3);
+        var inflacion = await this.getInflacion(iso3);
+        var desempleo = await this.getDesempleo(iso3);
+        var poblacion = await this.getPoblacion(iso3);
+        var deuda = await this.getDeudaPublica(iso3);
+        var densidad = await this.getDensidadPoblacion(iso3);
+        var esperanzaVida = await this.getEsperanzaVida(iso3);
+        
+        return { 
+            iso3: iso3, 
+            pib: pib, 
+            inflacion: inflacion, 
+            desempleo: desempleo, 
+            poblacion: poblacion, 
+            deuda: deuda,
+            densidad: densidad,
+            esperanzaVida: esperanzaVida,
+            ultimaActualizacion: new Date().toISOString() 
+        };
+    },
+    
+    isSoportado: function(iso3) {
+        return this.paisesSoportados.hasOwnProperty(iso3);
+    }
+};
 
 window.APIBancoMundial = APIBancoMundial;
