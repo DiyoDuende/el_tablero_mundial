@@ -6,20 +6,31 @@
 const DashboardReal = {
     async mostrar(iso3) {
         if (!iso3) return;
-        if (!APIBancoMundial.isSoportado(iso3)) return;
+        if (!window.APIBancoMundial || !window.APIBancoMundial.isSoportado(iso3)) return;
         
         const container = document.getElementById('dashboard-container');
-        if (!container) return;
+        if (!container) {
+            console.error('❌ dashboard-container no encontrado');
+            return;
+        }
         
         container.innerHTML = '<div class="loading-spinner">🌐 Cargando datos del Banco Mundial...</div>';
         
-        const datos = await CacheDatos.obtenerDatos(iso3);
+        let datos;
+        try {
+            datos = await window.CacheDatos.obtenerDatos(iso3);
+        } catch(e) {
+            console.error('Error obteniendo datos:', e);
+            container.innerHTML = `<div class="dashboard-error">⚠️ Error al cargar datos de ${iso3}</div>`;
+            return;
+        }
+        
         if (!datos || !datos.pib) {
             container.innerHTML = `<div class="dashboard-error">⚠️ No se pudieron obtener datos de ${iso3}</div>`;
             return;
         }
         
-        const nombre = APIBancoMundial.paisesSoportados[iso3];
+        const nombre = window.APIBancoMundial.paisesSoportados[iso3];
         const pib = datos.pib.valor ? Math.round(datos.pib.valor).toLocaleString() : 'N/D';
         const pibAnio = datos.pib.año || '2024';
         const inflacion = datos.inflacion?.valor ? datos.inflacion.valor.toFixed(1) : 'N/D';
@@ -29,7 +40,6 @@ const DashboardReal = {
         const deuda = datos.deuda?.valor ? datos.deuda.valor.toFixed(1) : 'N/D';
         const deudaAnio = datos.deuda?.año || '2024';
         
-        // Indicadores sociales
         const densidad = datos.densidad?.valor ? datos.densidad.valor.toFixed(1) : 'N/D';
         const densidadAnio = datos.densidad?.año || '2024';
         const esperanzaVida = datos.esperanzaVida?.valor ? datos.esperanzaVida.valor.toFixed(1) : 'N/D';
@@ -45,7 +55,6 @@ const DashboardReal = {
                     <span class="pais-estado">🟢 ESTABLE</span>
                 </div>
                 
-                <!-- INDICADORES ECONÓMICOS -->
                 <div class="indicadores-grid">
                     <div class="indicador-card">
                         <div class="indicador-icono">💰</div>
@@ -71,11 +80,6 @@ const DashboardReal = {
                         <div class="indicador-label">Deuda pública</div>
                         <div class="indicador-año">${deudaAnio}</div>
                     </div>
-                </div>
-                
-                <!-- SECCIÓN SOCIAL -->
-                <div class="seccion-titulo">👥 SOCIAL</div>
-                <div class="indicadores-grid">
                     <div class="indicador-card">
                         <div class="indicador-icono">🗺️</div>
                         <div class="indicador-valor">${densidad}</div>
@@ -90,7 +94,6 @@ const DashboardReal = {
                     </div>
                 </div>
                 
-                <!-- BOTONES DE SECCIÓN -->
                 <div class="info-botones">
                     <button class="info-btn" data-seccion="economia">📊 Economía</button>
                     <button class="info-btn" data-seccion="leyes">⚖️ Leyes</button>
@@ -103,18 +106,15 @@ const DashboardReal = {
             </div>
         `;
         
-        // Vincular eventos de los botones después de crearlos
-        this.vincularEventosBotones();
-    },
-    
-    vincularEventosBotones: function() {
-        document.querySelectorAll('.info-btn').forEach(btn => {
-            btn.removeEventListener('click', this.manejadorClick);
-            btn.addEventListener('click', this.manejadorClick.bind(this));
+        // Vincular eventos de los botones (forma segura)
+        const botones = document.querySelectorAll('.info-btn');
+        botones.forEach(btn => {
+            btn.removeEventListener('click', this.handleClick);
+            btn.addEventListener('click', this.handleClick);
         });
     },
     
-    manejadorClick: function(e) {
+    handleClick: function(e) {
         const seccion = e.currentTarget.dataset.seccion;
         console.log(`📂 Sección seleccionada: ${seccion}`);
         alert(`📊 Sección "${seccion}" - Próximamente disponible con datos reales`);
