@@ -1,6 +1,6 @@
 // js/ui/09-dashboard.js
 // ============================================
-// DASHBOARD REAL - Datos del Banco Mundial
+// DASHBOARD REAL - Datos del Banco Mundial (VERSIÓN ESTABLE)
 // ============================================
 
 const DashboardReal = {
@@ -9,10 +9,7 @@ const DashboardReal = {
         if (!window.APIBancoMundial || !window.APIBancoMundial.isSoportado(iso3)) return;
         
         const container = document.getElementById('dashboard-container');
-        if (!container) {
-            console.error('❌ dashboard-container no encontrado');
-            return;
-        }
+        if (!container) return;
         
         container.innerHTML = '<div class="loading-spinner">🌐 Cargando datos del Banco Mundial...</div>';
         
@@ -20,7 +17,7 @@ const DashboardReal = {
         try {
             datos = await window.CacheDatos.obtenerDatos(iso3);
         } catch(e) {
-            console.error('Error obteniendo datos:', e);
+            console.error(e);
             container.innerHTML = `<div class="dashboard-error">⚠️ Error al cargar datos de ${iso3}</div>`;
             return;
         }
@@ -40,12 +37,6 @@ const DashboardReal = {
         const deuda = datos.deuda?.valor ? datos.deuda.valor.toFixed(1) : 'N/D';
         const deudaAnio = datos.deuda?.año || '2024';
         
-        // Nuevos indicadores sociales
-        const densidad = datos.densidad?.valor ? datos.densidad.valor.toFixed(1) : 'N/D';
-        const densidadAnio = datos.densidad?.año || '2024';
-        const esperanzaVida = datos.esperanzaVida?.valor ? datos.esperanzaVida.valor.toFixed(1) : 'N/D';
-        const esperanzaAnio = datos.esperanzaVida?.año || '2024';
-        
         container.innerHTML = `
             <div class="dashboard-real">
                 <div class="dashboard-header">
@@ -56,7 +47,6 @@ const DashboardReal = {
                     <span class="pais-estado">🟢 ESTABLE</span>
                 </div>
                 
-                <!-- INDICADORES ECONÓMICOS -->
                 <div class="indicadores-grid">
                     <div class="indicador-card">
                         <div class="indicador-icono">💰</div>
@@ -84,24 +74,6 @@ const DashboardReal = {
                     </div>
                 </div>
                 
-                <!-- INDICADORES SOCIALES -->
-                <div class="seccion-titulo">👥 SOCIAL</div>
-                <div class="indicadores-grid">
-                    <div class="indicador-card">
-                        <div class="indicador-icono">🗺️</div>
-                        <div class="indicador-valor">${densidad}</div>
-                        <div class="indicador-label">Densidad (hab/km²)</div>
-                        <div class="indicador-año">${densidadAnio}</div>
-                    </div>
-                    <div class="indicador-card">
-                        <div class="indicador-icono">❤️</div>
-                        <div class="indicador-valor">${esperanzaVida}</div>
-                        <div class="indicador-label">Esperanza de vida</div>
-                        <div class="indicador-año">${esperanzaAnio}</div>
-                    </div>
-                </div>
-                
-                <!-- BOTONES DE SECCIÓN -->
                 <div class="info-botones">
                     <button class="info-btn" data-seccion="economia">📊 Economía</button>
                     <button class="info-btn" data-seccion="leyes">⚖️ Leyes</button>
@@ -114,7 +86,6 @@ const DashboardReal = {
             </div>
         `;
         
-        // Vincular eventos de los botones
         this.vincularEventosBotones();
     },
     
