@@ -60,11 +60,19 @@ obtenerNombrePais: function(properties) {
                             console.log('🌍 País GeoJSON (tooltip):', nombre);
                             layer.bindTooltip(nombre);
                             layer.on('click', () => {
-                                const id = this.normalizarId(nombre);
-                                if (window.UIPanelInfo) {
-                                    UIPanelInfo.mostrarPais(id);
-                                }
-                            });
+    const id = this.normalizarId(nombre);
+    if (window.UIPanelInfo) {
+        UIPanelInfo.mostrarPais(id);
+    }
+    
+    // NUEVO: Mostrar dashboard con datos reales si existe
+    if (window.DashboardReal) {
+        const iso3 = this.obtenerISO3(nombre);
+        if (iso3) {
+            DashboardReal.mostrar(iso3);
+        }
+    }
+});
                         }
                     }
                 }).addTo(this.map);
@@ -76,8 +84,24 @@ obtenerNombrePais: function(properties) {
     },
 
     normalizarId: function(nombre) {
-        return nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    },
+    return nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+},
+
+obtenerISO3: function(nombre) {
+    const mapa = {
+        'Spain': 'ESP', 'France': 'FRA', 'Germany': 'DEU', 'Italy': 'ITA',
+        'Portugal': 'PRT', 'United Kingdom': 'GBR', 'United States of America': 'USA',
+        'China': 'CHN', 'Russia': 'RUS', 'Brazil': 'BRA', 'India': 'IND',
+        'Japan': 'JPN', 'Canada': 'CAN', 'Mexico': 'MEX', 'Australia': 'AUS',
+        'South Africa': 'ZAF', 'Netherlands': 'NLD', 'Sweden': 'SWE', 'Norway': 'NOR',
+        'Switzerland': 'CHE', 'Argentina': 'ARG', 'Chile': 'CHL', 'Colombia': 'COL',
+        'Peru': 'PER', 'Venezuela': 'VEN', 'Egypt': 'EGY', 'Turkey': 'TUR',
+        'South Korea': 'KOR', 'Poland': 'POL', 'Ukraine': 'UKR', 'Romania': 'ROU',
+        'Greece': 'GRC', 'Austria': 'AUT', 'Belgium': 'BEL', 'Czech Republic': 'CZE',
+        'Denmark': 'DNK', 'Finland': 'FIN', 'Hungary': 'HUN', 'Ireland': 'IRL'
+    };
+    return mapa[nombre] || null;
+},
 
     irAPais: function(paisId) {
         if (!this.capaPaises) return;
