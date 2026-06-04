@@ -136,7 +136,7 @@ setTimeout(() => {
 
     if (btnNormas && modalNormas && normasContenido) {
         btnNormas.addEventListener('click', async () => {
-            await cargarMarkdown('Normas.md', normasContenido);
+            await cargarMarkdown('NORMAS.md', normasContenido);
             modalNormas.style.display = 'flex';
         });
     }
