@@ -1,6 +1,10 @@
 // js/ui/09-dashboard.js
-var DashboardReal = {
-    async mostrar(iso3, nivel, nombreLugar) {
+// ============================================
+// DASHBOARD REAL - Datos del Banco Mundial
+// ============================================
+
+const DashboardReal = {
+    async mostrar(iso3) {
         if (!iso3) return;
         if (!window.APIBancoMundial || !window.APIBancoMundial.isSoportado(iso3)) return;
         
@@ -9,40 +13,83 @@ var DashboardReal = {
         
         container.innerHTML = '<div class="loading-spinner">🌐 Cargando datos del Banco Mundial...</div>';
         
-        var datosRaw = await window.CacheDatos.obtenerDatos(iso3);
-        if (!datosRaw || !datosRaw.pib) {
-            container.innerHTML = '<div class="dashboard-error">⚠️ No se pudieron obtener datos</div>';
+        var datos;
+        try {
+            datos = await window.CacheDatos.obtenerDatos(iso3);
+        } catch(e) {
+            console.error(e);
+            container.innerHTML = '<div class="dashboard-error">⚠️ Error al cargar datos de ' + iso3 + '</div>';
             return;
         }
         
-        var datos = NormalizadorDatos.normalizar(datosRaw, iso3, nivel || 'pais', nombreLugar);
-        var datosFormateados = NormalizadorDatos.formatearParaDashboard(datos);
-        
-        if (!datosFormateados) {
-            container.innerHTML = '<div class="dashboard-error">⚠️ Error formateando datos</div>';
+        if (!datos || !datos.pib) {
+            container.innerHTML = '<div class="dashboard-error">⚠️ No se pudieron obtener datos de ' + iso3 + '</div>';
             return;
         }
         
-        var i = datosFormateados.indicadores;
+        var nombre = window.APIBancoMundial.paisesSoportados[iso3];
+        var pib = datos.pib.valor ? Math.round(datos.pib.valor).toLocaleString() : 'N/D';
+        var pibAnio = datos.pib.año || '2024';
+        var inflacion = datos.inflacion && datos.inflacion.valor ? datos.inflacion.valor.toFixed(1) : 'N/D';
+        var inflacionAnio = datos.inflacion && datos.inflacion.año || '2024';
+        var desempleo = datos.desempleo && datos.desempleo.valor ? datos.desempleo.valor.toFixed(1) : 'N/D';
+        var desempleoAnio = datos.desempleo && datos.desempleo.año || '2024';
+        var deuda = datos.deuda && datos.deuda.valor ? datos.deuda.valor.toFixed(1) : 'N/D';
+        var deudaAnio = datos.deuda && datos.deuda.año || '2024';
+        
+        // Indicadores sociales
+        var densidad = datos.densidad && datos.densidad.valor ? datos.densidad.valor.toFixed(1) : 'N/D';
+        var densidadAnio = datos.densidad && datos.densidad.año || '2024';
+        var esperanzaVida = datos.esperanzaVida && datos.esperanzaVida.valor ? datos.esperanzaVida.valor.toFixed(1) : 'N/D';
+        var esperanzaAnio = datos.esperanzaVida && datos.esperanzaVida.año || '2024';
         
         container.innerHTML = `
             <div class="dashboard-real">
                 <div class="dashboard-header">
                     <div class="pais-titulo">
                         <span class="pais-bandera">${this.getBandera(iso3)}</span>
-                        <h2>${datosFormateados.nombre}</h2>
+                        <h2>${nombre}</h2>
                     </div>
-                    <span class="pais-nivel">${datosFormateados.nivel}</span>
+                    <span class="pais-estado">🟢 ESTABLE</span>
                 </div>
                 
                 <div class="indicadores-grid">
-                    <div class="indicador-card"><div class="indicador-icono">💰</div><div class="indicador-valor">${i.pib}</div><div class="indicador-label">PIB per cápita</div><div class="indicador-año">${i.pib_anio}</div></div>
-                    <div class="indicador-card"><div class="indicador-icono">📈</div><div class="indicador-valor">${i.inflacion}</div><div class="indicador-label">Inflación</div><div class="indicador-año">${i.inflacion_anio}</div></div>
-                    <div class="indicador-card"><div class="indicador-icono">👥</div><div class="indicador-valor">${i.desempleo}</div><div class="indicador-label">Desempleo</div><div class="indicador-año">${i.desempleo_anio}</div></div>
-                    <div class="indicador-card"><div class="indicador-icono">🏛️</div><div class="indicador-valor">${i.deuda}</div><div class="indicador-label">Deuda pública</div><div class="indicador-año">${i.deuda_anio}</div></div>
-                    <div class="indicador-card"><div class="indicador-icono">🌍</div><div class="indicador-valor">${i.poblacion}</div><div class="indicador-label">Población</div><div class="indicador-año">-</div></div>
-                    <div class="indicador-card"><div class="indicador-icono">🗺️</div><div class="indicador-valor">${i.densidad}</div><div class="indicador-label">Densidad</div><div class="indicador-año">${i.densidad_anio}</div></div>
-                    <div class="indicador-card"><div class="indicador-icono">❤️</div><div class="indicador-valor">${i.esperanza_vida}</div><div class="indicador-label">Esperanza de vida</div><div class="indicador-año">${i.esperanza_anio}</div></div>
+                    <div class="indicador-card">
+                        <div class="indicador-icono">💰</div>
+                        <div class="indicador-valor">${pib} $</div>
+                        <div class="indicador-label">PIB per cápita</div>
+                        <div class="indicador-año">${pibAnio}</div>
+                    </div>
+                    <div class="indicador-card">
+                        <div class="indicador-icono">📈</div>
+                        <div class="indicador-valor">${inflacion}%</div>
+                        <div class="indicador-label">Inflación</div>
+                        <div class="indicador-año">${inflacionAnio}</div>
+                    </div>
+                    <div class="indicador-card">
+                        <div class="indicador-icono">👥</div>
+                        <div class="indicador-valor">${desempleo}%</div>
+                        <div class="indicador-label">Desempleo</div>
+                        <div class="indicador-año">${desempleoAnio}</div>
+                    </div>
+                    <div class="indicador-card">
+                        <div class="indicador-icono">🏛️</div>
+                        <div class="indicador-valor">${deuda}%</div>
+                        <div class="indicador-label">Deuda pública</div>
+                        <div class="indicador-año">${deudaAnio}</div>
+                    </div>
+                    <div class="indicador-card">
+                        <div class="indicador-icono">🗺️</div>
+                        <div class="indicador-valor">${densidad}</div>
+                        <div class="indicador-label">Densidad (hab/km²)</div>
+                        <div class="indicador-año">${densidadAnio}</div>
+                    </div>
+                    <div class="indicador-card">
+                        <div class="indicador-icono">❤️</div>
+                        <div class="indicador-valor">${esperanzaVida}</div>
+                        <div class="indicador-label">Esperanza de vida</div>
+                        <div class="indicador-año">${esperanzaAnio}</div>
+                    </div>
                 </div>
                 
                 <div class="info-botones">
@@ -71,18 +118,20 @@ var DashboardReal = {
     
     handleClick: function(e) {
         var seccion = e.currentTarget.dataset.seccion;
-        console.log('📂 Sección seleccionada:', seccion);
-        alert('📊 Sección "' + seccion + '" - Próximamente disponible');
+        console.log('📂 Sección seleccionada: ' + seccion);
+        alert('📊 Sección "' + seccion + '" - Próximamente disponible con datos reales');
     },
     
     getBandera: function(iso3) {
         var banderas = {
-            'ESP': '🇪🇸', 'FRA': '🇫🇷', 'DEU': '🇩🇪', 'ITA': '🇮🇹', 'PRT': '🇵🇹',
-            'GBR': '🇬🇧', 'IRL': '🇮🇪', 'NLD': '🇳🇱', 'BEL': '🇧🇪', 'AUT': '🇦🇹',
-            'CHE': '🇨🇭', 'SWE': '🇸🇪', 'NOR': '🇳🇴', 'DNK': '🇩🇰', 'FIN': '🇫🇮',
-            'POL': '🇵🇱', 'USA': '🇺🇸', 'CAN': '🇨🇦', 'MEX': '🇲🇽', 'BRA': '🇧🇷',
-            'ARG': '🇦🇷', 'CHL': '🇨🇱', 'COL': '🇨🇴', 'PER': '🇵🇪', 'CHN': '🇨🇳',
-            'JPN': '🇯🇵', 'KOR': '🇰🇷', 'IND': '🇮🇳', 'RUS': '🇷🇺', 'AUS': '🇦🇺', 'ZAF': '🇿🇦'
+            'ESP': '🇪🇸', 'FRA': '🇫🇷', 'DEU': '🇩🇪', 'ITA': '🇮🇹',
+            'PRT': '🇵🇹', 'GBR': '🇬🇧', 'IRL': '🇮🇪', 'NLD': '🇳🇱',
+            'BEL': '🇧🇪', 'AUT': '🇦🇹', 'CHE': '🇨🇭', 'SWE': '🇸🇪',
+            'NOR': '🇳🇴', 'DNK': '🇩🇰', 'FIN': '🇫🇮', 'POL': '🇵🇱',
+            'USA': '🇺🇸', 'CAN': '🇨🇦', 'MEX': '🇲🇽', 'BRA': '🇧🇷',
+            'ARG': '🇦🇷', 'CHL': '🇨🇱', 'COL': '🇨🇴', 'PER': '🇵🇪',
+            'CHN': '🇨🇳', 'JPN': '🇯🇵', 'KOR': '🇰🇷', 'IND': '🇮🇳',
+            'RUS': '🇷🇺', 'AUS': '🇦🇺', 'ZAF': '🇿🇦'
         };
         return banderas[iso3] || '🌍';
     }
