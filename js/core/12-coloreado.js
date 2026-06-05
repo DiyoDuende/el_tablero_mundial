@@ -1,136 +1,129 @@
-// js/core/12-coloreado.js
+// js/core/11-coloreado.js
 // ============================================
-// COLOREADO - Colorear mapa según datos
+// COLOREADO DINÁMICO - Basado en datos reales
 // ============================================
 
-const Coloreado = {
-    capaPaises: null,
-    modoActual: 'pib',
+var Coloreado = {
+    umbralesPIB: [
+        { max: 5000, color: '#b71c1c', label: '< 5.000 $' },
+        { max: 15000, color: '#ef6c00', label: '5.000 - 15.000 $' },
+        { max: 30000, color: '#f9a825', label: '15.000 - 30.000 $' },
+        { max: 50000, color: '#43a047', label: '30.000 - 50.000 $' },
+        { max: Infinity, color: '#2e7d32', label: '> 50.000 $' }
+    ],
     
-    init: function() {
-        this.capaPaises = window.capaPaisesGlobal;
-        console.log('🎨 Coloreado inicializado');
+    getColorPorPIB: function(pib) {
+        if (!pib || pib === 0) return '#1a3a4a';
+        for (var i = 0; i < this.umbralesPIB.length; i++) {
+            if (pib <= this.umbralesPIB[i].max) return this.umbralesPIB[i].color;
+        }
+        return '#1a3a4a';
     },
     
-    aplicarColoresPIB: function() {
-        console.log('💰 Aplicando colores por PIB');
-        this.modoActual = 'pib';
-        this.colorearPorPIB();
+    aplicarColoresPIB: async function() {
+        var capa = window.capaPaisesGlobal;
+        
+        if (!capa) {
+            console.warn('⚠️ capaPaisesGlobal no disponible, reintentando en 1 segundo...');
+            setTimeout(function() { Coloreado.aplicarColoresPIB(); }, 1000);
+            return;
+        }
+        
+        console.log('🎨 Coloreando', capa.getLayers().length, 'países por PIB...');
+        
+        var coloreados = 0;
+        var capas = capa.getLayers();
+        
+        for (var i = 0; i < capas.length; i++) {
+            var layer = capas[i];
+            var nombre = layer.feature?.properties?.ADMIN || '';
+            var iso3 = this.obtenerISO3(nombre);
+            
+            if (!iso3) continue;
+            if (!window.APIBancoMundial || !window.APIBancoMundial.isSoportado(iso3)) continue;
+            
+            try {
+                var datos = await window.CacheDatos.obtenerDatos(iso3);
+                var pib = datos?.pib?.valor;
+                
+                if (pib && pib > 0) {
+                    var color = this.getColorPorPIB(pib);
+                    layer.setStyle({
+                        fillColor: color,
+                        fillOpacity: 0.75,
+                        color: '#ffffff',
+                        weight: 0.5
+                    });
+                    coloreados++;
+                }
+            } catch(e) {
+                // Error silencioso
+            }
+        }
+        
+        console.log('✅ ' + coloreados + ' países coloreados por PIB');
+        this.actualizarLeyenda('💰 PIB per cápita', this.umbralesPIB);
     },
     
-    aplicarColoresInflacion: function() {
-        console.log('📈 Aplicando colores por Inflación');
-        this.modoActual = 'inflacion';
-        this.colorearPorInflacion();
+    obtenerISO3: function(nombre) {
+        var mapa = {
+            'Spain': 'ESP', 'France': 'FRA', 'Germany': 'DEU', 'Italy': 'ITA',
+            'Portugal': 'PRT', 'United Kingdom': 'GBR', 'United States of America': 'USA',
+            'China': 'CHN', 'Russia': 'RUS', 'Brazil': 'BRA', 'India': 'IND',
+            'Japan': 'JPN', 'Canada': 'CAN', 'Mexico': 'MEX', 'Australia': 'AUS',
+            'South Africa': 'ZAF', 'Netherlands': 'NLD', 'Sweden': 'SWE', 'Norway': 'NOR',
+            'Switzerland': 'CHE', 'Argentina': 'ARG', 'Chile': 'CHL', 'Colombia': 'COL',
+            'Peru': 'PER', 'Venezuela': 'VEN', 'Egypt': 'EGY', 'Turkey': 'TUR',
+            'South Korea': 'KOR', 'Poland': 'POL', 'Greece': 'GRC', 'Austria': 'AUT',
+            'Belgium': 'BEL', 'Denmark': 'DNK', 'Finland': 'FIN', 'Hungary': 'HUN',
+            'Ireland': 'IRL', 'Czech Republic': 'CZE', 'Romania': 'ROU'
+        };
+        return mapa[nombre] || null;
     },
     
-    aplicarColoresDesempleo: function() {
-        console.log('👥 Aplicando colores por Desempleo');
-        this.modoActual = 'desempleo';
-        this.colorearPorDesempleo();
+    actualizarLeyenda: function(titulo, umbrales) {
+        var leyenda = document.querySelector('.mapa-leyenda');
+        if (!leyenda) {
+            leyenda = document.createElement('div');
+            leyenda.className = 'mapa-leyenda';
+            var mapaContainer = document.querySelector('.mapa-container');
+            if (mapaContainer) mapaContainer.appendChild(leyenda);
+        }
+        
+        var html = '<div class="leyenda-titulo">' + titulo + '</div>';
+        html += '<div class="leyenda-escala">';
+        for (var i = 0; i < umbrales.length; i++) {
+            html += '<div class="leyenda-color" style="background: ' + umbrales[i].color + ';"></div>';
+        }
+        html += '</div>';
+        html += '<div class="leyenda-valores">';
+        for (var i = 0; i < umbrales.length; i++) {
+            html += '<span>' + umbrales[i].label + '</span>';
+        }
+        html += '</div>';
+        html += '<div class="leyenda-fuente">📊 Banco Mundial</div>';
+        
+        leyenda.innerHTML = html;
     },
     
     resetearColores: function() {
-        console.log('🔄 Reseteando colores');
-        if (this.capaPaises) {
-            this.capaPaises.setStyle({
-                color: '#4fc3f7',
-                weight: 1,
+        var capa = window.capaPaisesGlobal;
+        if (!capa) return;
+        
+        var capas = capa.getLayers();
+        for (var i = 0; i < capas.length; i++) {
+            capas[i].setStyle({
                 fillColor: '#1a3a4a',
-                fillOpacity: 0.6
+                fillOpacity: 0.6,
+                color: '#4fc3f7',
+                weight: 1
             });
         }
-    },
-    
-    colorearPorPIB: function() {
-        if (!this.capaPaises) return;
         
-        const datosEconomicos = {
-            'USA': { pib: 27000, color: '#8B0000' },
-            'CHN': { pib: 17700, color: '#B22222' },
-            'DEU': { pib: 4100, color: '#DC143C' },
-            'JPN': { pib: 4200, color: '#FF6347' },
-            'IND': { pib: 3700, color: '#FF7F50' },
-            'GBR': { pib: 3300, color: '#FFA07A' },
-            'FRA': { pib: 2800, color: '#FFB6C1' },
-            'ESP': { pib: 1400, color: '#FFE4E1' }
-        };
-        
-        this.capaPaises.eachLayer((layer) => {
-            const iso3 = layer.feature?.properties?.['ISO3166-1-Alpha-3'];
-            let color = '#90EE90';
-            
-            if (datosEconomicos[iso3]) {
-                color = datosEconomicos[iso3].color;
-            }
-            
-            layer.setStyle({
-                fillColor: color,
-                fillOpacity: 0.7,
-                weight: 1,
-                color: '#666'
-            });
-        });
-    },
-    
-    colorearPorInflacion: function() {
-        if (!this.capaPaises) return;
-        
-        const datosInflacion = {
-            'VEN': { inflacion: 25, color: '#8B0000' },
-            'TUR': { inflacion: 12, color: '#DC143C' },
-            'ARG': { inflacion: 11, color: '#FF6347' },
-            'BRA': { inflacion: 6, color: '#FFB6C1' },
-            'MEX': { inflacion: 4, color: '#FFE4E1' },
-            'ESP': { inflacion: 3.5, color: '#90EE90' }
-        };
-        
-        this.capaPaises.eachLayer((layer) => {
-            const iso3 = layer.feature?.properties?.['ISO3166-1-Alpha-3'];
-            let color = '#90EE90';
-            
-            if (datosInflacion[iso3]) {
-                color = datosInflacion[iso3].color;
-            }
-            
-            layer.setStyle({
-                fillColor: color,
-                fillOpacity: 0.7,
-                weight: 1,
-                color: '#666'
-            });
-        });
-    },
-    
-    colorearPorDesempleo: function() {
-        if (!this.capaPaises) return;
-        
-        const datosDesempleo = {
-            'ZAF': { desempleo: 33, color: '#8B0000' },
-            'MAR': { desempleo: 13, color: '#DC143C' },
-            'ESP': { desempleo: 12, color: '#FF6347' },
-            'FRA': { desempleo: 7, color: '#FFB6C1' },
-            'DEU': { desempleo: 6, color: '#FFE4E1' },
-            'USA': { desempleo: 4, color: '#90EE90' }
-        };
-        
-        this.capaPaises.eachLayer((layer) => {
-            const iso3 = layer.feature?.properties?.['ISO3166-1-Alpha-3'];
-            let color = '#90EE90';
-            
-            if (datosDesempleo[iso3]) {
-                color = datosDesempleo[iso3].color;
-            }
-            
-            layer.setStyle({
-                fillColor: color,
-                fillOpacity: 0.7,
-                weight: 1,
-                color: '#666'
-            });
-        });
+        var leyenda = document.querySelector('.mapa-leyenda');
+        if (leyenda) leyenda.remove();
+        console.log('🎨 Colores restablecidos');
     }
 };
 
 window.Coloreado = Coloreado;
-console.log('✅ Coloreado cargado');
