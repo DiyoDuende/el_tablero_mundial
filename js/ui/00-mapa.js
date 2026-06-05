@@ -60,10 +60,13 @@ obtenerNombrePais: function(properties) {
                             console.log('🌍 País GeoJSON (tooltip):', nombre);
                             layer.bindTooltip(nombre);
                             layer.on('click', () => {
-    const id = this.normalizarId(nombre);
-    if (window.UIPanelInfo) {
-        UIPanelInfo.mostrarPais(id);
+    var nombre = this.obtenerNombrePais(feature.properties);
+    var iso3 = this.obtenerISO3(nombre);
+    
+    if (window.DashboardReal && iso3) {
+        DashboardReal.mostrar(iso3, 'pais', nombre);
     }
+});
     
     // NUEVO: Mostrar dashboard con datos reales si existe
     if (window.DashboardReal) {
