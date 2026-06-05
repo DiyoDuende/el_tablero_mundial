@@ -10,14 +10,15 @@ var MapaMundial = {
     init: function() {
         if (mapaGlobal) return;
         
+        // Configuración para ver todo el mundo (Groenlandia y Antártida incluidos)
         mapaGlobal = L.map('mapa-mundial', {
-            center: [20, 0],
-            zoom: 2,
-            minZoom: 2,
+            center: [0, 0],        // Centro en el ecuador
+            zoom: 1.5,             // Zoom para ver el mundo entero
+            minZoom: 1.5,
             maxZoom: 8,
             zoomControl: true,
-            maxBounds: [[-70, -140], [70, 140]],
-            maxBoundsViscosity: 0.8
+            maxBounds: [[-90, -180], [90, 180]],
+            maxBoundsViscosity: 0.5
         });
         
         L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
@@ -78,16 +79,23 @@ var MapaMundial = {
                     }
                 }).addTo(mapaGlobal);
                 
+                // IMPORTANTE: Actualizar la variable global para que Coloreado la encuentre
                 window.capaPaisesGlobal = capaPaisesGlobal;
-                console.log('✅ GeoJSON cargado');
                 
+                console.log('✅ GeoJSON cargado');
+                console.log('📊 Países en el mapa:', capaPaisesGlobal.getLayers().length);
+                
+                // Activar coloreado después de cargar
                 setTimeout(function() {
                     if (window.Coloreado) {
+                        console.log('🎨 Activando coloreado...');
                         Coloreado.aplicarColoresPIB();
+                    } else {
+                        console.warn('⚠️ Coloreado no disponible');
                     }
                 }, 2000);
             })
-            .catch(function(error) { console.error('Error:', error); });
+            .catch(function(error) { console.error('Error cargando GeoJSON:', error); });
     }
 };
 
