@@ -127,3 +127,4 @@ var NormalizadorDatos = {
 };
 
 window.NormalizadorDatos = NormalizadorDatos;
+console.log('✅ NormalizadorDatos cargado');
