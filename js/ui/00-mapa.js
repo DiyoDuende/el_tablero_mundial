@@ -435,13 +435,9 @@ obtenerISO3: function(nombre) {
 };
 
 // ============================================
-// BUSCADOR GLOBAL CON NOMINATIM + GADM
+// BUSCADOR GLOBAL CON NOMINATIM + GADM + INE
 // ============================================
 
-/**
- * Busca cualquier lugar del mundo y centra el mapa
- * @param {string} texto - Nombre del lugar a buscar (ej: "Nerva", "Paris", "New York")
- */
 async function buscarLugarGlobal(texto) {
     if (!texto || texto.trim() === "") return;
     
@@ -464,20 +460,6 @@ async function buscarLugarGlobal(texto) {
     }
     
     console.log("📍 Lugar encontrado:", info);
-
-    / Si es España, buscar datos regionales en el INE
-if (info.pais_codigo === 'ESP') {
-    // Prioridad: municipio > provincia > región
-    var nombreBusqueda = info.municipio || info.provincia || info.region || info.nombre;
-    
-    if (nombreBusqueda) {
-        var datosINE = await INE_API.getDatosPorNombre(nombreBusqueda);
-        if (datosINE && datosINE.pib_percapita && datosINE.pib_percapita.valor) {
-            mostrarDashboardINE(datosINE, info);
-            return;
-        }
-    }
-}
     
     // Centrar mapa
     if (typeof mapaGlobal !== 'undefined' && mapaGlobal) {
@@ -487,29 +469,30 @@ if (info.pais_codigo === 'ESP') {
             .bindTooltip(info.nombre).openTooltip();
     }
     
-    // Construir jerarquía para mostrar
-    var nombreMostrar = info.nombre;
-    var nivel = 'lugar';
-    
-    if (info.municipio) {
-        nivel = 'municipio';
-        nombreMostrar = info.municipio;
-    } else if (info.provincia) {
-        nivel = 'provincia';
-        nombreMostrar = info.provincia;
-    } else if (info.region) {
-        nivel = 'region';
-        nombreMostrar = info.region;
-    } else if (info.pais) {
-        nivel = 'pais';
-        nombreMostrar = info.pais;
+    // Si es España, buscar datos regionales en el INE
+    if (info.pais_codigo === 'ESP') {
+        var nombreBusqueda = info.municipio || info.provincia || info.region || info.nombre;
+        
+        if (nombreBusqueda && window.INE_API) {
+            var datosINE = await INE_API.getDatosPorNombre(nombreBusqueda);
+            if (datosINE && datosINE.pib_percapita && datosINE.pib_percapita.valor) {
+                mostrarDashboardINE(datosINE, info);
+                return;
+            }
+        }
     }
     
-    // Mostrar en el dashboard
+    // Si no hay datos regionales, mostrar datos del país
     if (window.DashboardReal && info.pais_codigo) {
+        var nivel = 'lugar';
+        var nombreMostrar = info.nombre;
+        if (info.municipio) nivel = 'municipio';
+        else if (info.provincia) nivel = 'provincia';
+        else if (info.region) nivel = 'region';
+        else if (info.pais) nivel = 'pais';
+        
         DashboardReal.mostrar(info.pais_codigo, nivel, nombreMostrar);
         
-        // Añadir aviso de ubicación
         setTimeout(function() {
             var aviso = document.querySelector('.dashboard-real .aviso-estimacion');
             if (!aviso && container) {
@@ -528,57 +511,19 @@ if (info.pais_codigo === 'ESP') {
 }
 
 // ============================================
-// CONECTAR EL BUSCADOR EXISTENTE
+// MOSTRAR DATOS DEL INE EN EL DASHBOARD
 // ============================================
-
-// Buscador rápido del panel lateral (id="buscador-rapido")
-var buscadorRapido = document.getElementById('buscador-rapido');
-if (buscadorRapido) {
-    var nuevoBuscadorRapido = buscadorRapido.cloneNode(true);
-    buscadorRapido.parentNode.replaceChild(nuevoBuscadorRapido, buscadorRapido);
-    
-    nuevoBuscadorRapido.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            buscarLugarGlobal(e.target.value.trim());
-        }
-    });
-    console.log("✅ Buscador rápido conectado a GADM");
-}
-
-// Buscador global superior (si existe)
-var buscadorGlobal = document.getElementById('buscador-global');
-if (buscadorGlobal) {
-    var nuevoBuscadorGlobal = buscadorGlobal.cloneNode(true);
-    buscadorGlobal.parentNode.replaceChild(nuevoBuscadorGlobal, buscadorGlobal);
-    
-    nuevoBuscadorGlobal.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            buscarLugarGlobal(e.target.value.trim());
-        }
-    });
-    
-    var btnBuscar = document.getElementById('btn-buscar');
-    if (btnBuscar) {
-        var nuevoBtnBuscar = btnBuscar.cloneNode(true);
-        btnBuscar.parentNode.replaceChild(nuevoBtnBuscar, btnBuscar);
-        nuevoBtnBuscar.addEventListener('click', function() {
-            var input = document.getElementById('buscador-global');
-            if (input) buscarLugarGlobal(input.value.trim());
-        });
-    }
-    console.log("✅ Buscador global conectado a GADM");
-}
 
 function mostrarDashboardINE(datosINE, info) {
     var container = document.getElementById('dashboard-container');
     if (!container) return;
     
-    var pib = datosINE.pib_percapita?.valor ? datosINE.pib_percapita.valor.toLocaleString() + ' €' : 'N/D';
-    var pibAnio = datosINE.pib_percapita?.año || 'N/D';
-    var inflacion = datosINE.inflacion?.valor ? datosINE.inflacion.valor.toFixed(1) + '%' : 'N/D';
-    var inflacionAnio = datosINE.inflacion?.año || 'N/D';
-    var desempleo = datosINE.desempleo?.valor ? datosINE.desempleo.valor.toFixed(1) + '%' : 'N/D';
-    var desempleoAnio = datosINE.desempleo?.año || 'N/D';
+    var pib = datosINE.pib_percapita && datosINE.pib_percapita.valor ? datosINE.pib_percapita.valor.toLocaleString() + ' €' : 'N/D';
+    var pibAnio = datosINE.pib_percapita && datosINE.pib_percapita.año || 'N/D';
+    var inflacion = datosINE.inflacion && datosINE.inflacion.valor ? datosINE.inflacion.valor.toFixed(1) + '%' : 'N/D';
+    var inflacionAnio = datosINE.inflacion && datosINE.inflacion.año || 'N/D';
+    var desempleo = datosINE.desempleo && datosINE.desempleo.valor ? datosINE.desempleo.valor.toFixed(1) + '%' : 'N/D';
+    var desempleoAnio = datosINE.desempleo && datosINE.desempleo.año || 'N/D';
     
     container.innerHTML = `
         <div class="dashboard-real">
@@ -615,7 +560,9 @@ function mostrarDashboardINE(datosINE, info) {
         </div>
     `;
     
-    if (window.DashboardReal) window.DashboardReal.vincularEventosBotones();
+    if (window.DashboardReal && window.DashboardReal.vincularEventosBotones) {
+        window.DashboardReal.vincularEventosBotones();
+    }
 }
 
 // Exportar función para uso global
