@@ -73,4 +73,44 @@ const TERRITORIOS = {
     get: function(id) { return this[id] || null; }
 };
 
+// ============================================
+// INTEGRACIÓN CON GADM (IDENTIDAD GLOBAL)
+// ============================================
+
+async function expandirConIdentidadGlobal(territorioLocal) {
+    if (!territorioLocal) return territorioLocal;
+    
+    // Si el territorio tiene nombre y país, buscar en GADM
+    if (territorioLocal.nombre && !territorioLocal.gadm_id) {
+        var resultados = await GADM.buscarPorNombre(territorioLocal.nombre);
+        if (resultados && resultados.length > 0) {
+            territorioLocal.gadm_id = resultados[0].id;
+            territorioLocal.nivel_gadm = resultados[0].nivel;
+            
+            // Si es un municipio, obtener jerarquía completa
+            if (resultados[0].nivel === "municipio") {
+                var jerarquia = await GADM.obtenerJerarquia(resultados[0].id);
+                if (jerarquia) {
+                    territorioLocal.jerarquia_global = jerarquia;
+                }
+            }
+        }
+    }
+    
+    return territorioLocal;
+}
+
+// Ejemplo de uso: expandir un territorio existente
+async function obtenerTerritorioGlobal(idLocal) {
+    var territorio = TERRITORIOS[idLocal];
+    if (territorio) {
+        return await expandirConIdentidadGlobal(territorio);
+    }
+    return null;
+}
+
+// Añadir al objeto TERRITORIOS
+TERRITORIOS.expandirConIdentidadGlobal = expandirConIdentidadGlobal;
+TERRITORIOS.obtenerTerritorioGlobal = obtenerTerritorioGlobal;
+
 window.TERRITORIOS = TERRITORIOS;
