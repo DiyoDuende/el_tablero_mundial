@@ -118,5 +118,115 @@ var Fuentes = (function() {
     };
 })();
 
+var registroFuentes = {
+    // Fuentes globales
+    "Banco Mundial": {
+        nombre: "World Bank Open Data",
+        url: "https://data.worldbank.org",
+        fiabilidad_base: "muy_alta",
+        tipo: "oficial_internacional",
+        actualizacion: "anual"
+    },
+    "GADM": {
+        nombre: "Global Administrative Areas Database",
+        url: "https://gadm.org",
+        fiabilidad_base: "alta",
+        tipo: "academico",
+        actualizacion: "versionada"
+    },
+    "IEA": {
+        nombre: "International Energy Agency",
+        url: "https://www.iea.org",
+        fiabilidad_base: "alta",
+        tipo: "organismo_internacional",
+        actualizacion: "anual"
+    },
+    "UNData": {
+        nombre: "United Nations Data",
+        url: "https://data.un.org",
+        fiabilidad_base: "muy_alta",
+        tipo: "oficial_internacional",
+        actualizacion: "variable"
+    },
+    
+    // América
+    "IBGE": {
+        nombre: "Instituto Brasileiro de Geografia e Estatística (Brasil)",
+        url: "https://www.ibge.gov.br",
+        fiabilidad_base: "muy_alta",
+        tipo: "oficial_nacional",
+        actualizacion: "anual"
+    },
+    "INEGI": {
+        nombre: "Instituto Nacional de Estadística y Geografía (México)",
+        url: "https://www.inegi.org.mx",
+        fiabilidad_base: "muy_alta",
+        tipo: "oficial_nacional",
+        actualizacion: "anual"
+    },
+    "Statistics Canada": {
+        nombre: "Statistics Canada",
+        url: "https://www.statcan.gc.ca",
+        fiabilidad_base: "muy_alta",
+        tipo: "oficial_nacional",
+        actualizacion: "anual"
+    },
+    "INDEC": {
+        nombre: "Instituto Nacional de Estadística y Censos (Argentina)",
+        url: "https://www.indec.gob.ar",
+        fiabilidad_base: "muy_alta",
+        tipo: "oficial_nacional",
+        actualizacion: "anual"
+    },
+    
+    // Asia
+    "NBS": {
+        nombre: "National Bureau of Statistics of China",
+        url: "https://www.stats.gov.cn",
+        fiabilidad_base: "media",
+        tipo: "oficial_nacional",
+        actualizacion: "anual"
+    },
+    "Statistics Japan": {
+        nombre: "Statistics Bureau of Japan",
+        url: "https://www.stat.go.jp",
+        fiabilidad_base: "muy_alta",
+        tipo: "oficial_nacional",
+        actualizacion: "anual"
+    },
+    "KOSTAT": {
+        nombre: "Statistics Korea",
+        url: "https://kostat.go.kr",
+        fiabilidad_base: "alta",
+        tipo: "oficial_nacional",
+        actualizacion: "anual"
+    },
+    
+    // África
+    "StatsSA": {
+        nombre: "Statistics South Africa",
+        url: "https://www.statssa.gov.za",
+        fiabilidad_base: "media",
+        tipo: "oficial_nacional",
+        actualizacion: "anual"
+    },
+    "CAPMAS": {
+        nombre: "Central Agency for Public Mobilization and Statistics (Egypt)",
+        url: "https://www.capmas.gov.eg",
+        fiabilidad_base: "media",
+        tipo: "oficial_nacional",
+        actualizacion: "anual"
+    },
+    
+    // Oceanía
+    "ABS": {
+        nombre: "Australian Bureau of Statistics",
+        url: "https://www.abs.gov.au",
+        fiabilidad_base: "muy_alta",
+        tipo: "oficial_nacional",
+        actualizacion: "anual"
+    }
+};
+
 window.Fuentes = Fuentes;
 console.log("✅ Sistema de Fuentes cargado");
