@@ -435,50 +435,6 @@ obtenerISO3: function(nombre) {
 };
 
 // ============================================
-// BUSCADOR GLOBAL CON NOMINATIM
-// ============================================
-
-async function buscarLugarGlobal(texto) {
-    if (!texto) return;
-    
-    console.log("🔍 Buscando:", texto);
-    
-    var info = await GADM.obtenerInfoLugar(texto);
-    
-    if (!info) {
-        alert("❌ No se encontró: " + texto);
-        return;
-    }
-    
-    console.log("📍 Lugar encontrado:", info);
-    
-    // Centrar mapa en el lugar
-    if (mapaGlobal) {
-        mapaGlobal.setView([info.lat, info.lon], 12);
-    }
-    
-    // Mostrar información en el dashboard
-    if (window.DashboardReal && info.pais_codigo) {
-        var nombreMostrar = info.nombre;
-        if (info.municipio) nombreMostrar = info.municipio;
-        else if (info.provincia) nombreMostrar = info.provincia;
-        else if (info.region) nombreMostrar = info.region;
-        
-        DashboardReal.mostrar(info.pais_codigo, info.tipo || 'lugar', nombreMostrar);
-    }
-}
-
-// Conectar con el buscador existente
-var buscadorInput = document.getElementById('buscador-rapido');
-if (buscadorInput) {
-    buscadorInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            buscarLugarGlobal(e.target.value.trim());
-        }
-    });
-}
-
-// ============================================
 // BUSCADOR GLOBAL CON NOMINATIM + GADM
 // ============================================
 
@@ -491,13 +447,11 @@ async function buscarLugarGlobal(texto) {
     
     console.log("🔍 Buscando lugar:", texto);
     
-    // Mostrar indicador de carga en el dashboard
     var container = document.getElementById('dashboard-container');
     if (container) {
         container.innerHTML = '<div class="loading-spinner">🌐 Buscando ' + texto + '...</div>';
     }
     
-    // Usar GADM para obtener información del lugar
     var info = await GADM.obtenerInfoLugar(texto);
     
     if (!info) {
@@ -511,44 +465,50 @@ async function buscarLugarGlobal(texto) {
     
     console.log("📍 Lugar encontrado:", info);
     
-    // Centrar mapa en el lugar
+    // Centrar mapa
     if (typeof mapaGlobal !== 'undefined' && mapaGlobal) {
         mapaGlobal.setView([info.lat, info.lon], 12);
-        // Añadir marcador temporal
-        if (window.marcadorBusqueda) {
-            mapaGlobal.removeLayer(window.marcadorBusqueda);
-        }
+        if (window.marcadorBusqueda) mapaGlobal.removeLayer(window.marcadorBusqueda);
         window.marcadorBusqueda = L.marker([info.lat, info.lon]).addTo(mapaGlobal)
             .bindTooltip(info.nombre).openTooltip();
     }
     
-    // Mostrar información en el dashboard
-    if (window.DashboardReal && info.pais_codigo) {
-        // Determinar el nivel para mostrar
-        var nivel = 'lugar';
-        var nombreMostrar = info.nombre;
-        
-        if (info.municipio) {
-            nivel = 'municipio';
-            nombreMostrar = info.municipio;
-        } else if (info.provincia) {
-            nivel = 'provincia';
-            nombreMostrar = info.provincia;
-        } else if (info.region) {
-            nivel = 'region';
-            nombreMostrar = info.region;
-        } else if (info.pais) {
-            nivel = 'pais';
-            nombreMostrar = info.pais;
-        }
-        
-        // Mostrar dashboard con los datos económicos del país
-        DashboardReal.mostrar(info.pais_codigo, nivel, nombreMostrar);
+    // Construir jerarquía para mostrar
+    var nombreMostrar = info.nombre;
+    var nivel = 'lugar';
+    
+    if (info.municipio) {
+        nivel = 'municipio';
+        nombreMostrar = info.municipio;
+    } else if (info.provincia) {
+        nivel = 'provincia';
+        nombreMostrar = info.provincia;
+    } else if (info.region) {
+        nivel = 'region';
+        nombreMostrar = info.region;
     } else if (info.pais) {
-        // Si no hay DashboardReal pero tenemos país, mostrar alerta
-        console.log("📍 País detectado:", info.pais, "(código:", info.pais_codigo, ")");
+        nivel = 'pais';
+        nombreMostrar = info.pais;
+    }
+    
+    // Mostrar en el dashboard
+    if (window.DashboardReal && info.pais_codigo) {
+        DashboardReal.mostrar(info.pais_codigo, nivel, nombreMostrar);
+        
+        // Añadir aviso de ubicación
+        setTimeout(function() {
+            var aviso = document.querySelector('.dashboard-real .aviso-estimacion');
+            if (!aviso && container) {
+                var avisoDiv = document.createElement('div');
+                avisoDiv.className = 'aviso-estimacion';
+                avisoDiv.innerHTML = '📍 Ubicación: ' + info.nombre + ' · Coordenadas: ' + info.lat.toFixed(4) + '°, ' + info.lon.toFixed(4) + '°';
+                var header = container.querySelector('.dashboard-header');
+                if (header) header.insertAdjacentElement('afterend', avisoDiv);
+            }
+        }, 100);
+    } else if (info.pais) {
         if (container) {
-            container.innerHTML = '<div class="dashboard-info">📍 ' + info.nombre + '<br>País: ' + (info.pais || 'Desconocido') + '<br>Lat: ' + info.lat.toFixed(4) + ', Lon: ' + info.lon.toFixed(4) + '</div>';
+            container.innerHTML = '<div class="dashboard-info">📍 ' + info.nombre + '<br>País: ' + info.pais + '<br>Lat: ' + info.lat.toFixed(4) + ', Lon: ' + info.lon.toFixed(4) + '</div>';
         }
     }
 }
@@ -560,7 +520,6 @@ async function buscarLugarGlobal(texto) {
 // Buscador rápido del panel lateral (id="buscador-rapido")
 var buscadorRapido = document.getElementById('buscador-rapido');
 if (buscadorRapido) {
-    // Eliminar event listeners anteriores para evitar duplicados
     var nuevoBuscadorRapido = buscadorRapido.cloneNode(true);
     buscadorRapido.parentNode.replaceChild(nuevoBuscadorRapido, buscadorRapido);
     
@@ -572,7 +531,7 @@ if (buscadorRapido) {
     console.log("✅ Buscador rápido conectado a GADM");
 }
 
-// Buscador global superior (si existe, id="buscador-global")
+// Buscador global superior (si existe)
 var buscadorGlobal = document.getElementById('buscador-global');
 if (buscadorGlobal) {
     var nuevoBuscadorGlobal = buscadorGlobal.cloneNode(true);
