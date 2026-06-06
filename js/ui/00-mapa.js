@@ -464,6 +464,20 @@ async function buscarLugarGlobal(texto) {
     }
     
     console.log("📍 Lugar encontrado:", info);
+
+    / Si es España, buscar datos regionales en el INE
+if (info.pais_codigo === 'ESP') {
+    // Prioridad: municipio > provincia > región
+    var nombreBusqueda = info.municipio || info.provincia || info.region || info.nombre;
+    
+    if (nombreBusqueda) {
+        var datosINE = await INE_API.getDatosPorNombre(nombreBusqueda);
+        if (datosINE && datosINE.pib_percapita && datosINE.pib_percapita.valor) {
+            mostrarDashboardINE(datosINE, info);
+            return;
+        }
+    }
+}
     
     // Centrar mapa
     if (typeof mapaGlobal !== 'undefined' && mapaGlobal) {
