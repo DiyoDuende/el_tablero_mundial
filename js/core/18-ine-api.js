@@ -162,19 +162,52 @@ var INE_API = {
     
     // Obtener datos para cualquier nombre de lugar en España
     async getDatosPorNombre(nombreLugar) {
-        // Intentar como comunidad autónoma
+    // Mapa de nombres comunes a nombres oficiales
+    var mapaNombres = {
+        'madrid': 'Comunidad de Madrid',
+        'comunidad de madrid': 'Comunidad de Madrid',
+        'andalucia': 'Andalucía',
+        'andalucía': 'Andalucía',
+        'cataluna': 'Cataluña',
+        'cataluña': 'Cataluña',
+        'valencia': 'Comunitat Valenciana',
+        'comunitat valenciana': 'Comunitat Valenciana',
+        'galicia': 'Galicia',
+        'pais vasco': 'País Vasco',
+        'castilla y leon': 'Castilla y León',
+        'castilla la mancha': 'Castilla-La Mancha',
+        'canarias': 'Canarias',
+        'murcia': 'Región de Murcia',
+        'aragon': 'Aragón',
+        'extremadura': 'Extremadura',
+        'baleares': 'Islas Baleares',
+        'asturias': 'Principado de Asturias',
+        'navarra': 'Comunidad Foral de Navarra',
+        'cantabria': 'Cantabria',
+        'la rioja': 'La Rioja'
+    };
+    
+    var nombreLower = nombreLugar.toLowerCase();
+    var nombreOficial = mapaNombres[nombreLower] || null;
+    
+    // Si no está en el mapa, buscar directamente en los códigos
+    if (!nombreOficial) {
         for (var region in this.codigosCCAA) {
-            if (region.toLowerCase() === nombreLugar.toLowerCase() ||
-                region.toLowerCase().includes(nombreLugar.toLowerCase()) ||
-                nombreLugar.toLowerCase().includes(region.toLowerCase())) {
-                return await this.getDatosCCAA(region);
+            if (region.toLowerCase() === nombreLower ||
+                region.toLowerCase().includes(nombreLower) ||
+                nombreLower.includes(region.toLowerCase())) {
+                nombreOficial = region;
+                break;
             }
         }
-        
-        // Si no se encuentra, devolver null
-        return null;
     }
-};
+    
+    if (nombreOficial && this.codigosCCAA[nombreOficial]) {
+        return await this.getDatosCCAA(nombreOficial);
+    }
+    
+    return null;
+}
 
 window.INE_API = INE_API;
 console.log('✅ INE_API cargado');
