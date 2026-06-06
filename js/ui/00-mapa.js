@@ -568,4 +568,131 @@ function mostrarDashboardINE(datosINE, info) {
 // Exportar función para uso global
 window.buscarLugarGlobal = buscarLugarGlobal;
 
+// ============================================
+// MOSTRAR DATOS DEL INE EN EL DASHBOARD
+// ============================================
+function mostrarDashboardINE(datosINE, info) {
+    var container = document.getElementById('dashboard-container');
+    if (!container) return;
+    
+    var pib = datosINE.pib_percapita && datosINE.pib_percapita.valor ? datosINE.pib_percapita.valor.toLocaleString() + ' €' : 'N/D';
+    var pibAnio = datosINE.pib_percapita && datosINE.pib_percapita.año || 'N/D';
+    var inflacion = datosINE.inflacion && datosINE.inflacion.valor ? datosINE.inflacion.valor.toFixed(1) + '%' : 'N/D';
+    var inflacionAnio = datosINE.inflacion && datosINE.inflacion.año || 'N/D';
+    var desempleo = datosINE.desempleo && datosINE.desempleo.valor ? datosINE.desempleo.valor.toFixed(1) + '%' : 'N/D';
+    var desempleoAnio = datosINE.desempleo && datosINE.desempleo.año || 'N/D';
+    
+    container.innerHTML = `
+        <div class="dashboard-real">
+            <div class="dashboard-header">
+                <div class="pais-titulo">
+                    <span class="pais-bandera">🇪🇸</span>
+                    <h2>${datosINE.nombre}</h2>
+                </div>
+                <span class="pais-nivel">Comunidad Autónoma</span>
+            </div>
+            
+            <div class="indicadores-grid">
+                <div class="indicador-card">
+                    <div class="indicador-icono">💰</div>
+                    <div class="indicador-valor">${pib}</div>
+                    <div class="indicador-label">PIB per cápita</div>
+                    <div class="indicador-año">${pibAnio}</div>
+                </div>
+                <div class="indicador-card">
+                    <div class="indicador-icono">📈</div>
+                    <div class="indicador-valor">${inflacion}</div>
+                    <div class="indicador-label">Inflación</div>
+                    <div class="indicador-año">${inflacionAnio}</div>
+                </div>
+                <div class="indicador-card">
+                    <div class="indicador-icono">👥</div>
+                    <div class="indicador-valor">${desempleo}</div>
+                    <div class="indicador-label">Desempleo</div>
+                    <div class="indicador-año">${desempleoAnio}</div>
+                </div>
+            </div>
+            
+            <div class="dashboard-fuentes">📚 Fuentes: INE (Instituto Nacional de Estadística)</div>
+        </div>
+    `;
+    
+    if (window.DashboardReal && window.DashboardReal.vincularEventosBotones) {
+        window.DashboardReal.vincularEventosBotones();
+    }
+}
+
+// ============================================
+// BUSCADOR GLOBAL CON INE
+// ============================================
+async function buscarLugarGlobal(texto) {
+    if (!texto || texto.trim() === "") return;
+    
+    console.log("🔍 Buscando lugar:", texto);
+    
+    var container = document.getElementById('dashboard-container');
+    if (container) {
+        container.innerHTML = '<div class="loading-spinner">🌐 Buscando ' + texto + '...</div>';
+    }
+    
+    // Primero intentar con GADM para obtener info del lugar
+    var info = await GADM.obtenerInfoLugar(texto);
+    
+    if (!info) {
+        console.warn("❌ No se encontró:", texto);
+        if (container) {
+            container.innerHTML = '<div class="dashboard-error">⚠️ No se encontró el lugar: "' + texto + '"</div>';
+        }
+        alert("❌ No se encontró: " + texto);
+        return;
+    }
+    
+    console.log("📍 Lugar encontrado:", info);
+    
+    // Centrar mapa
+    if (typeof mapaGlobal !== 'undefined' && mapaGlobal) {
+        mapaGlobal.setView([info.lat, info.lon], 12);
+        if (window.marcadorBusqueda) mapaGlobal.removeLayer(window.marcadorBusqueda);
+        window.marcadorBusqueda = L.marker([info.lat, info.lon]).addTo(mapaGlobal)
+            .bindTooltip(info.nombre).openTooltip();
+    }
+    
+    // Si es España, buscar datos regionales en el INE
+    if (info.pais_codigo === 'ESP') {
+        var nombreBusqueda = info.municipio || info.provincia || info.region || info.nombre;
+        
+        if (nombreBusqueda && window.INE_API) {
+            var datosINE = await INE_API.getDatosPorNombre(nombreBusqueda);
+            if (datosINE && datosINE.pib_percapita && datosINE.pib_percapita.valor) {
+                mostrarDashboardINE(datosINE, info);
+                return;
+            }
+        }
+    }
+    
+    // Si no hay datos regionales, mostrar datos del país
+    if (window.DashboardReal && info.pais_codigo) {
+        var nombreMostrar = info.municipio || info.provincia || info.region || info.nombre;
+        DashboardReal.mostrar(info.pais_codigo, 'lugar', nombreMostrar);
+    } else if (info.pais) {
+        if (container) {
+            container.innerHTML = '<div class="dashboard-info">📍 ' + info.nombre + '<br>País: ' + info.pais + '<br>Lat: ' + info.lat.toFixed(4) + ', Lon: ' + info.lon.toFixed(4) + '</div>';
+        }
+    }
+}
+
+// Conectar el buscador rápido
+var buscadorRapido = document.getElementById('buscador-rapido');
+if (buscadorRapido) {
+    buscadorRapido.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            buscarLugarGlobal(e.target.value.trim());
+        }
+    });
+    console.log("✅ Buscador rápido conectado");
+}
+
+// Exportar función
+window.buscarLugarGlobal = buscarLugarGlobal;
+
 window.MapaMundial = MapaMundial;
