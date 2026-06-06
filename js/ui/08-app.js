@@ -160,3 +160,25 @@ setTimeout(() => {
     
     console.log('✅ Tablero Mundial listo');
 });
+
+// ============================================
+// VERIFICADOR MEJORADO CON FUENTES
+// ============================================
+
+function explicarConFuentes(indicador, preguntaUsuario) {
+    var respuesta = "🔍 **Análisis verificado**\n\n";
+    respuesta += Fuentes.explicarOrigen(indicador);
+    respuesta += "\n\n📈 Valor: " + indicador.valor.toLocaleString() + " " + indicador.unidad;
+    
+    if (Fuentes.esFiable(indicador, "alta")) {
+        respuesta += "\n\n✅ Este dato es considerado **fiable** para análisis y simulaciones.";
+    } else {
+        respuesta += "\n\n⚠️ **Precaución**: Este dato tiene fiabilidad " + indicador.fuente.fiabilidad + ". Considera contrastarlo con otras fuentes.";
+    }
+    
+    return respuesta;
+}
+
+// Ejemplo de uso en el verificador existente
+// Busca donde se muestra la respuesta del verificador y añade:
+// var explicacion = explicarConFuentes(indicador, pregunta);
