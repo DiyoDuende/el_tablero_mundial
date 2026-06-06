@@ -1,6 +1,6 @@
 // js/core/16-gadm.js
 // ============================================
-// PROVEEDOR GLOBAL DE IDENTIDAD TERRITORIAL
+// PROVEEDOR GLOBAL DE IDENTIDAD TERRITORIAL (GADM)
 // ============================================
 
 var GADM = (function() {
@@ -10,7 +10,6 @@ var GADM = (function() {
     
     var BASE_URL = "https://geodata.ucdavis.edu/gadm/gadm4.1/json/gadm41_";
     
-    // Mapa de códigos ISO3 a nombres de archivo GADM
     var mapaPaisesGADM = {
         'ESP': 'ESP', 'FRA': 'FRA', 'DEU': 'DEU', 'ITA': 'ITA',
         'PRT': 'PRT', 'GBR': 'GBR', 'USA': 'USA', 'CAN': 'CAN',
@@ -19,10 +18,6 @@ var GADM = (function() {
         'AUS': 'AUS', 'ZAF': 'ZAF', 'EGY': 'EGY', 'TUR': 'TUR'
     };
     
-    /**
-     * Buscar cualquier lugar del mundo usando Nominatim (OpenStreetMap)
-     * Devuelve: nombre, lat, lon, tipo, país, región, etc.
-     */
     async function buscarLugar(texto) {
         if (!texto) return null;
         
@@ -57,9 +52,6 @@ var GADM = (function() {
         }
     }
     
-    /**
-     * Obtener jerarquía administrativa desde GADM por coordenadas
-     */
     async function obtenerJerarquiaPorCoordenadas(lat, lon, iso3) {
         if (!iso3) return null;
         
@@ -69,7 +61,6 @@ var GADM = (function() {
         var geojson = await cargarGeoJSONPais(iso3);
         if (!geojson || !geojson.features) return null;
         
-        // Buscar el feature que contiene el punto
         for (var i = 0; i < geojson.features.length; i++) {
             var feature = geojson.features[i];
             if (contienePunto(feature, lat, lon)) {
@@ -95,9 +86,6 @@ var GADM = (function() {
         return null;
     }
     
-    /**
-     * Verificar si un punto está dentro de un polígono
-     */
     function contienePunto(feature, lat, lon) {
         var geometry = feature.geometry;
         if (!geometry) return false;
@@ -152,9 +140,6 @@ var GADM = (function() {
         }
     }
     
-    /**
-     * Obtener información completa de cualquier lugar (búsqueda por texto)
-     */
     async function obtenerInfoLugar(texto) {
         var lugar = await buscarLugar(texto);
         if (!lugar) return null;
@@ -172,7 +157,6 @@ var GADM = (function() {
             jerarquia_gadm: null
         };
         
-        // Si tenemos código de país, intentar obtener jerarquía GADM
         if (lugar.pais_codigo && lugar.lat && lugar.lon) {
             var jerarquia = await obtenerJerarquiaPorCoordenadas(lugar.lat, lugar.lon, lugar.pais_codigo);
             if (jerarquia) {
