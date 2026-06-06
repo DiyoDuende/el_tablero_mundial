@@ -434,4 +434,48 @@ obtenerISO3: function(nombre) {
     }
 };
 
+// ============================================
+// BUSCADOR GLOBAL CON NOMINATIM
+// ============================================
+
+async function buscarLugarGlobal(texto) {
+    if (!texto) return;
+    
+    console.log("🔍 Buscando:", texto);
+    
+    var info = await GADM.obtenerInfoLugar(texto);
+    
+    if (!info) {
+        alert("❌ No se encontró: " + texto);
+        return;
+    }
+    
+    console.log("📍 Lugar encontrado:", info);
+    
+    // Centrar mapa en el lugar
+    if (mapaGlobal) {
+        mapaGlobal.setView([info.lat, info.lon], 12);
+    }
+    
+    // Mostrar información en el dashboard
+    if (window.DashboardReal && info.pais_codigo) {
+        var nombreMostrar = info.nombre;
+        if (info.municipio) nombreMostrar = info.municipio;
+        else if (info.provincia) nombreMostrar = info.provincia;
+        else if (info.region) nombreMostrar = info.region;
+        
+        DashboardReal.mostrar(info.pais_codigo, info.tipo || 'lugar', nombreMostrar);
+    }
+}
+
+// Conectar con el buscador existente
+var buscadorInput = document.getElementById('buscador-rapido');
+if (buscadorInput) {
+    buscadorInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            buscarLugarGlobal(e.target.value.trim());
+        }
+    });
+}
+
 window.MapaMundial = MapaMundial;
