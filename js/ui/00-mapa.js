@@ -478,4 +478,125 @@ if (buscadorInput) {
     });
 }
 
+// ============================================
+// BUSCADOR GLOBAL CON NOMINATIM + GADM
+// ============================================
+
+/**
+ * Busca cualquier lugar del mundo y centra el mapa
+ * @param {string} texto - Nombre del lugar a buscar (ej: "Nerva", "Paris", "New York")
+ */
+async function buscarLugarGlobal(texto) {
+    if (!texto || texto.trim() === "") return;
+    
+    console.log("🔍 Buscando lugar:", texto);
+    
+    // Mostrar indicador de carga en el dashboard
+    var container = document.getElementById('dashboard-container');
+    if (container) {
+        container.innerHTML = '<div class="loading-spinner">🌐 Buscando ' + texto + '...</div>';
+    }
+    
+    // Usar GADM para obtener información del lugar
+    var info = await GADM.obtenerInfoLugar(texto);
+    
+    if (!info) {
+        console.warn("❌ No se encontró:", texto);
+        if (container) {
+            container.innerHTML = '<div class="dashboard-error">⚠️ No se encontró el lugar: "' + texto + '"</div>';
+        }
+        alert("❌ No se encontró: " + texto);
+        return;
+    }
+    
+    console.log("📍 Lugar encontrado:", info);
+    
+    // Centrar mapa en el lugar
+    if (typeof mapaGlobal !== 'undefined' && mapaGlobal) {
+        mapaGlobal.setView([info.lat, info.lon], 12);
+        // Añadir marcador temporal
+        if (window.marcadorBusqueda) {
+            mapaGlobal.removeLayer(window.marcadorBusqueda);
+        }
+        window.marcadorBusqueda = L.marker([info.lat, info.lon]).addTo(mapaGlobal)
+            .bindTooltip(info.nombre).openTooltip();
+    }
+    
+    // Mostrar información en el dashboard
+    if (window.DashboardReal && info.pais_codigo) {
+        // Determinar el nivel para mostrar
+        var nivel = 'lugar';
+        var nombreMostrar = info.nombre;
+        
+        if (info.municipio) {
+            nivel = 'municipio';
+            nombreMostrar = info.municipio;
+        } else if (info.provincia) {
+            nivel = 'provincia';
+            nombreMostrar = info.provincia;
+        } else if (info.region) {
+            nivel = 'region';
+            nombreMostrar = info.region;
+        } else if (info.pais) {
+            nivel = 'pais';
+            nombreMostrar = info.pais;
+        }
+        
+        // Mostrar dashboard con los datos económicos del país
+        DashboardReal.mostrar(info.pais_codigo, nivel, nombreMostrar);
+    } else if (info.pais) {
+        // Si no hay DashboardReal pero tenemos país, mostrar alerta
+        console.log("📍 País detectado:", info.pais, "(código:", info.pais_codigo, ")");
+        if (container) {
+            container.innerHTML = '<div class="dashboard-info">📍 ' + info.nombre + '<br>País: ' + (info.pais || 'Desconocido') + '<br>Lat: ' + info.lat.toFixed(4) + ', Lon: ' + info.lon.toFixed(4) + '</div>';
+        }
+    }
+}
+
+// ============================================
+// CONECTAR EL BUSCADOR EXISTENTE
+// ============================================
+
+// Buscador rápido del panel lateral (id="buscador-rapido")
+var buscadorRapido = document.getElementById('buscador-rapido');
+if (buscadorRapido) {
+    // Eliminar event listeners anteriores para evitar duplicados
+    var nuevoBuscadorRapido = buscadorRapido.cloneNode(true);
+    buscadorRapido.parentNode.replaceChild(nuevoBuscadorRapido, buscadorRapido);
+    
+    nuevoBuscadorRapido.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            buscarLugarGlobal(e.target.value.trim());
+        }
+    });
+    console.log("✅ Buscador rápido conectado a GADM");
+}
+
+// Buscador global superior (si existe, id="buscador-global")
+var buscadorGlobal = document.getElementById('buscador-global');
+if (buscadorGlobal) {
+    var nuevoBuscadorGlobal = buscadorGlobal.cloneNode(true);
+    buscadorGlobal.parentNode.replaceChild(nuevoBuscadorGlobal, buscadorGlobal);
+    
+    nuevoBuscadorGlobal.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            buscarLugarGlobal(e.target.value.trim());
+        }
+    });
+    
+    var btnBuscar = document.getElementById('btn-buscar');
+    if (btnBuscar) {
+        var nuevoBtnBuscar = btnBuscar.cloneNode(true);
+        btnBuscar.parentNode.replaceChild(nuevoBtnBuscar, btnBuscar);
+        nuevoBtnBuscar.addEventListener('click', function() {
+            var input = document.getElementById('buscador-global');
+            if (input) buscarLugarGlobal(input.value.trim());
+        });
+    }
+    console.log("✅ Buscador global conectado a GADM");
+}
+
+// Exportar función para uso global
+window.buscarLugarGlobal = buscarLugarGlobal;
+
 window.MapaMundial = MapaMundial;
