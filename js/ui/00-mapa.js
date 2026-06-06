@@ -569,6 +569,55 @@ if (buscadorGlobal) {
     console.log("✅ Buscador global conectado a GADM");
 }
 
+function mostrarDashboardINE(datosINE, info) {
+    var container = document.getElementById('dashboard-container');
+    if (!container) return;
+    
+    var pib = datosINE.pib_percapita?.valor ? datosINE.pib_percapita.valor.toLocaleString() + ' €' : 'N/D';
+    var pibAnio = datosINE.pib_percapita?.año || 'N/D';
+    var inflacion = datosINE.inflacion?.valor ? datosINE.inflacion.valor.toFixed(1) + '%' : 'N/D';
+    var inflacionAnio = datosINE.inflacion?.año || 'N/D';
+    var desempleo = datosINE.desempleo?.valor ? datosINE.desempleo.valor.toFixed(1) + '%' : 'N/D';
+    var desempleoAnio = datosINE.desempleo?.año || 'N/D';
+    
+    container.innerHTML = `
+        <div class="dashboard-real">
+            <div class="dashboard-header">
+                <div class="pais-titulo">
+                    <span class="pais-bandera">🇪🇸</span>
+                    <h2>${datosINE.nombre}</h2>
+                </div>
+                <span class="pais-nivel">Comunidad Autónoma</span>
+            </div>
+            
+            <div class="indicadores-grid">
+                <div class="indicador-card">
+                    <div class="indicador-icono">💰</div>
+                    <div class="indicador-valor">${pib}</div>
+                    <div class="indicador-label">PIB per cápita</div>
+                    <div class="indicador-año">${pibAnio}</div>
+                </div>
+                <div class="indicador-card">
+                    <div class="indicador-icono">📈</div>
+                    <div class="indicador-valor">${inflacion}</div>
+                    <div class="indicador-label">Inflación</div>
+                    <div class="indicador-año">${inflacionAnio}</div>
+                </div>
+                <div class="indicador-card">
+                    <div class="indicador-icono">👥</div>
+                    <div class="indicador-valor">${desempleo}</div>
+                    <div class="indicador-label">Desempleo</div>
+                    <div class="indicador-año">${desempleoAnio}</div>
+                </div>
+            </div>
+            
+            <div class="dashboard-fuentes">📚 Fuentes: INE (Instituto Nacional de Estadística)</div>
+        </div>
+    `;
+    
+    if (window.DashboardReal) window.DashboardReal.vincularEventosBotones();
+}
+
 // Exportar función para uso global
 window.buscarLugarGlobal = buscarLugarGlobal;
 
