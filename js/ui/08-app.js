@@ -157,6 +157,45 @@ setTimeout(() => {
         if (modalReadme && e.target === modalReadme) modalReadme.style.display = 'none';
         if (modalNormas && e.target === modalNormas) modalNormas.style.display = 'none';
     });
+
+    // ============================================
+// ACTIVAR CAPAS DE PODER (botones laterales)
+// ============================================
+const capaBotones = document.querySelectorAll('.capa-icon');
+console.log("🎨 Configurando", capaBotones.length, "botones de capa");
+
+capaBotones.forEach(btn => {
+    btn.addEventListener('click', function() {
+        const capa = this.dataset.capa;
+        const estaActivo = this.classList.contains('activo');
+        
+        // Resaltar visualmente el botón activo
+        if (!estaActivo) {
+            // Desactivar todos los demás
+            capaBotones.forEach(b => b.classList.remove('activo'));
+            this.classList.add('activo');
+        } else {
+            this.classList.remove('activo');
+        }
+        
+        console.log(`🎨 Capa seleccionada: ${capa}, Activo: ${!estaActivo}`);
+        
+        // Llamar al mapa para activar la capa
+        if (window.MapaMundial && typeof window.MapaMundial.activarCapa === 'function') {
+            window.MapaMundial.activarCapa(capa, !estaActivo);
+        } else {
+            console.warn("⚠️ MapaMundial.activarCapa no está disponible");
+        }
+    });
+});
+
+// Activar la capa económica por defecto
+const capaEconomicaBtn = document.querySelector('.capa-icon[data-capa="economico"]');
+if (capaEconomicaBtn) {
+    capaEconomicaBtn.click(); // Esto activará la capa y el estilo
+} else {
+    console.warn("⚠️ No se encontró el botón de capa económica");
+}
     
     console.log('✅ Tablero Mundial listo');
 });
