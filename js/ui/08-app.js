@@ -13,161 +13,86 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof UISimulador !== 'undefined') UISimulador.init();
     if (typeof Idioma !== 'undefined') Idioma.init();
     
-    // Botones de la barra superior
-    const btnReadme = document.getElementById('btn-readme');
-    const btnNormas = document.getElementById('btn-normas');
-    const btnVerificador = document.getElementById('btn-verificador-panel');
-    const btnRelaciones = document.getElementById('btn-relaciones-globales');
-    const btnTimeline = document.getElementById('btn-timeline-panel');
-    const btnModoReal = document.getElementById('btn-modo-real');
-    const btnModoJuego = document.getElementById('btn-modo-juego');
-    const badgeModo = document.getElementById('modo-badge');
-    const verificadorPanel = document.getElementById('verificador-panel');
-    const relacionesPanel = document.getElementById('relaciones-globales-panel');
-    const timelinePanel = document.getElementById('timeline-panel');
-    
-    // README
-    if (btnReadme) {
-        btnReadme.addEventListener('click', (e) => {
-            e.preventDefault();
-            mostrarModal('README - Tablero Mundial', `
-                <h1>🌍 TABLERO MUNDIAL</h1>
-                <p>Plataforma interactiva de análisis geopolítico, económico y estratégico.</p>
-                <h2>📊 Características</h2>
-                <ul><li>Mapa mundial interactivo</li><li>Datos económicos reales del Banco Mundial</li><li>Verificador ciudadano</li><li>Simulador de escenarios</li></ul>
-                <h2>📚 Fuentes</h2><p>Banco Mundial · FMI · Eurostat · ONU</p>
-                <p><small>Versión 4.1 - Mayo 2026</small></p>
-            `);
-        });
-    }
-    
-    // NORMAS
-    if (btnNormas) {
-        btnNormas.addEventListener('click', (e) => {
-            e.preventDefault();
-            mostrarModal('📋 NORMAS DEL TABLERO', `
-                <h2>📜 Principios fundamentales</h2>
-                <ul><li><strong>Separación realidad/simulación</strong></li><li><strong>Transparencia</strong></li><li><strong>Neutralidad</strong></li></ul>
-                <h2>🎮 Modos de uso</h2>
-                <ul><li><strong>MODO REAL</strong>: Observación y análisis de datos reales</li><li><strong>MODO JUEGO</strong>: Simulación de escenarios hipotéticos</li></ul>
-            `);
-        });
-    }
-    
-    // Verificador
-    if (btnVerificador && verificadorPanel) {
-        btnVerificador.addEventListener('click', () => {
-            verificadorPanel.classList.toggle('active');
-        });
-    }
-    
-    // Relaciones Globales
-    if (btnRelaciones && relacionesPanel) {
-        btnRelaciones.addEventListener('click', () => {
-            relacionesPanel.classList.toggle('active');
-        });
-    }
-    
-    // Timeline
-    if (btnTimeline && timelinePanel) {
-        btnTimeline.addEventListener('click', () => {
-            timelinePanel.classList.toggle('active');
-        });
-    }
-    
-    // Modo Real / Juego
-    if (btnModoReal && btnModoJuego && badgeModo) {
-        btnModoReal.addEventListener('click', () => {
-            if (typeof CONFIG !== 'undefined') CONFIG.modo = 'realidad';
-            btnModoReal.classList.add('active');
-            btnModoJuego.classList.remove('active');
-            badgeModo.innerHTML = '🌐 MODO REAL';
-            badgeModo.style.background = '#2e7d32';
+    // ============================================
+    // ESPERAR A QUE EL MAPA ESTÉ LISTO
+    // ============================================
+    window.addEventListener('mapa-listos', function() {
+        console.log("🗺️ Mapa listo, inicializando componentes del mapa...");
+        
+        // Conectar botones de capa
+        const capaBotones = document.querySelectorAll('.capa-icon');
+        capaBotones.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const capa = this.dataset.capa;
+                const estaActivo = this.classList.contains('activo');
+                
+                capaBotones.forEach(b => b.classList.remove('activo'));
+                if (!estaActivo) this.classList.add('activo');
+                
+                if (window.MapaMundial) {
+                    window.MapaMundial.activarCapa(capa, !estaActivo);
+                }
+            });
         });
         
-        btnModoJuego.addEventListener('click', () => {
-            if (typeof CONFIG !== 'undefined') CONFIG.modo = 'juego';
-            btnModoJuego.classList.add('active');
-            btnModoReal.classList.remove('active');
-            badgeModo.innerHTML = '🎮 MODO JUEGO';
-            badgeModo.style.background = '#b27c2c';
-        });
-    }
+        // Activar capa económica por defecto
+        const capaEconomica = document.querySelector('.capa-icon[data-capa="economico"]');
+        if (capaEconomica) capaEconomica.click();
+        
+        // Mostrar España en el dashboard
+        if (typeof DashboardReal !== 'undefined') {
+            DashboardReal.mostrar('ESP', 'pais', 'España');
+        }
+        
+        // Activar coloreado
+        if (typeof Coloreado !== 'undefined') {
+            setTimeout(function() {
+                Coloreado.aplicarColoresPIB();
+            }, 500);
+        }
+    });
     
     // ============================================
-    // BUSCADOR RÁPIDO (mejorado)
+    // BUSCADOR RÁPIDO
     // ============================================
     const buscador = document.getElementById('buscador-rapido');
     if (buscador) {
         buscador.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 const texto = e.target.value.trim();
-                if (texto) {
-                    console.log(`🔍 Buscando: "${texto}"`);
-                    // Usar búsqueda avanzada si existe, o la del mapa
-                    if (typeof window.buscarLugarGlobal === 'function') {
-                        window.buscarLugarGlobal(texto);
-                    } else if (window.MapaMundial && typeof window.MapaMundial.buscarLugar === 'function') {
-                        window.MapaMundial.buscarLugar(texto);
-                    }
+                if (texto && window.MapaMundial && window.MapaMundial.buscarLugar) {
+                    window.MapaMundial.buscarLugar(texto);
                 }
             }
         });
-        console.log("✅ Buscador rápido configurado");
     }
     
     // ============================================
-    // ACTIVAR CAPAS DE PODER (botones laterales)
+    // BOTONES README Y NORMAS
     // ============================================
-    const capaBotones = document.querySelectorAll('.capa-icon');
-    console.log("🎨 Configurando", capaBotones.length, "botones de capa");
-
-    capaBotones.forEach(btn => {
+    const btnReadme = document.getElementById('btn-readme');
+    const btnNormas = document.getElementById('btn-normas');
+    const modalReadme = document.getElementById('modal-readme');
+    const modalNormas = document.getElementById('modal-normas');
+    
+    if (btnReadme && modalReadme) {
+        btnReadme.addEventListener('click', () => { modalReadme.style.display = 'flex'; });
+    }
+    if (btnNormas && modalNormas) {
+        btnNormas.addEventListener('click', () => { modalNormas.style.display = 'flex'; });
+    }
+    
+    // Cerrar modales
+    document.querySelectorAll('.close-btn').forEach(btn => {
         btn.addEventListener('click', function() {
-            const capa = this.dataset.capa;
-            const estaActivo = this.classList.contains('activo');
-            
-            // Resaltar visualmente el botón activo
-            if (!estaActivo) {
-                capaBotones.forEach(b => b.classList.remove('activo'));
-                this.classList.add('activo');
-            } else {
-                this.classList.remove('activo');
-            }
-            
-            console.log(`🎨 Capa seleccionada: ${capa}, Activo: ${!estaActivo}`);
-            
-            if (window.MapaMundial && typeof window.MapaMundial.activarCapa === 'function') {
-                window.MapaMundial.activarCapa(capa, !estaActivo);
-            } else {
-                console.warn("⚠️ MapaMundial.activarCapa no está disponible");
-            }
+            const modal = this.closest('.modal-overlay');
+            if (modal) modal.style.display = 'none';
         });
-    });
-
-    // Activar la capa económica por defecto
-    const capaEconomicaBtn = document.querySelector('.capa-icon[data-capa="economico"]');
-    if (capaEconomicaBtn) {
-        setTimeout(() => {
-            capaEconomicaBtn.click();
-        }, 500);
-    } else {
-        console.warn("⚠️ No se encontró el botón de capa económica");
-    }
-    
-    // Mostrar España al inicio
-    window.addEventListener('mapa-listos', () => {
-        setTimeout(() => {
-            if (typeof DashboardReal !== 'undefined') {
-                DashboardReal.mostrar('ESP');
-            }
-        }, 500);
     });
     
     console.log('✅ Tablero Mundial listo');
 });
 
-// Función para mostrar modales
 function mostrarModal(titulo, contenido) {
     let modal = document.getElementById('modal-global');
     if (!modal) {
