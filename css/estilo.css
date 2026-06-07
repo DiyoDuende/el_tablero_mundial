@@ -539,7 +539,7 @@ html, body {
     display: grid;
     grid-template-columns: 70% 30%;
     gap: 15px;
-    min-height: 0; /* Importante para que flex funcione */
+    min-height: 0;
 }
 
 .mapa-container {
