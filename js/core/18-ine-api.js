@@ -1,14 +1,13 @@
 // js/core/18-ine-api.js
 // ============================================
 // API DEL INSTITUTO NACIONAL DE ESTADÍSTICA (INE)
-// Datos regionales reales para España
 // ============================================
 
-var INE_API = {
-    baseURL: 'https://servicios.ine.es/wstempus/js/ES/DATOS_TABLA/',
+var INE_API = (function() {
     
-    // Códigos de comunidades autónomas (según INE)
-    codigosCCAA: {
+    var baseURL = 'https://servicios.ine.es/wstempus/js/ES/DATOS_TABLA/';
+    
+    var codigosCCAA = {
         'Comunidad de Madrid': 13,
         'Andalucía': 11,
         'Cataluña': 9,
@@ -28,21 +27,29 @@ var INE_API = {
         'La Rioja': 17,
         'Ceuta': 19,
         'Melilla': 20
-    },
+    };
     
-    // Tabla A31: PIB per cápita por comunidad autónoma
-    async getPIBPerCapita(codigoCCAA) {
-        var url = this.baseURL + 'A31?tip=AMBITOS&codigo=' + codigoCCAA;
+    var mapaNombres = {
+        'madrid': 'Comunidad de Madrid',
+        'comunidad de madrid': 'Comunidad de Madrid',
+        'andalucia': 'Andalucía',
+        'andalucía': 'Andalucía',
+        'sevilla': 'Andalucía',
+        'cataluna': 'Cataluña',
+        'cataluña': 'Cataluña',
+        'valencia': 'Comunitat Valenciana',
+        'galicia': 'Galicia',
+        'pais vasco': 'País Vasco'
+    };
+    
+    async function getPIBPerCapita(codigoCCAA) {
+        var url = baseURL + 'A31?tip=AMBITOS&codigo=' + codigoCCAA;
         try {
             var response = await fetch(url);
             var data = await response.json();
-            
             if (!data || !data.Datos) return null;
-            
-            // Buscar el valor más reciente
             var ultimoValor = null;
             var ultimoAño = null;
-            
             for (var i = 0; i < data.Datos.length; i++) {
                 var item = data.Datos[i];
                 if (item.Valor && !isNaN(parseFloat(item.Valor))) {
@@ -53,31 +60,21 @@ var INE_API = {
                     }
                 }
             }
-            
-            return {
-                valor: ultimoValor,
-                año: ultimoAño,
-                unidad: '€'
-            };
+            return { valor: ultimoValor, año: ultimoAño, unidad: '€' };
         } catch(e) {
             console.warn('Error INE PIB:', e);
             return null;
         }
-    },
+    }
     
-    // Tabla A28: IPC por comunidad autónoma
-    async getIPC(codigoCCAA) {
-        var url = this.baseURL + 'A28?tip=AMBITOS&codigo=' + codigoCCAA;
+    async function getIPC(codigoCCAA) {
+        var url = baseURL + 'A28?tip=AMBITOS&codigo=' + codigoCCAA;
         try {
             var response = await fetch(url);
             var data = await response.json();
-            
             if (!data || !data.Datos) return null;
-            
-            // Buscar el valor más reciente
             var ultimoValor = null;
             var ultimoAño = null;
-            
             for (var i = 0; i < data.Datos.length; i++) {
                 var item = data.Datos[i];
                 if (item.Valor && !isNaN(parseFloat(item.Valor))) {
@@ -88,33 +85,23 @@ var INE_API = {
                     }
                 }
             }
-            
-            return {
-                valor: ultimoValor,
-                año: ultimoAño,
-                unidad: '%'
-            };
+            return { valor: ultimoValor, año: ultimoAño, unidad: '%' };
         } catch(e) {
             console.warn('Error INE IPC:', e);
             return null;
         }
-    },
+    }
     
-    // Tabla A13: EPA (desempleo) por comunidad autónoma
-    async getDesempleo(codigoCCAA) {
-        var url = this.baseURL + 'A13?tip=AMBITOS&codigo=' + codigoCCAA;
+    async function getDesempleo(codigoCCAA) {
+        var url = baseURL + 'A13?tip=AMBITOS&codigo=' + codigoCCAA;
         try {
             var response = await fetch(url);
             var data = await response.json();
-            
             if (!data || !data.Datos) return null;
-            
             var ultimoValor = null;
             var ultimoAño = null;
-            
             for (var i = 0; i < data.Datos.length; i++) {
                 var item = data.Datos[i];
-                // Buscar tasa de paro total (código 1 o similar)
                 if (item.Valor && !isNaN(parseFloat(item.Valor))) {
                     var año = parseInt(item.Periode);
                     if (!ultimoAño || año > ultimoAño) {
@@ -123,32 +110,22 @@ var INE_API = {
                     }
                 }
             }
-            
-            return {
-                valor: ultimoValor,
-                año: ultimoAño,
-                unidad: '%'
-            };
+            return { valor: ultimoValor, año: ultimoAño, unidad: '%' };
         } catch(e) {
             console.warn('Error INE desempleo:', e);
             return null;
         }
-    },
+    }
     
-    // Obtener datos completos de una comunidad autónoma
-    async getDatosCCAA(nombreCCAA) {
-        var codigo = this.codigosCCAA[nombreCCAA];
+    async function getDatosCCAA(nombreCCAA) {
+        var codigo = codigosCCAA[nombreCCAA];
         if (!codigo) return null;
-        
-        // Mostrar que estamos cargando
         console.log('📊 Cargando datos del INE para:', nombreCCAA);
-        
         var [pib, ipc, desempleo] = await Promise.all([
-            this.getPIBPerCapita(codigo),
-            this.getIPC(codigo),
-            this.getDesempleo(codigo)
+            getPIBPerCapita(codigo),
+            getIPC(codigo),
+            getDesempleo(codigo)
         ]);
-        
         return {
             nombre: nombreCCAA,
             pib_percapita: pib,
@@ -158,56 +135,36 @@ var INE_API = {
             nivel: 'region',
             ultima_actualizacion: new Date().toISOString()
         };
-    },
+    }
     
-    // Obtener datos para cualquier nombre de lugar en España
-    async getDatosPorNombre(nombreLugar) {
-    // Mapa de nombres comunes a nombres oficiales
-    var mapaNombres = {
-        'madrid': 'Comunidad de Madrid',
-        'comunidad de madrid': 'Comunidad de Madrid',
-        'andalucia': 'Andalucía',
-        'andalucía': 'Andalucía',
-        'cataluna': 'Cataluña',
-        'cataluña': 'Cataluña',
-        'valencia': 'Comunitat Valenciana',
-        'comunitat valenciana': 'Comunitat Valenciana',
-        'galicia': 'Galicia',
-        'pais vasco': 'País Vasco',
-        'castilla y leon': 'Castilla y León',
-        'castilla la mancha': 'Castilla-La Mancha',
-        'canarias': 'Canarias',
-        'murcia': 'Región de Murcia',
-        'aragon': 'Aragón',
-        'extremadura': 'Extremadura',
-        'baleares': 'Islas Baleares',
-        'asturias': 'Principado de Asturias',
-        'navarra': 'Comunidad Foral de Navarra',
-        'cantabria': 'Cantabria',
-        'la rioja': 'La Rioja'
-    };
-    
-    var nombreLower = nombreLugar.toLowerCase();
-    var nombreOficial = mapaNombres[nombreLower] || null;
-    
-    // Si no está en el mapa, buscar directamente en los códigos
-    if (!nombreOficial) {
-        for (var region in this.codigosCCAA) {
-            if (region.toLowerCase() === nombreLower ||
-                region.toLowerCase().includes(nombreLower) ||
-                nombreLower.includes(region.toLowerCase())) {
-                nombreOficial = region;
-                break;
+    async function getDatosPorNombre(nombreLugar) {
+        var nombreLower = nombreLugar.toLowerCase();
+        var nombreOficial = mapaNombres[nombreLower];
+        
+        if (!nombreOficial) {
+            for (var region in codigosCCAA) {
+                if (region.toLowerCase() === nombreLower ||
+                    region.toLowerCase().includes(nombreLower) ||
+                    nombreLower.includes(region.toLowerCase())) {
+                    nombreOficial = region;
+                    break;
+                }
             }
         }
+        
+        if (nombreOficial && codigosCCAA[nombreOficial]) {
+            return await getDatosCCAA(nombreOficial);
+        }
+        
+        return null;
     }
     
-    if (nombreOficial && this.codigosCCAA[nombreOficial]) {
-        return await this.getDatosCCAA(nombreOficial);
-    }
+    return {
+        getDatosPorNombre: getDatosPorNombre,
+        getDatosCCAA: getDatosCCAA
+    };
     
-    return null;
-}
+})();
 
 window.INE_API = INE_API;
-console.log('✅ INE_API cargado');
+console.log("✅ INE_API cargado");
