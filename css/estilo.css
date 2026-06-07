@@ -214,6 +214,15 @@ body {
     color: #4fc3f7;
 }
 
+.dashboard-footer {
+    margin-top: 15px;
+    padding-top: 10px;
+    font-size: 0.75rem;
+    color: #6a8a9a;
+    text-align: center;
+    border-top: 1px solid #2a4050;
+}
+
 /* SIMULADOR */
 .simulador-panel {
     background: #16222b;
@@ -256,6 +265,7 @@ body {
     background: #1c2c36;
     border-radius: 12px;
     padding: 15px;
+    line-height: 1.8;
 }
 
 /* FOOTER */
