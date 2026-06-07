@@ -38,12 +38,13 @@ function cargarGeoJSON() {
                         const nombrePais = feature.properties.ADMIN;
                         paisSeleccionado = nombrePais;
                         mostrarDashboard(nombrePais);
+                        actualizarMapa(); // Para resaltar el país seleccionado
                     });
                 }
             }).addTo(mapa);
         })
         .catch(error => {
-            console.error("Error cargando GeoJSON:", error);
+            console.warn("Error cargando GeoJSON:", error);
             mostrarPlaceholderMapa();
         });
 }
@@ -72,7 +73,7 @@ function obtenerEstilo(nombrePais) {
     const esSeleccionado = (paisSeleccionado === nombrePais);
     
     return {
-        color: esSeleccionado ? "#fff" : color,
+        color: esSeleccionado ? "#ffffff" : color,
         weight: esSeleccionado ? 3 : 1,
         fillOpacity: 0.6,
         fillColor: color
@@ -114,7 +115,7 @@ function mostrarDashboard(nombrePais) {
     const pol = pais.politica;
     
     dashboard.innerHTML = `
-        <h3>🇪🇸 ${nombrePais}</h3>
+        <h3>🇺🇳 ${nombrePais}</h3>
         <div class="dashboard-grid">
             <div class="dashboard-card">
                 <h4>💰 PIB</h4>
@@ -217,7 +218,7 @@ function verificarAfirmacion() {
     } else {
         divRespuesta.innerHTML = `
             <p>❓ No hay suficiente información para verificar esta afirmación.</p>
-            <p><small>Prueba con: "¿subió el sueldo a los diputados?" o "¿sube el petróleo?"</small></p>
+            <p><small>Prueba con: "subido el sueldo a los diputados" o "sube el petróleo"</small></p>
         `;
     }
 }
@@ -234,31 +235,41 @@ function simularEscenario() {
     }
     
     const escenario = document.getElementById("escenario").value.trim();
-    if (!escenario) return;
+    if (!escenario) {
+        document.getElementById("resultado-simulacion").innerHTML = `
+            <p>✏️ Escribe un escenario, por ejemplo: "sube el petróleo un 20%"</p>
+        `;
+        return;
+    }
     
     // Simulación básica con la fórmula madre
     let impacto = 0;
     let tipo = "";
+    let probabilidad = 0;
     
     if (escenario.includes("petróleo") || escenario.includes("petroleo")) {
         impacto = 15 + Math.random() * 10;
         tipo = "⚡ ENERGÍA";
+        probabilidad = 55 + Math.random() * 30;
     } else if (escenario.includes("impuesto") || escenario.includes("impuestos")) {
         impacto = 8 + Math.random() * 8;
         tipo = "💰 ECONOMÍA";
+        probabilidad = 60 + Math.random() * 25;
     } else if (escenario.includes("guerra") || escenario.includes("conflicto")) {
         impacto = 25 + Math.random() * 15;
         tipo = "⚔️ MILITAR";
+        probabilidad = 40 + Math.random() * 30;
     } else {
         impacto = 5 + Math.random() * 15;
         tipo = "🌍 GENERAL";
+        probabilidad = 50 + Math.random() * 35;
     }
     
     const resultado = `
         <p><strong>🎲 ESCENARIO:</strong> "${escenario}"</p>
         <p><strong>📊 TIPO:</strong> ${tipo}</p>
         <p><strong>💥 IMPACTO ESTIMADO:</strong> ${impacto.toFixed(1)} puntos</p>
-        <p><strong>📈 PROBABILIDAD:</strong> ${Math.round(50 + Math.random() * 40)}%</p>
+        <p><strong>📈 PROBABILIDAD:</strong> ${Math.round(probabilidad)}%</p>
         <p><small>⚠️ Esta es una SIMULACIÓN basada en modelos matemáticos. No es una predicción real.</small></p>
     `;
     
@@ -272,15 +283,16 @@ function cambiarModo(modo) {
     modoActual = modo;
     const btnReal = document.getElementById("btn-modo-real");
     const btnJuego = document.getElementById("btn-modo-juego");
+    const simuladorPanel = document.getElementById("simulador-panel");
     
     if (modo === "real") {
         btnReal.classList.add("active");
         btnJuego.classList.remove("active");
-        document.getElementById("simulador-panel").style.opacity = "0.6";
+        if (simuladorPanel) simuladorPanel.style.opacity = "0.6";
     } else {
         btnJuego.classList.add("active");
         btnReal.classList.remove("active");
-        document.getElementById("simulador-panel").style.opacity = "1";
+        if (simuladorPanel) simuladorPanel.style.opacity = "1";
     }
 }
 
@@ -304,6 +316,8 @@ function cambiarCapa(capa) {
 // ============================================
 function toggleVerificador() {
     const panel = document.getElementById("verificador-panel");
+    if (!panel) return;
+    
     if (panel.style.display === "none") {
         panel.style.display = "block";
     } else {
@@ -316,24 +330,35 @@ function toggleVerificador() {
 // ============================================
 function mostrarPlaceholderMapa() {
     const mapDiv = document.getElementById("mapa");
+    if (!mapDiv) return;
+    
     mapDiv.innerHTML = `
-        <div style="display: flex; justify-content: center; align-items: center; height: 100%; flex-direction: column; gap: 10px;">
+        <div style="display: flex; justify-content: center; align-items: center; height: 100%; flex-direction: column; gap: 10px; background: #1a3b4f;">
             <span style="font-size: 3rem;">🗺️</span>
-            <p>Cargando mapa mundial...</p>
-            <p style="font-size: 0.8rem; color: #888;">Si no carga automáticamente, actualiza la página</p>
+            <p>Mapa mundial cargando...</p>
+            <p style="font-size: 0.8rem; color: #888;">Si no carga, actualiza la página</p>
         </div>
     `;
+    
+    // Intentar recargar después de 3 segundos
+    setTimeout(() => {
+        if (!geojsonLayer) {
+            cargarGeoJSON();
+        }
+    }, 3000);
 }
 
 // ============================================
-// 13. EVENTOS Y INICIALIZACIÓN
+// 13. EVENTOS E INICIALIZACIÓN
 // ============================================
 document.addEventListener("DOMContentLoaded", () => {
     iniciarMapa();
     
     // Botón de buscar
-    document.getElementById("btn-buscar").addEventListener("click", buscarLugar);
-    document.getElementById("buscador").addEventListener("keypress", (e) => {
+    const btnBuscar = document.getElementById("btn-buscar");
+    const buscador = document.getElementById("buscador");
+    if (btnBuscar) btnBuscar.addEventListener("click", buscarLugar);
+    if (buscador) buscador.addEventListener("keypress", (e) => {
         if (e.key === "Enter") buscarLugar();
     });
     
@@ -343,19 +368,27 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     
     // Botones de modo
-    document.getElementById("btn-modo-real").addEventListener("click", () => cambiarModo("real"));
-    document.getElementById("btn-modo-juego").addEventListener("click", () => cambiarModo("juego"));
+    const btnModoReal = document.getElementById("btn-modo-real");
+    const btnModoJuego = document.getElementById("btn-modo-juego");
+    if (btnModoReal) btnModoReal.addEventListener("click", () => cambiarModo("real"));
+    if (btnModoJuego) btnModoJuego.addEventListener("click", () => cambiarModo("juego"));
     
     // Verificador
-    document.getElementById("btn-verificador").addEventListener("click", toggleVerificador);
-    document.getElementById("btn-verificar").addEventListener("click", verificarAfirmacion);
-    document.getElementById("pregunta-verificador").addEventListener("keypress", (e) => {
+    const btnVerificador = document.getElementById("btn-verificador");
+    const btnVerificar = document.getElementById("btn-verificar");
+    const preguntaVerificador = document.getElementById("pregunta-verificador");
+    
+    if (btnVerificador) btnVerificador.addEventListener("click", toggleVerificador);
+    if (btnVerificar) btnVerificar.addEventListener("click", verificarAfirmacion);
+    if (preguntaVerificador) preguntaVerificador.addEventListener("keypress", (e) => {
         if (e.key === "Enter") verificarAfirmacion();
     });
     
     // Simulador
-    document.getElementById("btn-simular").addEventListener("click", simularEscenario);
-    document.getElementById("escenario").addEventListener("keypress", (e) => {
+    const btnSimular = document.getElementById("btn-simular");
+    const escenarioInput = document.getElementById("escenario");
+    if (btnSimular) btnSimular.addEventListener("click", simularEscenario);
+    if (escenarioInput) escenarioInput.addEventListener("keypress", (e) => {
         if (e.key === "Enter") simularEscenario();
     });
 });
