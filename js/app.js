@@ -107,17 +107,101 @@ const mapaBanderas = {
 async function cargarDatosBancoMundial(nombrePais) {
     const iso3 = mapaISO3[nombrePais];
     const dashboard = document.getElementById("dashboard");
-    
+
+    // 1. Validar que el país tiene código ISO
     if (!iso3) {
-        dashboard.innerHTML = `
-            <div class="dashboard-real">
-                <div class="dashboard-header"><h3>📭 ${nombrePais}</h3></div>
-                <p>No hay datos disponibles en el Banco Mundial para este país.</p>
-                <p><small>Prueba con: España, Francia, Alemania, Italia, Portugal...</small></p>
-            </div>
-        `;
+        dashboard.innerHTML = `<div class="dashboard-real"><div class="dashboard-header"><h3>📭 ${nombrePais}</h3></div><p>No hay datos disponibles en el Banco Mundial para este país.</p><p><small>Prueba con: España, Francia, Alemania, Italia, Portugal...</small></p></div>`;
         return;
     }
+
+    // 2. Mostrar estado de carga
+    dashboard.innerHTML = `<div class="dashboard-loading">🔄 Cargando datos económicos desde el Banco Mundial para ${nombrePais}...</div>`;
+
+    try {
+        // 3. Definir los indicadores a consultar (códigos del Banco Mundial)
+        const indicadores = [
+            'NY.GDP.MKTP.CD',      // PIB (USD)
+            'NY.GDP.PCAP.CD',      // PIB per cápita (USD)
+            'FP.CPI.TOTL.ZG',      // Inflación (%)
+            'SL.UEM.TOTL.ZS'       // Desempleo (%)
+        ];
+        
+        const resultados = {};
+
+        // 4. Hacer las peticiones a la API en paralelo (más rápido)
+        const peticiones = indicadores.map(async (indicador) => {
+            // ---> URL CORREGIDA Y MEJORADA <---
+            const url = `https://api.worldbank.org/v2/country/${iso3}/indicator/${indicador}?format=json&per_page=1&sortBy=date:desc`;
+            const respuesta = await fetch(url);
+            const datos = await respuesta.json();
+            
+            let valor = null;
+            let anio = null;
+
+            // La API devuelve un array. El último valor está en datos[1][0]
+            if (datos && datos[1] && datos[1][0] && datos[1][0].value) {
+                const valorRaw = parseFloat(datos[1][0].value);
+                if (!isNaN(valorRaw)) {
+                    valor = valorRaw;
+                    anio = datos[1][0].date;
+                }
+            }
+            resultados[indicador] = { valor, anio };
+        });
+
+        await Promise.all(peticiones);
+
+        // 5. Obtener la bandera y formatear los números
+        const bandera = mapaBanderas[iso3] || "🌍";
+        const pib = resultados['NY.GDP.MKTP.CD']?.valor ? (resultados['NY.GDP.MKTP.CD'].valor / 1e9).toFixed(1) + 'B' : 'N/D';
+        const pibPerCapita = resultados['NY.GDP.PCAP.CD']?.valor ? Math.round(resultados['NY.GDP.PCAP.CD'].valor).toLocaleString() + ' USD' : 'N/D';
+        const inflacion = resultados['FP.CPI.TOTL.ZG']?.valor ? resultados['FP.CPI.TOTL.ZG'].valor.toFixed(1) + '%' : 'N/D';
+        const desempleo = resultados['SL.UEM.TOTL.ZS']?.valor ? resultados['SL.UEM.TOTL.ZS'].valor.toFixed(1) + '%' : 'N/D';
+
+        // 6. Escribir el HTML final en el dashboard
+        dashboard.innerHTML = `
+            <div class="dashboard-real">
+                <div class="dashboard-header">
+                    <div class="pais-titulo">
+                        <span class="pais-bandera">${bandera}</span>
+                        <h3>${nombrePais}</h3>
+                        <span class="pais-codigo">${iso3}</span>
+                    </div>
+                </div>
+                <div class="indicadores-grid">
+                    <div class="indicador-card">
+                        <div class="indicador-icono">📊</div>
+                        <div class="indicador-valor">${pib}</div>
+                        <div class="indicador-label">PIB (USD)</div>
+                        <div class="indicador-año">${resultados['NY.GDP.MKTP.CD']?.anio || ''}</div>
+                    </div>
+                    <div class="indicador-card">
+                        <div class="indicador-icono">💰</div>
+                        <div class="indicador-valor">${pibPerCapita}</div>
+                        <div class="indicador-label">PIB per cápita</div>
+                        <div class="indicador-año">${resultados['NY.GDP.PCAP.CD']?.anio || ''}</div>
+                    </div>
+                    <div class="indicador-card">
+                        <div class="indicador-icono">📈</div>
+                        <div class="indicador-valor">${inflacion}</div>
+                        <div class="indicador-label">Inflación</div>
+                        <div class="indicador-año">${resultados['FP.CPI.TOTL.ZG']?.anio || ''}</div>
+                    </div>
+                    <div class="indicador-card">
+                        <div class="indicador-icono">👥</div>
+                        <div class="indicador-valor">${desempleo}</div>
+                        <div class="indicador-label">Desempleo</div>
+                        <div class="indicador-año">${resultados['SL.UEM.TOTL.ZS']?.anio || ''}</div>
+                    </div>
+                </div>
+                <div class="dashboard-fuentes">📚 Fuentes: Banco Mundial · Datos actualizados</div>
+            </div>
+        `;
+    } catch (error) {
+        console.error("Error detallado al cargar del Banco Mundial:", error);
+        dashboard.innerHTML = `<div class="dashboard-real"><div class="dashboard-header"><h3>❌ Error de conexión</h3></div><p>No se pudieron cargar los datos para ${nombrePais}.</p><p><small>Intenta de nuevo más tarde o selecciona otro país.</small></p></div>`;
+    }
+}
     
     dashboard.innerHTML = `<div class="dashboard-loading">🔄 Cargando datos económicos desde el Banco Mundial para ${nombrePais}...</div>`;
     
