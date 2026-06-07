@@ -2,6 +2,22 @@
 // TERRITORIOS - Jerarquía global
 // ============================================
 
+// Dentro de 01-territorios.js
+function identificarTerritorio(paisISO, nombreLugar) {
+  const pais = territoriosPorISO[paisISO];
+  const posibleMunicipio = GADM_LITE.buscarEnPais(paisISO, nombreLugar);
+  
+  if (posibleMunicipio && posibleMunicipio.nivel === 3) {
+    return {
+      tipo: "municipio",
+      nombre: posibleMunicipio.nombre,
+      jerarquia: posibleMunicipio.nombres_padres,
+      id_gadm: posibleMunicipio.id
+    };
+  }
+  return pais; // tu objeto país existente
+}
+
 const TERRITORIOS = {
     mundo: { id: 'mundo', nombre: 'Mundo', nivel: 'mundo' },
     
