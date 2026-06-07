@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🌍 TABLERO MUNDIAL - Geopolítica Global</title>
     <!-- Favicon para evitar error 404 -->
-    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAZdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuMTM0A1t6AAAAI0lEVQ0T2P8//8/Ay0xTAADyUADmYAG0gDGSDAYBoNgMAAA//8DAAi6AuWtSQBkAAAAAElFTkSuQmCC">
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAZdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuMTM0A1t6AAAAI0lEQVQ4T2P8//8/Ay0xTAADyUADmYAG0gDGSDAYBoNgMAAA//8DAAi6AuWtSQBkAAAAAElFTkSuQmCC">
     <!-- Leaflet CSS y JS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -42,6 +42,7 @@
 
         <!-- CONTENEDOR PRINCIPAL: MAPA + VERIFICADOR -->
         <div class="contenedor-principal">
+            <!-- CORREGIDO: el ID debe ser "mapa" -->
             <div id="mapa" class="mapa"></div>
             <div id="verificador-panel" class="verificador-panel" style="display: none;">
                 <h3>✅ VERIFICADOR CIUDADANO</h3>
@@ -52,7 +53,8 @@
         </div>
 
         <!-- DASHBOARD DE INFORMACIÓN -->
-        <div id="dashboard" class="dashboard">
+        <!-- CORREGIDO: el ID debe ser "dashboard-container" -->
+        <div id="dashboard-container" class="dashboard">
             <div class="placeholder">🌍 Haz clic en cualquier país para ver sus datos</div>
         </div>
 
@@ -72,7 +74,6 @@
         </div>
     </div>
 
-    <script src="js/datos.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>
