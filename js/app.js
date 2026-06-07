@@ -31,21 +31,32 @@ function cargarGeoJSON() {
         .then(response => response.json())
         .then(data => {
             geojsonLayer = L.geoJSON(data, {
-                style: () => obtenerEstilo(),
+                style: (feature) => obtenerEstilo(feature),
                 onEachFeature: (feature, layer) => {
                     layer.on('click', () => {
-                        paisSeleccionado = feature.properties.ADMIN;
-                        cargarDatosBancoMundial(paisSeleccionado);
+                        const nombrePais = feature.properties.ADMIN;
+                        paisSeleccionado = nombrePais;
+                        cargarDatosBancoMundial(nombrePais);
                         actualizarMapa();
                     });
                 }
             }).addTo(mapa);
         })
-        .catch(error => console.warn("Error cargando GeoJSON:", error));
+        .catch(error => {
+            console.warn("Error cargando GeoJSON:", error);
+            document.getElementById("dashboard").innerHTML = `
+                <div class="dashboard-real">
+                    <div class="dashboard-header"><h3>⚠️ Error</h3></div>
+                    <p>No se pudo cargar el mapa mundial. Actualiza la página.</p>
+                </div>
+            `;
+        });
 }
 
-function obtenerEstilo() {
-    const esSeleccionado = (paisSeleccionado === feature?.properties?.ADMIN);
+function obtenerEstilo(feature) {
+    const nombrePais = feature?.properties?.ADMIN;
+    const esSeleccionado = (paisSeleccionado === nombrePais);
+    
     return {
         color: esSeleccionado ? "#ffffff" : "#4fc3f7",
         weight: esSeleccionado ? 3 : 1,
@@ -245,22 +256,18 @@ function buscarLugar() {
 
 const VERIFICADOR_CONOCIMIENTO = {
     "subido el sueldo a los diputados": {
-        estado: "falso",
         respuesta: "No es cierto. El sueldo base de los diputados es 3.050,68€/mes. La última subida fue del 2,5% (IPC 2025).",
         fuentes: ["Congreso.es", "BOE"]
     },
     "tropas españolas en ucrania": {
-        estado: "falso",
         respuesta: "España NO ha enviado tropas de combate a Ucrania. Sí ha enviado instructores militares.",
         fuentes: ["Ministerio de Defensa", "EFE"]
     },
     "iva de la luz": {
-        estado: "falso",
         respuesta: "El IVA de la luz sigue en el 10% (tipo reducido). No hay proyecto para subirlo al 21%.",
         fuentes: ["BOE", "Ministerio de Hacienda"]
     },
     "sube el petróleo": {
-        estado: "incierto",
         respuesta: "El precio del petróleo ha subido un 8% en el último mes por tensiones en Oriente Medio.",
         fuentes: ["International Energy Agency", "Bloomberg"]
     }
@@ -310,10 +317,12 @@ function simularEscenario() {
     }
     
     const escenario = document.getElementById("escenario").value.trim();
-    if (!escenario) return;
+    if (!escenario) {
+        document.getElementById("resultado-simulacion").innerHTML = `<p>✏️ Escribe un escenario, por ejemplo: "sube el petróleo un 20%"</p>`;
+        return;
+    }
     
     let impacto = 15 + Math.random() * 10;
-    let tipo = "⚡ ENERGÍA";
     
     if (escenario.includes("impuesto")) impacto = 8 + Math.random() * 8;
     if (escenario.includes("guerra")) impacto = 25 + Math.random() * 15;
@@ -349,7 +358,9 @@ function cambiarModo(modo) {
 
 function toggleVerificador() {
     const panel = document.getElementById("verificador-panel");
-    panel.style.display = panel.style.display === "none" ? "block" : "none";
+    if (panel) {
+        panel.style.display = panel.style.display === "none" ? "block" : "none";
+    }
 }
 
 // ============================================
@@ -359,17 +370,27 @@ function toggleVerificador() {
 document.addEventListener("DOMContentLoaded", () => {
     iniciarMapa();
     
-    document.getElementById("btn-buscar").addEventListener("click", buscarLugar);
-    document.getElementById("buscador").addEventListener("keypress", (e) => {
+    const btnBuscar = document.getElementById("btn-buscar");
+    const buscador = document.getElementById("buscador");
+    if (btnBuscar) btnBuscar.addEventListener("click", buscarLugar);
+    if (buscador) buscador.addEventListener("keypress", (e) => {
         if (e.key === "Enter") buscarLugar();
     });
     
-    document.getElementById("btn-modo-real").addEventListener("click", () => cambiarModo("real"));
-    document.getElementById("btn-modo-juego").addEventListener("click", () => cambiarModo("juego"));
-    document.getElementById("btn-verificador").addEventListener("click", toggleVerificador);
-    document.getElementById("btn-verificar").addEventListener("click", verificarAfirmacion);
-    document.getElementById("btn-simular").addEventListener("click", simularEscenario);
-    document.getElementById("escenario").addEventListener("keypress", (e) => {
+    const btnModoReal = document.getElementById("btn-modo-real");
+    const btnModoJuego = document.getElementById("btn-modo-juego");
+    if (btnModoReal) btnModoReal.addEventListener("click", () => cambiarModo("real"));
+    if (btnModoJuego) btnModoJuego.addEventListener("click", () => cambiarModo("juego"));
+    
+    const btnVerificador = document.getElementById("btn-verificador");
+    const btnVerificar = document.getElementById("btn-verificar");
+    if (btnVerificador) btnVerificador.addEventListener("click", toggleVerificador);
+    if (btnVerificar) btnVerificar.addEventListener("click", verificarAfirmacion);
+    
+    const btnSimular = document.getElementById("btn-simular");
+    const escenarioInput = document.getElementById("escenario");
+    if (btnSimular) btnSimular.addEventListener("click", simularEscenario);
+    if (escenarioInput) escenarioInput.addEventListener("keypress", (e) => {
         if (e.key === "Enter") simularEscenario();
     });
 });
