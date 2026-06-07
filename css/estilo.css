@@ -276,3 +276,106 @@ body {
     font-size: 0.85rem;
     border-top: 1px solid #2a4050;
 }
+
+/* ============================================ */
+/* DASHBOARD REAL - Estilos Banco Mundial */
+/* ============================================ */
+
+.dashboard-real {
+    background: #1c2c36;
+    border-radius: 16px;
+    padding: 20px;
+    margin-top: 0;
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #2a4050;
+}
+
+.pais-titulo {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.pais-bandera {
+    font-size: 2rem;
+}
+
+.pais-titulo h3 {
+    margin: 0;
+    color: #4fc3f7;
+}
+
+.pais-codigo {
+    background: #16222b;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-family: monospace;
+}
+
+.indicadores-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.indicador-card {
+    background: #16222b;
+    border-radius: 12px;
+    padding: 15px;
+    text-align: center;
+    transition: transform 0.2s;
+    border-left: 4px solid #4fc3f7;
+}
+
+.indicador-card:hover {
+    transform: translateY(-3px);
+}
+
+.indicador-icono {
+    font-size: 2rem;
+    margin-bottom: 8px;
+}
+
+.indicador-valor {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #4fc3f7;
+}
+
+.indicador-label {
+    font-size: 0.75rem;
+    color: #9aaec2;
+    margin-top: 5px;
+}
+
+.indicador-año {
+    font-size: 0.7rem;
+    color: #6a8a9a;
+    margin-top: 5px;
+}
+
+.dashboard-loading, .dashboard-error {
+    text-align: center;
+    padding: 40px;
+    background: #16222b;
+    border-radius: 16px;
+}
+
+.dashboard-fuentes {
+    background: #16222b;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 0.7rem;
+    text-align: center;
+    color: #9aaec2;
+    margin-top: 15px;
+}
