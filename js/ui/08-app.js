@@ -71,17 +71,34 @@ setTimeout(() => {
     }
 
     // ============================================
-    // BUSCADOR RÁPIDO
-    // ============================================
-    const buscador = document.getElementById('buscador-rapido');
-    if (buscador && MapaMundial.buscarLugar) {
-        buscador.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                MapaMundial.buscarLugar(buscador.value.trim());
+// BUSCADOR RÁPIDO (conectado al dashboard)
+// ============================================
+const buscador = document.getElementById('buscador-rapido');
+if (buscador) {
+    buscador.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            const texto = this.value.trim();
+            if (texto !== "") {
+                console.log(`🔍 Buscando: "${texto}"`);
+                
+                // Si existe la función global de búsqueda avanzada, úsala
+                if (typeof window.buscarLugarGlobal === 'function') {
+                    window.buscarLugarGlobal(texto);
+                } 
+                // Si no, usar el método simple del mapa para centrar
+                else if (window.MapaMundial && typeof window.MapaMundial.buscarLugar === 'function') {
+                    window.MapaMundial.buscarLugar(texto);
+                } else {
+                    console.warn("⚠️ No hay sistema de búsqueda disponible");
+                }
             }
-        });
-    }
-
+        }
+    });
+    console.log("✅ Buscador rápido configurado");
+} else {
+    console.warn("⚠️ No se encontró el elemento 'buscador-rapido'");
+}
+    
     // ============================================
     // CAPAS (iconos)
     // ============================================
